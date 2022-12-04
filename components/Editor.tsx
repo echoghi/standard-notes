@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { useStoreState, useStoreActions } from 'easy-peasy';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import fetcher from '../lib/fetcher';
+import { formatDate } from '../lib/formatters';
 
 const Container = styled.div`
     display: flex;
@@ -38,62 +39,72 @@ const EditPanel = styled.textarea`
     padding: 0.8rem;
 `;
 
-const formatDate = () => {
-    return new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric'
-    });
-};
-
-const throttle = (func: any, limit: number) => {
-    let inThrottle: boolean;
-    return function () {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => (inThrottle = false), limit);
-        }
-    };
-};
-
 const Editor = ({ notes }: { notes: any }) => {
     const note = useStoreState((state: any) => state.activeNote);
     const setNotes = useStoreActions((store: any) => store.setNotes);
     const [editorContent, setEditorContent] = useState(note?.content || '');
-    const [editorTitle, setEditorTitle] = useState(note?.title || formatDate());
+    const [editorTitle, setEditorTitle] = useState(note?.title || formatDate(new Date()));
+    const [isEditing, setIsEditing] = useState(false);
+    const [hasEdited, setHasEdited] = useState(false);
+
+    const throttledSetEdit: any = useCallback(
+        (newValue: any) => {
+            if (throttledSetEdit.timeout) {
+                clearTimeout(throttledSetEdit.timeout);
+            }
+
+            throttledSetEdit.timeout = setTimeout(() => {
+                setIsEditing(newValue);
+            }, 500);
+        },
+        [setIsEditing]
+    );
 
     useEffect(() => {
         if (note?.content) setEditorContent(note.content);
         if (note?.title) setEditorTitle(note.title);
     }, [note]);
 
+    // save note when user has stopped editing
+    useEffect(() => {
+        if (!isEditing && hasEdited) {
+            const newNote = {
+                ...note,
+                content: editorContent ? editorContent : note?.content,
+                title: editorTitle ? editorTitle : note?.title
+            };
+
+            const saveNote = async () => {
+                const updatedNote: any = await fetcher('/edit', newNote);
+
+                const updatedNotes = notes.map((n: any) => {
+                    if (n.id === updatedNote.id) {
+                        return updatedNote;
+                    }
+                    return n;
+                });
+
+                setNotes(updatedNotes);
+            };
+
+            saveNote();
+        }
+    }, [isEditing, hasEdited]);
+
     const onEditTitle = async (e: any) => {
+        setIsEditing(true);
+        setHasEdited(true);
         setEditorTitle(e.target.value);
 
-        const upsert = await fetcher('/edit', { id: note?.id || null, content: editorContent, title: e.target.value });
-
-        // map through notes and replace the note with the same id as the upset note
-        const updatedNotes = notes.map((n: any) => (n.id === upsert.id ? upsert : n));
-
-        setNotes(updatedNotes);
-
-        throttle(upsert, 150);
+        throttledSetEdit(false);
     };
 
     const onEditContent = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setIsEditing(true);
+        setHasEdited(true);
         setEditorContent(e.target.value);
 
-        const upsert = await fetcher('/edit', { id: note?.id || null, content: e.target.value, title: editorTitle });
-
-        const updatedNotes = notes.map((n: any) => (n.id === upsert.id ? upsert : n));
-
-        setNotes(updatedNotes);
-
-        throttle(upsert, 150);
+        throttledSetEdit(false);
     };
 
     return (

@@ -16,8 +16,6 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         result = await prisma.note.create({
             data: { title, content, createdAt: new Date(), updatedAt: new Date() }
         });
-
-        console.log(result);
     }
 
     res.json(result);
