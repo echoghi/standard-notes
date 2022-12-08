@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { SlOptions } from 'react-icons/sl';
 import { BiTrash } from 'react-icons/bi';
 import { BsPin } from 'react-icons/bs';
+import { CgNotes } from 'react-icons/cg';
+import Switch from './Switch';
 import { useOnClickOutside } from '@echoghi/hooks';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { AiOutlineStar } from 'react-icons/ai';
@@ -84,6 +86,7 @@ const Item = styled.button`
 const ItemContent = styled.div`
     display: flex;
     align-items: center;
+    flex-grow: 1;
 `;
 
 const ItemText = styled.div`
@@ -174,6 +177,21 @@ const NoteMenu = () => {
         }
     }, [note]);
 
+    const handleSpellCheck = useCallback(async () => {
+        try {
+            setLoading(true);
+            const updatedNotes: any = await fetcher('/spellCheck', {
+                id: note.id,
+                spellCheck: !note.spellCheck,
+                trashed: view === 'trashed'
+            });
+
+            setNotes(updatedNotes);
+        } catch (err) {
+            setError(true);
+        }
+    }, [note]);
+
     return (
         <Container ref={ref}>
             <MenuButton onClick={handleClick}>
@@ -185,7 +203,7 @@ const NoteMenu = () => {
                         <MenuItem>
                             <Item onClick={handleStarNote}>
                                 <ItemContent>
-                                    <AiOutlineStar size="24px" color="var(--sn-stylekit-neutral-color)" />
+                                    <AiOutlineStar size="20px" color="var(--sn-stylekit-neutral-color)" />
                                     <ItemText>{note?.starred ? 'Unstar' : 'Star'}</ItemText>
                                 </ItemContent>
                             </Item>
@@ -195,12 +213,12 @@ const NoteMenu = () => {
                                 <ItemContent>
                                     {note?.pinned ? (
                                         <>
-                                            <BsPin size="24px" color="var(--sn-stylekit-neutral-color)" />
+                                            <BsPin size="20px" color="var(--sn-stylekit-neutral-color)" />
                                             <ItemText>Unpin</ItemText>
                                         </>
                                     ) : (
                                         <>
-                                            <BsPin size="24px" color="var(--sn-stylekit-neutral-color)" />
+                                            <BsPin size="20px" color="var(--sn-stylekit-neutral-color)" />
                                             <ItemText>Pin to top</ItemText>
                                         </>
                                     )}
@@ -210,11 +228,23 @@ const NoteMenu = () => {
                         <MenuItem>
                             <Item onClick={handleDeleteNote}>
                                 <ItemContent>
-                                    <BiTrash size="24px" color="var(--sn-stylekit-danger-color)" />
+                                    <BiTrash size="20px" color="var(--sn-stylekit-danger-color)" />
                                     <ItemText color="var(--sn-stylekit-danger-color)">
                                         {view === 'trashed' ? 'Delete permanently' : 'Move to trash'}
                                     </ItemText>
                                 </ItemContent>
+                            </Item>
+                        </MenuItem>
+                        <Divider />
+                        <MenuItem>
+                            <Item onClick={handleSpellCheck}>
+                                <ItemContent>
+                                    <CgNotes size="20px" color="var(--sn-stylekit-neutral-color)" />
+                                    <ItemText>Spellcheck</ItemText>
+                                </ItemContent>
+                                <div>
+                                    <Switch value={note?.spellCheck} />
+                                </div>
                             </Item>
                         </MenuItem>
                         <Divider />

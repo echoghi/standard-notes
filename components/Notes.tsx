@@ -69,8 +69,7 @@ const Container = styled.div`
 const Notes = ({ notes, deleted, starred }) => {
     const view = useStoreState((store: any) => store.view);
     const setView = useStoreActions((store: any) => store.setView);
-    const setNotes = useStoreActions((store: any) => store.setNotes);
-    const setError = useStoreActions((store: any) => store.setError);
+    const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
 
     const isEmpty =
         (view === 'trashed' && deleted.length === 0) ||
@@ -78,15 +77,9 @@ const Notes = ({ notes, deleted, starred }) => {
         (view === 'notes' && notes.length === 0);
 
     const createNote = async () => {
-        try {
-            const updatedNotes: any = await fetcher('/create', { title: formatTitleDate(new Date()), content: '' });
-
-            setNotes(updatedNotes);
-            if (view !== 'notes') {
-                setView('notes');
-            }
-        } catch (err) {
-            setError(true);
+        setActiveNote({ title: formatTitleDate(new Date()), content: '' });
+        if (view !== 'notes') {
+            setView('notes');
         }
     };
 

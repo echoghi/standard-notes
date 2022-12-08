@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { BsPin } from 'react-icons/bs';
-import { useStoreActions } from 'easy-peasy';
+import { useStoreActions, useStoreState } from 'easy-peasy';
 import { useCallback } from 'react';
 import fetcher from '../lib/fetcher';
 
@@ -27,6 +27,7 @@ const MenuButton = styled.button`
 `;
 
 const PinNote = ({ note }) => {
+    const view = useStoreState((store: any) => store.view);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
     const setNotes = useStoreActions((store: any) => store.setNotes);
     const setLoading = useStoreActions((store: any) => store.setLoading);
@@ -35,7 +36,11 @@ const PinNote = ({ note }) => {
     const handlePinNote = useCallback(async () => {
         try {
             setLoading(true);
-            const updatedNotes: any = await fetcher('/pin', { id: note.id, pinned: !note.pinned });
+            const updatedNotes: any = await fetcher('/pin', {
+                id: note.id,
+                pinned: !note.pinned,
+                trashed: view === 'trashed'
+            });
 
             setActiveNote(updatedNotes.newNote);
             setNotes(updatedNotes);
@@ -45,7 +50,7 @@ const PinNote = ({ note }) => {
     }, [note]);
 
     return (
-        <MenuButton onClick={handlePinNote} pinned={note?.pinned}>
+        <MenuButton onClick={handlePinNote} pinned={note?.pinned} aria-label="Pin note">
             <BsPin size="18px" color={`${!note?.pinned ? 'var(--sn-stylekit-neutral-color)' : 'white'}`} />
         </MenuButton>
     );

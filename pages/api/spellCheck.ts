@@ -1,27 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
 
-// write a next js api route to update a note
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, title, content, trashed } = req.body;
+    const { id, spellCheck, trashed } = req.body;
 
     let newNote;
 
-    if (id) {
-        if (!trashed) {
-            newNote = await prisma.note.update({
-                where: { id: Number(id) },
-                data: { title, content, updatedAt: new Date() }
-            });
-        } else {
-            newNote = await prisma.deleted.update({
-                where: { id: Number(id) },
-                data: { title, content, updatedAt: new Date() }
-            });
-        }
+    if (!trashed) {
+        newNote = await prisma.note.update({
+            where: { id: Number(id) },
+            data: { spellCheck }
+        });
     } else {
-        newNote = await prisma.note.create({
-            data: { title, content, createdAt: new Date(), updatedAt: new Date() }
+        newNote = await prisma.deleted.update({
+            where: { id: Number(id) },
+            data: { spellCheck }
         });
     }
 

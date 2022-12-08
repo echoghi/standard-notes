@@ -135,7 +135,7 @@ const Editor = () => {
         <Container>
             <TitleContainer>
                 <InputContainer>
-                    <Title onChange={onEditTitle} value={editorTitle} />
+                    <Title onChange={onEditTitle} value={editorTitle} spellCheck={false} />
                 </InputContainer>
                 <ActionContainer>
                     <SaveStatus />
@@ -143,7 +143,7 @@ const Editor = () => {
                     <NoteMenu />
                 </ActionContainer>
             </TitleContainer>
-            <EditPanel onChange={onEditContent} value={editorContent} />
+            <EditPanel onChange={onEditContent} value={editorContent} spellCheck={note?.spellCheck} />
         </Container>
     );
 };

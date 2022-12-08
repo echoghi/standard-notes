@@ -25,22 +25,24 @@ datasource db {
 // }
 
 model Note {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  pinned    Boolean  @default(false)
-  starred   Boolean  @default(false)
-  createdAt DateTime
-  updatedAt DateTime
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  pinned     Boolean  @default(false)
+  starred    Boolean  @default(false)
+  spellCheck Boolean  @default(true)
+  createdAt  DateTime
+  updatedAt  DateTime
 }
 
 model Deleted {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  pinned    Boolean  @default(false)
-  starred   Boolean  @default(false)
-  createdAt DateTime
-  updatedAt DateTime
-  deletedAt DateTime
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  pinned     Boolean  @default(false)
+  starred    Boolean  @default(false)
+  spellCheck Boolean  @default(true)
+  createdAt  DateTime
+  updatedAt  DateTime
+  deletedAt  DateTime
 }
