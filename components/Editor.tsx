@@ -6,6 +6,7 @@ import { formatDate } from '../lib/formatters';
 import SaveStatus from './SaveStatus';
 import NoteMenu from './NoteMenu';
 import PinNote from './PinNote';
+import EditModeBanner from './EditModeBanner';
 
 const Container = styled.div`
     display: flex;
@@ -133,9 +134,15 @@ const Editor = () => {
 
     return (
         <Container>
+            {!note?.editEnabled && <EditModeBanner note={note} />}
             <TitleContainer>
                 <InputContainer>
-                    <Title onChange={onEditTitle} value={editorTitle} spellCheck={false} />
+                    <Title
+                        onChange={onEditTitle}
+                        value={editorTitle}
+                        spellCheck={false}
+                        disabled={!note?.editEnabled}
+                    />
                 </InputContainer>
                 <ActionContainer>
                     <SaveStatus />
@@ -143,7 +150,12 @@ const Editor = () => {
                     <NoteMenu />
                 </ActionContainer>
             </TitleContainer>
-            <EditPanel onChange={onEditContent} value={editorContent} spellCheck={note?.spellCheck} />
+            <EditPanel
+                onChange={onEditContent}
+                value={editorContent}
+                spellCheck={note?.spellCheck}
+                disabled={!note?.editEnabled}
+            />
         </Container>
     );
 };

@@ -4,10 +4,12 @@ import { SlOptions } from 'react-icons/sl';
 import { BiTrash } from 'react-icons/bi';
 import { BsPin } from 'react-icons/bs';
 import { CgNotes } from 'react-icons/cg';
+import { MdOutlineEditOff } from 'react-icons/md';
+import { AiOutlineStar } from 'react-icons/ai';
+import { VscPreview } from 'react-icons/vsc';
 import Switch from './Switch';
 import { useOnClickOutside } from '@echoghi/hooks';
 import { useStoreActions, useStoreState } from 'easy-peasy';
-import { AiOutlineStar } from 'react-icons/ai';
 import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
 import fetcher from '../lib/fetcher';
 
@@ -192,6 +194,36 @@ const NoteMenu = () => {
         }
     }, [note]);
 
+    const toggleEditMode = useCallback(async () => {
+        try {
+            setLoading(true);
+            const updatedNotes: any = await fetcher('/enableEdit', {
+                id: note.id,
+                editEnabled: !note.editEnabled,
+                trashed: view === 'trashed'
+            });
+
+            setNotes(updatedNotes);
+        } catch (err) {
+            setError(true);
+        }
+    }, [note]);
+
+    const togglePreviewMode = useCallback(async () => {
+        try {
+            setLoading(true);
+            const updatedNotes: any = await fetcher('/preview', {
+                id: note.id,
+                preview: !note.preview,
+                trashed: view === 'trashed'
+            });
+
+            setNotes(updatedNotes);
+        } catch (err) {
+            setError(true);
+        }
+    }, [note]);
+
     return (
         <Container ref={ref}>
             <MenuButton onClick={handleClick}>
@@ -200,6 +232,29 @@ const NoteMenu = () => {
             {note && (
                 <MenuContainer open={isMenuOpen && note}>
                     <Menu aria-label="Note Options Menu">
+                        <MenuItem>
+                            <Item onClick={toggleEditMode}>
+                                <ItemContent>
+                                    <MdOutlineEditOff size="20px" color="var(--sn-stylekit-neutral-color)" />
+                                    <ItemText>Prevent editing</ItemText>
+                                </ItemContent>
+                                <div>
+                                    <Switch value={!note?.editEnabled} />
+                                </div>
+                            </Item>
+                        </MenuItem>
+                        <MenuItem>
+                            <Item onClick={togglePreviewMode}>
+                                <ItemContent>
+                                    <VscPreview size="20px" color="var(--sn-stylekit-neutral-color)" />
+                                    <ItemText>Show preview</ItemText>
+                                </ItemContent>
+                                <div>
+                                    <Switch value={note?.preview} />
+                                </div>
+                            </Item>
+                        </MenuItem>
+                        <Divider />
                         <MenuItem>
                             <Item onClick={handleStarNote}>
                                 <ItemContent>

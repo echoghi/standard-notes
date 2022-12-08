@@ -91,9 +91,11 @@ const Note = ({ note }: any) => {
             </IconWrapper>
             <ContentContainer>
                 <NoteTitle>{note.title}</NoteTitle>
-                <NoteContent>
-                    <NoteInner>{note.content}</NoteInner>
-                </NoteContent>
+                {note?.preview ? (
+                    <NoteContent>
+                        <NoteInner>{note.content}</NoteInner>
+                    </NoteContent>
+                ) : null}
                 <NoteTime>{formatDate(note.createdAt)}</NoteTime>
             </ContentContainer>
             <NoteIcons>

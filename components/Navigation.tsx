@@ -53,7 +53,7 @@ const NavItem = styled.button`
 
 const NavItemName = styled.div`
     margin-left: 0.5rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--navigation-item-text-color);
     font-size: 0.88rem;
 `;
