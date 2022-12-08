@@ -1,21 +1,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
 
-// write a next js api route to update a note
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, title, content, trashed } = req.body;
+    const { id, starred, trashed } = req.body;
 
     let newNote;
 
     if (!trashed) {
         newNote = await prisma.note.update({
             where: { id: Number(id) },
-            data: { title, content, updatedAt: new Date() }
+            data: { starred }
         });
     } else {
         newNote = await prisma.deleted.update({
             where: { id: Number(id) },
-            data: { title, content, updatedAt: new Date() }
+            data: { starred }
         });
     }
 
@@ -25,7 +24,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
     });
 
-    const starred = await prisma.note.findMany({
+    const starredNotes = await prisma.note.findMany({
         where: {
             starred: true
         }
@@ -39,10 +38,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     res.json({
         notes,
-        starred,
+        starred: starredNotes,
         deleted,
         newNote,
-        starredCount: starred.length,
+        starredCount: starredNotes.length,
         deletedCount: deleted.length,
         notesCount: notes.length
     });

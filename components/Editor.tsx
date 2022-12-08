@@ -3,6 +3,9 @@ import { useStoreState, useStoreActions } from 'easy-peasy';
 import React, { useCallback, useEffect, useState } from 'react';
 import fetcher from '../lib/fetcher';
 import { formatDate } from '../lib/formatters';
+import SaveStatus from './SaveStatus';
+import NoteMenu from './NoteMenu';
+import PinNote from './PinNote';
 
 const Container = styled.div`
     display: flex;
@@ -10,17 +13,34 @@ const Container = styled.div`
     align-items: center;
 `;
 
+const TitleContainer = styled.div`
+    display: flex;
+    padding: 1rem 14px;
+    padding-bottom: 10px;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--sn-stylekit-border-color);
+    width: 100%;
+`;
+
+const InputContainer = styled.div`
+    flex-grow: 1;
+`;
+
+const ActionContainer = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+`;
+
 const Title = styled.input`
     text-overflow: ellipsis;
-    width: 100%;
     font-weight: bold;
     border: none;
     outline: none;
     background-color: rgba(0, 0, 0, 0);
     color: var(--editor-title-input-color);
-    border-bottom: 1px solid var(--sn-stylekit-border-color);
-    padding: 0.8rem;
-    height: 100px;
+    width: 100%;
     font-size: 1.125rem;
     line-height: 1.75rem;
 `;
@@ -36,12 +56,14 @@ const EditPanel = styled.textarea`
     outline: none;
     padding: 15px;
     resize: none;
-    padding: 0.8rem;
 `;
 
-const Editor = ({ notes }: { notes: any }) => {
+const Editor = () => {
+    const view = useStoreState((state: any) => state.view);
     const note = useStoreState((state: any) => state.activeNote);
     const setNotes = useStoreActions((store: any) => store.setNotes);
+    const setLoading = useStoreActions((store: any) => store.setLoading);
+    const setError = useStoreActions((store: any) => store.setError);
     const [editorContent, setEditorContent] = useState(note?.content || '');
     const [editorTitle, setEditorTitle] = useState(note?.title || formatDate(new Date()));
     const [isEditing, setIsEditing] = useState(false);
@@ -61,30 +83,32 @@ const Editor = ({ notes }: { notes: any }) => {
     );
 
     useEffect(() => {
-        if (note?.content) setEditorContent(note.content);
-        if (note?.title) setEditorTitle(note.title);
+        if (note) {
+            setEditorContent(note?.content || '');
+            setEditorTitle(note?.title);
+        }
     }, [note]);
 
     // save note when user has stopped editing
     useEffect(() => {
         if (!isEditing && hasEdited) {
+            setLoading(true);
+
             const newNote = {
                 ...note,
                 content: editorContent ? editorContent : note?.content,
-                title: editorTitle ? editorTitle : note?.title
+                title: editorTitle ? editorTitle : note?.title,
+                trashed: view === 'trashed'
             };
 
             const saveNote = async () => {
-                const updatedNote: any = await fetcher('/edit', newNote);
+                try {
+                    const updatedNotes: any = await fetcher('/edit', newNote);
 
-                const updatedNotes = notes.map((n: any) => {
-                    if (n.id === updatedNote.id) {
-                        return updatedNote;
-                    }
-                    return n;
-                });
-
-                setNotes(updatedNotes);
+                    setNotes(updatedNotes);
+                } catch (err) {
+                    setError(true);
+                }
             };
 
             saveNote();
@@ -109,7 +133,16 @@ const Editor = ({ notes }: { notes: any }) => {
 
     return (
         <Container>
-            <Title onChange={onEditTitle} value={editorTitle} />
+            <TitleContainer>
+                <InputContainer>
+                    <Title onChange={onEditTitle} value={editorTitle} />
+                </InputContainer>
+                <ActionContainer>
+                    <SaveStatus />
+                    <PinNote note={note} />
+                    <NoteMenu />
+                </ActionContainer>
+            </TitleContainer>
             <EditPanel onChange={onEditContent} value={editorContent} />
         </Container>
     );

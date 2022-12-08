@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react';
 import { CgNotes } from 'react-icons/cg';
 import { MdAddCircle } from 'react-icons/md';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState, useStoreActions } from 'easy-peasy';
 import styled from 'styled-components';
 import Note from './Note';
+import fetcher from '../lib/fetcher';
+import { formatTitleDate } from '../lib/formatters';
+import { useEffect, useState } from 'react';
 
 const TitleContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-left: 0.8rem;
     padding: 1rem;
+    border-bottom: 1px solid var(--sn-stylekit-border-color);
 `;
 
 const FlexCenter = styled.div`
@@ -32,14 +34,27 @@ const Actions = styled(FlexCenter)`
 `;
 
 const Title = styled.div`
-    margin-left: 0.75rem;
+    margin-left: 0.5rem;
     color: var(--sn-stylekit-contrast-foreground-color);
+    font-weight: 600;
     font-size: 1.125rem;
     line-height: 1.75rem;
 `;
 
 const NoteContainer = styled.div`
     overflow: auto;
+    overflow-x: hidden;
+    height: ${(props: { isEmpty: boolean }) => (props.isEmpty ? '100%' : 'auto')};
+`;
+
+const Empty = styled.div`
+    flex-grow: 1;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--sn-stylekit-font-size-h3);
+    height: 100%;
 `;
 
 const Container = styled.div`
@@ -51,20 +66,29 @@ const Container = styled.div`
     border: 1px solid var(--sn-stylekit-border-color);
 `;
 
-const Notes = ({ notes }: { notes: any }) => {
-    const [displayedNotes, setDisplayedNotes] = useState(notes);
-    const savedNotes = useStoreState((state: any) => state.notes);
+const Notes = ({ notes, deleted, starred }) => {
+    const view = useStoreState((store: any) => store.view);
+    const setView = useStoreActions((store: any) => store.setView);
+    const setNotes = useStoreActions((store: any) => store.setNotes);
+    const setError = useStoreActions((store: any) => store.setError);
 
-    useEffect(() => {
-        if (savedNotes && savedNotes.length) {
-            // order updated notes by the updatedAt field
-            const orderedNotes = savedNotes.sort((a: any, b: any) => {
-                return new Date(b.updatedAt) - new Date(a.updatedAt);
-            });
+    const isEmpty =
+        (view === 'trashed' && deleted.length === 0) ||
+        (view === 'starred' && starred.length === 0) ||
+        (view === 'notes' && notes.length === 0);
 
-            setDisplayedNotes(orderedNotes);
+    const createNote = async () => {
+        try {
+            const updatedNotes: any = await fetcher('/create', { title: formatTitleDate(new Date()), content: '' });
+
+            setNotes(updatedNotes);
+            if (view !== 'notes') {
+                setView('notes');
+            }
+        } catch (err) {
+            setError(true);
         }
-    }, [savedNotes]);
+    };
 
     return (
         <Container id="items-column" aria-label="Notes">
@@ -81,13 +105,15 @@ const Notes = ({ notes }: { notes: any }) => {
                         className="cursor-pointer"
                         title="Create a new note"
                         aria-label="Create a new note"
+                        onClick={createNote}
                     />
                 </Actions>
             </TitleContainer>
-            <NoteContainer>
-                {displayedNotes.map((note: any) => (
-                    <Note note={note} key={note.id} />
-                ))}
+            <NoteContainer isEmpty={isEmpty}>
+                {view === 'notes' && notes.map((note: any) => <Note note={note} key={note.id} />)}
+                {view === 'starred' && starred.map((note: any) => <Note note={note} key={note.id} />)}
+                {view === 'trashed' && deleted.map((note: any) => <Note note={note} key={note.id} />)}
+                {isEmpty && <Empty>No items.</Empty>}
             </NoteContainer>
         </Container>
     );
