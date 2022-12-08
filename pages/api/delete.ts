@@ -2,29 +2,19 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, title, content, pinned, starred, updatedAt, createdAt, trashed } = req.body;
+    const { id, trashed } = req.body;
 
     if (trashed) {
-        // delete note from deleted table
-        await prisma.deleted.delete({
-            where: { id: Number(id) }
-        });
-    } else {
-        // delete note by id
+        // permanently delete note
         await prisma.note.delete({
             where: { id: Number(id) }
         });
-
-        // add the note to the deleted table with the deletedAt timestamp
-        await prisma.deleted.create({
+    } else {
+        // update note to be trashed
+        await prisma.note.update({
+            where: { id: Number(id) },
             data: {
-                id: Number(id),
-                title,
-                content,
-                pinned,
-                starred,
-                updatedAt,
-                createdAt,
+                deleted: true,
                 deletedAt: new Date()
             }
         });
@@ -42,9 +32,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
     });
 
-    const deleted = await prisma.deleted.findMany({
-        orderBy: {
-            pinned: 'desc'
+    const deleted = await prisma.note.findMany({
+        where: {
+            deleted: true
         }
     });
 

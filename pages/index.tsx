@@ -31,14 +31,19 @@ export const getServerSideProps = async () => {
         }
     });
 
-    const deleted = await prisma.deleted.findMany({
-        orderBy: {
-            deletedAt: 'desc'
+    const deleted = await prisma.note.findMany({
+        where: {
+            deleted: true
         }
     });
 
     // get Number of deleted notes
-    const deletedCount = await prisma.deleted.count();
+    const deletedCount = await prisma.note.count({
+        where: {
+            deleted: true
+        }
+    });
+
     // get Number of  notes
     const notesCount = await prisma.note.count();
 

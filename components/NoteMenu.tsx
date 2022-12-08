@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { SlOptions } from 'react-icons/sl';
 import { BiTrash } from 'react-icons/bi';
 import { BsPin } from 'react-icons/bs';
-import { CgNotes } from 'react-icons/cg';
+import { CgNotes, CgTrashEmpty } from 'react-icons/cg';
+import { GrClose } from 'react-icons/gr';
 import { MdOutlineEditOff } from 'react-icons/md';
 import { AiOutlineStar } from 'react-icons/ai';
 import { VscPreview } from 'react-icons/vsc';
@@ -87,7 +88,7 @@ const Item = styled.button`
 
 const ItemContent = styled.div`
     display: flex;
-    align-items: center;
+    align-items: ${(props: any) => (props.alignAlt ? 'flex-start' : 'center')};
     flex-grow: 1;
 `;
 
@@ -120,14 +121,29 @@ const Info = styled.div`
     }
 `;
 
+const FlexText = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const SmallText = styled.div`
+    font-size: 0.75rem;
+    line-height: 1rem;
+    margin-left: 0.5rem;
+    color: var(--sn-stylekit-contrast-foreground-color);
+`;
+
 const NoteMenu = () => {
     const ref = useRef();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const view = useStoreState((store: any) => store.view);
     const note = useStoreState((store: any) => store.activeNote);
+    const deleted = useStoreState((store: any) => store.deleted);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
     const setNotes = useStoreActions((store: any) => store.setNotes);
+
+    const isTrash = view === 'trashed';
 
     useOnClickOutside(ref, () => setIsMenuOpen(false));
 
@@ -140,8 +156,7 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/pin', {
                 id: note.id,
-                pinned: !note.pinned,
-                trashed: view === 'trashed'
+                pinned: !note.pinned
             });
 
             setNotes(updatedNotes);
@@ -155,8 +170,7 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/star', {
                 id: note.id,
-                starred: !note.starred,
-                trashed: view === 'trashed'
+                starred: !note.starred
             });
 
             setNotes(updatedNotes);
@@ -184,8 +198,7 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/spellCheck', {
                 id: note.id,
-                spellCheck: !note.spellCheck,
-                trashed: view === 'trashed'
+                spellCheck: !note.spellCheck
             });
 
             setNotes(updatedNotes);
@@ -199,8 +212,7 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/enableEdit', {
                 id: note.id,
-                editEnabled: !note.editEnabled,
-                trashed: view === 'trashed'
+                editEnabled: !note.editEnabled
             });
 
             setNotes(updatedNotes);
@@ -214,9 +226,19 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/preview', {
                 id: note.id,
-                preview: !note.preview,
-                trashed: view === 'trashed'
+                preview: !note.preview
             });
+
+            setNotes(updatedNotes);
+        } catch (err) {
+            setError(true);
+        }
+    }, [note]);
+
+    const handleEmptyTrash = useCallback(async () => {
+        try {
+            setLoading(true);
+            const updatedNotes: any = await fetcher('/emptyTrash', {});
 
             setNotes(updatedNotes);
         } catch (err) {
@@ -280,16 +302,45 @@ const NoteMenu = () => {
                                 </ItemContent>
                             </Item>
                         </MenuItem>
-                        <MenuItem>
-                            <Item onClick={handleDeleteNote}>
-                                <ItemContent>
-                                    <BiTrash size="20px" color="var(--sn-stylekit-danger-color)" />
-                                    <ItemText color="var(--sn-stylekit-danger-color)">
-                                        {view === 'trashed' ? 'Delete permanently' : 'Move to trash'}
-                                    </ItemText>
-                                </ItemContent>
-                            </Item>
-                        </MenuItem>
+                        {!isTrash && (
+                            <MenuItem>
+                                <Item onClick={handleDeleteNote}>
+                                    <ItemContent>
+                                        <BiTrash size="20px" color="var(--sn-stylekit-danger-color)" />
+                                        <ItemText color="var(--sn-stylekit-danger-color)">Move to trash</ItemText>
+                                    </ItemContent>
+                                </Item>
+                            </MenuItem>
+                        )}
+                        {isTrash && (
+                            <>
+                                <MenuItem>
+                                    <Item onClick={handleDeleteNote}>
+                                        <ItemContent>
+                                            <GrClose
+                                                size="14px"
+                                                color="var(--sn-stylekit-danger-color)"
+                                                style={{ marginLeft: 3 }}
+                                            />
+                                            <ItemText color="var(--sn-stylekit-danger-color)">
+                                                Delete permanently
+                                            </ItemText>
+                                        </ItemContent>
+                                    </Item>
+                                </MenuItem>
+                                <MenuItem>
+                                    <Item onClick={handleEmptyTrash}>
+                                        <ItemContent alignAlt={true}>
+                                            <CgTrashEmpty size="20px" color="var(--sn-stylekit-danger-color)" />
+                                            <FlexText>
+                                                <ItemText color="var(--sn-stylekit-danger-color)">Empty Trash</ItemText>
+                                                <SmallText>{`${deleted.length} notes in Trash`}</SmallText>
+                                            </FlexText>
+                                        </ItemContent>
+                                    </Item>
+                                </MenuItem>
+                            </>
+                        )}
                         <Divider />
                         <MenuItem>
                             <Item onClick={handleSpellCheck}>

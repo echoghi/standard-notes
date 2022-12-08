@@ -73,13 +73,26 @@ const Navigation = () => {
         setView(nextView);
 
         if (nextView === 'notes') {
-            if (notes.length) setActiveNote(notes[0]);
+            if (notes.length) {
+                setActiveNote(notes[0]);
+            } else {
+                setActiveNote(null);
+            }
+
             setView('notes');
         } else if (nextView === 'starred') {
-            if (starred.length) setActiveNote(starred[0]);
+            if (starred.length) {
+                setActiveNote(starred[0]);
+            } else {
+                setActiveNote(null);
+            }
             setView('starred');
         } else if (nextView === 'trashed') {
-            if (deleted.length) setActiveNote(deleted[0]);
+            if (deleted.length) {
+                setActiveNote(deleted[0]);
+            } else {
+                setActiveNote(null);
+            }
             setView('trashed');
         }
     };

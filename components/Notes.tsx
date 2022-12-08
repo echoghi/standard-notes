@@ -3,9 +3,9 @@ import { MdAddCircle } from 'react-icons/md';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import styled from 'styled-components';
 import Note from './Note';
-import fetcher from '../lib/fetcher';
+import { BiTrash } from 'react-icons/bi';
+import { AiFillStar } from 'react-icons/ai';
 import { formatTitleDate } from '../lib/formatters';
-import { useEffect, useState } from 'react';
 
 const TitleContainer = styled.div`
     display: flex;
@@ -71,13 +71,15 @@ const Notes = ({ notes, deleted, starred }) => {
     const setView = useStoreActions((store: any) => store.setView);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
 
+    const isTrashed = view === 'trashed';
+    const isStarred = view === 'starred';
+    const isNotes = view === 'notes';
+
     const isEmpty =
-        (view === 'trashed' && deleted.length === 0) ||
-        (view === 'starred' && starred.length === 0) ||
-        (view === 'notes' && notes.length === 0);
+        (isTrashed && deleted.length === 0) || (isStarred && starred.length === 0) || (isNotes && notes.length === 0);
 
     const createNote = async () => {
-        setActiveNote({ title: formatTitleDate(new Date()), content: '' });
+        setActiveNote({ title: formatTitleDate(new Date()), content: '', editEnabled: true, spellCheck: true });
         if (view !== 'notes') {
             setView('notes');
         }
@@ -86,10 +88,26 @@ const Notes = ({ notes, deleted, starred }) => {
     return (
         <Container id="items-column" aria-label="Notes">
             <TitleContainer className="flex justify-between items-center ml-3">
-                <FlexCenter>
-                    <CgNotes color="gray" size="20px" />
-                    <Title>Notes</Title>
-                </FlexCenter>
+                {isNotes && (
+                    <FlexCenter>
+                        <CgNotes color="gray" size="20px" />
+                        <Title>Notes</Title>
+                    </FlexCenter>
+                )}
+
+                {isTrashed && (
+                    <FlexCenter>
+                        <BiTrash color="gray" size="20px" />
+                        <Title>Trash</Title>
+                    </FlexCenter>
+                )}
+
+                {isStarred && (
+                    <FlexCenter>
+                        <AiFillStar color="gray" size="20px" />
+                        <Title>Starred</Title>
+                    </FlexCenter>
+                )}
 
                 <Actions>
                     <MdAddCircle
@@ -103,9 +121,9 @@ const Notes = ({ notes, deleted, starred }) => {
                 </Actions>
             </TitleContainer>
             <NoteContainer isEmpty={isEmpty}>
-                {view === 'notes' && notes.map((note: any) => <Note note={note} key={note.id} />)}
-                {view === 'starred' && starred.map((note: any) => <Note note={note} key={note.id} />)}
-                {view === 'trashed' && deleted.map((note: any) => <Note note={note} key={note.id} />)}
+                {isNotes && notes.map((note: any) => <Note note={note} key={note.id} />)}
+                {isStarred && starred.map((note: any) => <Note note={note} key={note.id} />)}
+                {isTrashed && deleted.map((note: any) => <Note note={note} key={note.id} />)}
                 {isEmpty && <Empty>No items.</Empty>}
             </NoteContainer>
         </Container>

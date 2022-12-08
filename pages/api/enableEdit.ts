@@ -2,21 +2,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, editEnabled, trashed } = req.body;
+    const { id, editEnabled } = req.body;
 
-    let newNote;
-
-    if (!trashed) {
-        newNote = await prisma.note.update({
-            where: { id: Number(id) },
-            data: { editEnabled }
-        });
-    } else {
-        newNote = await prisma.deleted.update({
-            where: { id: Number(id) },
-            data: { editEnabled }
-        });
-    }
+    const newNote = await prisma.note.update({
+        where: { id: Number(id) },
+        data: { editEnabled }
+    });
 
     const notes = await prisma.note.findMany({
         orderBy: {
@@ -30,9 +21,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
     });
 
-    const deleted = await prisma.deleted.findMany({
-        orderBy: {
-            pinned: 'desc'
+    const deleted = await prisma.note.findMany({
+        where: {
+            deleted: true
         }
     });
 

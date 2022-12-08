@@ -2,9 +2,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { title, content } = req.body;
-    const newNote = await prisma.note.create({
-        data: { title, content, createdAt: new Date(), updatedAt: new Date() }
+    // empty the trashed notes
+    await prisma.note.deleteMany({
+        where: {
+            deleted: true
+        }
     });
 
     const notes = await prisma.note.findMany({
@@ -19,19 +21,12 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
     });
 
-    const deleted = await prisma.note.findMany({
-        where: {
-            deleted: true
-        }
-    });
-
     res.json({
         notes,
         starred,
-        deleted,
-        newNote,
+        deleted: [],
         starredCount: starred.length,
-        deletedCount: deleted.length,
+        deletedCount: 0,
         notesCount: notes.length
     });
 }

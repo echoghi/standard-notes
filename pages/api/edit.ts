@@ -3,22 +3,15 @@ import prisma from '../../lib/prisma';
 
 // write a next js api route to update a note
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, title, content, trashed } = req.body;
+    const { id, title, content } = req.body;
 
     let newNote;
 
     if (id) {
-        if (!trashed) {
-            newNote = await prisma.note.update({
-                where: { id: Number(id) },
-                data: { title, content, updatedAt: new Date() }
-            });
-        } else {
-            newNote = await prisma.deleted.update({
-                where: { id: Number(id) },
-                data: { title, content, updatedAt: new Date() }
-            });
-        }
+        newNote = await prisma.note.update({
+            where: { id: Number(id) },
+            data: { title, content, updatedAt: new Date() }
+        });
     } else {
         newNote = await prisma.note.create({
             data: { title, content, createdAt: new Date(), updatedAt: new Date() }
@@ -37,9 +30,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
     });
 
-    const deleted = await prisma.deleted.findMany({
-        orderBy: {
-            pinned: 'desc'
+    const deleted = await prisma.note.findMany({
+        where: {
+            deleted: true
         }
     });
 
