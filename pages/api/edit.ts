@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
+import getNotes from '../../prisma/getNotes';
 
-// write a next js api route to update a note
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     const { id, title, content } = req.body;
 
@@ -18,31 +18,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         });
     }
 
-    const notes = await prisma.note.findMany({
-        orderBy: {
-            pinned: 'desc'
-        }
-    });
-
-    const starred = await prisma.note.findMany({
-        where: {
-            starred: true
-        }
-    });
-
-    const deleted = await prisma.note.findMany({
-        where: {
-            deleted: true
-        }
-    });
+    const response = await getNotes();
 
     res.json({
-        notes,
-        starred,
-        deleted,
         newNote,
-        starredCount: starred.length,
-        deletedCount: deleted.length,
-        notesCount: notes.length
+        ...response
     });
 }

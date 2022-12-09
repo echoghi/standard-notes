@@ -99,7 +99,7 @@ const Note = ({ note }: any) => {
                 <NoteTime>{formatDate(note.createdAt)}</NoteTime>
             </ContentContainer>
             <NoteIcons>
-                {view === 'trashed' && (
+                {note?.deleted && (
                     <span>
                         <BiTrash size="14px" color="var(--sn-stylekit-danger-color)" aria-label="Trashed" />
                     </span>

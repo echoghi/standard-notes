@@ -2,9 +2,9 @@ import Notes from '../components/Notes';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
 import Editor from '../components/Editor';
-import prisma from '../lib/prisma';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Navigation from '../components/Navigation';
+import getNotes from '../prisma/getNotes';
 
 const Container = styled.div`
     display: grid;
@@ -17,45 +17,10 @@ const Container = styled.div`
 `;
 
 export const getServerSideProps = async () => {
-    // get all prisma notes order by the createdAt field in descending order but keep all pinned notes at the top
-    const notes = await prisma.note.findMany({
-        orderBy: {
-            pinned: 'desc'
-        }
-    });
-
-    // get all starred notes
-    const starred = await prisma.note.findMany({
-        where: {
-            starred: true
-        }
-    });
-
-    const deleted = await prisma.note.findMany({
-        where: {
-            deleted: true
-        }
-    });
-
-    // get Number of deleted notes
-    const deletedCount = await prisma.note.count({
-        where: {
-            deleted: true
-        }
-    });
-
-    // get Number of  notes
-    const notesCount = await prisma.note.count();
-
-    // get number of starred notes
-    const starredCount = await prisma.note.count({
-        where: {
-            starred: true
-        }
-    });
+    const response = await getNotes();
 
     return {
-        props: { noteData: { notes, deleted, starred, deletedCount, notesCount, starredCount, newNote: notes[0] } }
+        props: { noteData: { ...response, newNote: response.notes[0] } }
     };
 };
 

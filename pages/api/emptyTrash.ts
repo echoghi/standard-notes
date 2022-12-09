@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
+import getNotes from '../../prisma/getNotes';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     // empty the trashed notes
@@ -9,24 +10,9 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
     });
 
-    const notes = await prisma.note.findMany({
-        orderBy: {
-            pinned: 'desc'
-        }
-    });
-
-    const starred = await prisma.note.findMany({
-        where: {
-            starred: true
-        }
-    });
+    const response = await getNotes();
 
     res.json({
-        notes,
-        starred,
-        deleted: [],
-        starredCount: starred.length,
-        deletedCount: 0,
-        notesCount: notes.length
+        ...response
     });
 }
