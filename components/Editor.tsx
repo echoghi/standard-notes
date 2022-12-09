@@ -7,6 +7,7 @@ import SaveStatus from './SaveStatus';
 import NoteMenu from './NoteMenu';
 import PinNote from './PinNote';
 import EditModeBanner from './EditModeBanner';
+import { decrypt, encrypt } from '../lib/encryption';
 
 const Container = styled.div`
     display: flex;
@@ -78,15 +79,15 @@ const Editor = () => {
 
             throttledSetEdit.timeout = setTimeout(() => {
                 setIsEditing(newValue);
-            }, 500);
+            }, 1000);
         },
         [setIsEditing]
     );
 
     useEffect(() => {
         if (note) {
-            setEditorContent(note?.content || '');
-            setEditorTitle(note?.title);
+            setEditorContent(decrypt(note?.content) || '');
+            setEditorTitle(decrypt(note?.title));
         }
     }, [note]);
 
@@ -104,6 +105,8 @@ const Editor = () => {
 
             const saveNote = async () => {
                 try {
+                    newNote.content = encrypt(newNote.content);
+                    newNote.title = encrypt(newNote.title);
                     const updatedNotes: any = await fetcher('/edit', newNote);
 
                     setNotes(updatedNotes);

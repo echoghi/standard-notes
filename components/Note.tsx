@@ -5,6 +5,7 @@ import { BsPinFill } from 'react-icons/bs';
 import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
 import { useStoreActions, useStoreState } from 'easy-peasy';
+import { decrypt } from '../lib/encryption';
 
 const NoteContainer = styled.div`
     display: flex;
@@ -90,10 +91,10 @@ const Note = ({ note }: any) => {
                 <MdOutlineNotes title="note" size="20px" color="var(--sn-stylekit-accessory-tint-color-1)" />
             </IconWrapper>
             <ContentContainer>
-                <NoteTitle>{note.title}</NoteTitle>
+                <NoteTitle>{decrypt(note.title)}</NoteTitle>
                 {note?.preview ? (
                     <NoteContent>
-                        <NoteInner>{note.content}</NoteInner>
+                        <NoteInner>{decrypt(note.content)}</NoteInner>
                     </NoteContent>
                 ) : null}
                 <NoteTime>{formatDate(note.createdAt)}</NoteTime>

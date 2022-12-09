@@ -6,6 +6,7 @@ import Note from './Note';
 import { BiTrash } from 'react-icons/bi';
 import { AiFillStar } from 'react-icons/ai';
 import { formatTitleDate } from '../lib/formatters';
+import { encrypt } from '../lib/encryption';
 
 const TitleContainer = styled.div`
     display: flex;
@@ -79,7 +80,12 @@ const Notes = ({ notes, deleted, starred }) => {
         (isTrashed && deleted.length === 0) || (isStarred && starred.length === 0) || (isNotes && notes.length === 0);
 
     const createNote = async () => {
-        setActiveNote({ title: formatTitleDate(new Date()), content: '', editEnabled: true, spellCheck: true });
+        setActiveNote({
+            title: encrypt(formatTitleDate(new Date())),
+            content: '',
+            editEnabled: true,
+            spellCheck: true
+        });
         if (view !== 'notes') {
             setView('notes');
         }
