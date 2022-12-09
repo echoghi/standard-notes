@@ -3,7 +3,7 @@ import prisma from '../../lib/prisma';
 import getNotes from '../../prisma/getNotes';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id } = req.body;
+    const { id, userId } = req.body;
 
     // find note by id
     const noteToDuplicate = await prisma.note.findUnique({
@@ -11,13 +11,20 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     });
 
     // destructure note data without deletedAt or id fields
-    const { id: noteId, deletedAt: noteDeletedAt, ...noteData } = noteToDuplicate;
+    const { id: noteId, deletedAt: noteDeletedAt, userId: noteUserId, ...noteData } = noteToDuplicate;
 
     const newNote = await prisma.note.create({
-        data: { ...noteData }
+        data: {
+            ...noteData,
+            user: {
+                connect: {
+                    id: Number(userId)
+                }
+            }
+        }
     });
 
-    const response = await getNotes();
+    const response = await getNotes(userId);
 
     res.json({
         newNote,

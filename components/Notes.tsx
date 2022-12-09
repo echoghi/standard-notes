@@ -65,9 +65,10 @@ const Container = styled.div`
     overflow: hidden;
     height: 100%;
     border: 1px solid var(--sn-stylekit-border-color);
+    border-bottom: 0;
 `;
 
-const Notes = ({ notes, deleted, starred }) => {
+const Notes = ({ notes, deleted, starred, secretKey }) => {
     const view = useStoreState((store: any) => store.view);
     const setView = useStoreActions((store: any) => store.setView);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
@@ -81,7 +82,7 @@ const Notes = ({ notes, deleted, starred }) => {
 
     const createNote = async () => {
         setActiveNote({
-            title: encrypt(formatTitleDate(new Date())),
+            title: encrypt(formatTitleDate(new Date()), secretKey),
             content: '',
             editEnabled: true,
             spellCheck: true
@@ -127,9 +128,9 @@ const Notes = ({ notes, deleted, starred }) => {
                 </Actions>
             </TitleContainer>
             <NoteContainer isEmpty={isEmpty}>
-                {isNotes && notes.map((note: any) => <Note note={note} key={note.id} />)}
-                {isStarred && starred.map((note: any) => <Note note={note} key={note.id} />)}
-                {isTrashed && deleted.map((note: any) => <Note note={note} key={note.id} />)}
+                {isNotes && notes.map((note: any) => <Note note={note} key={note.id} secretKey={secretKey} />)}
+                {isStarred && starred.map((note: any) => <Note note={note} key={note.id} secretKey={secretKey} />)}
+                {isTrashed && deleted.map((note: any) => <Note note={note} key={note.id} secretKey={secretKey} />)}
                 {isEmpty && <Empty>No items.</Empty>}
             </NoteContainer>
         </Container>

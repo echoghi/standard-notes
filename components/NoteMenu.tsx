@@ -13,6 +13,7 @@ import { useOnClickOutside } from '@echoghi/hooks';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
 import fetcher from '../lib/fetcher';
+import { decrypt } from '../lib/encryption';
 
 const MenuButton = styled.button`
     height: 2rem;
@@ -25,7 +26,7 @@ const MenuButton = styled.button`
     cursor: pointer;
     background-color: var(--sn-stylekit-background-color);
 
-    &:focus {
+    &:active {
         box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
     }
 
@@ -133,9 +134,10 @@ const SmallText = styled.div`
     color: var(--sn-stylekit-contrast-foreground-color);
 `;
 
-const NoteMenu = () => {
+const NoteMenu = ({ secretKey }) => {
     const ref = useRef();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const userId = useStoreState((state: any) => state.userId);
     const view = useStoreState((store: any) => store.view);
     const note = useStoreState((store: any) => store.activeNote);
     const deleted = useStoreState((store: any) => store.deleted);
@@ -156,7 +158,8 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/pin', {
                 id: note.id,
-                pinned: !note.pinned
+                pinned: !note.pinned,
+                userId
             });
 
             setNotes(updatedNotes);
@@ -170,7 +173,8 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/star', {
                 id: note.id,
-                starred: !note.starred
+                starred: !note.starred,
+                userId
             });
 
             setNotes(updatedNotes);
@@ -184,7 +188,8 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/delete', {
                 ...note,
-                trashed: view === 'trashed'
+                trashed: view === 'trashed',
+                userId
             });
 
             setNotes(updatedNotes);
@@ -198,7 +203,8 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/spellCheck', {
                 id: note.id,
-                spellCheck: !note.spellCheck
+                spellCheck: !note.spellCheck,
+                userId
             });
 
             setNotes(updatedNotes);
@@ -212,7 +218,8 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/enableEdit', {
                 id: note.id,
-                editEnabled: !note.editEnabled
+                editEnabled: !note.editEnabled,
+                userId
             });
 
             setNotes(updatedNotes);
@@ -226,7 +233,8 @@ const NoteMenu = () => {
             setLoading(true);
             const updatedNotes: any = await fetcher('/preview', {
                 id: note.id,
-                preview: !note.preview
+                preview: !note.preview,
+                userId
             });
 
             setNotes(updatedNotes);
@@ -238,7 +246,7 @@ const NoteMenu = () => {
     const handleEmptyTrash = useCallback(async () => {
         try {
             setLoading(true);
-            const updatedNotes: any = await fetcher('/emptyTrash', {});
+            const updatedNotes: any = await fetcher('/emptyTrash', { userId });
 
             setNotes(updatedNotes);
         } catch (err) {
@@ -250,7 +258,8 @@ const NoteMenu = () => {
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/restore', {
-                id: note.id
+                id: note.id,
+                userId
             });
 
             setNotes(updatedNotes);
@@ -262,8 +271,11 @@ const NoteMenu = () => {
     const handleExportNote = useCallback(async () => {
         try {
             const element = document.createElement('a');
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(note.content));
-            element.setAttribute('download', `${note.title}.txt`);
+            element.setAttribute(
+                'href',
+                'data:text/plain;charset=utf-8,' + encodeURIComponent(decrypt(note.content, secretKey))
+            );
+            element.setAttribute('download', `${decrypt(note.title, secretKey)}.txt`);
             element.style.display = 'none';
             document.body.appendChild(element);
             element.click();
@@ -277,7 +289,8 @@ const NoteMenu = () => {
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/duplicate', {
-                id: note.id
+                id: note.id,
+                userId
             });
 
             setNotes(updatedNotes);

@@ -1,6 +1,7 @@
 import { createStore, action } from 'easy-peasy';
 
 export const store = createStore({
+    userId: null,
     notes: [],
     starred: [],
     deleted: [],
@@ -24,6 +25,9 @@ export const store = createStore({
     }),
     setActiveNote: action((state: any, payload) => {
         state.activeNote = payload;
+    }),
+    setUserId: action((state: any, payload) => {
+        state.userId = payload;
     }),
     setNotes: action((state: any, payload) => {
         state.loading = false;

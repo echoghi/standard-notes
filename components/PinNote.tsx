@@ -27,6 +27,7 @@ const MenuButton = styled.button`
 `;
 
 const PinNote = ({ note }) => {
+    const userId = useStoreState((store: any) => store.userId);
     const view = useStoreState((store: any) => store.view);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
     const setNotes = useStoreActions((store: any) => store.setNotes);
@@ -39,7 +40,8 @@ const PinNote = ({ note }) => {
             const updatedNotes: any = await fetcher('/pin', {
                 id: note.id,
                 pinned: !note.pinned,
-                trashed: view === 'trashed'
+                trashed: view === 'trashed',
+                userId
             });
 
             setActiveNote(updatedNotes.newNote);

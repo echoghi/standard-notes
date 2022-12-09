@@ -3,7 +3,7 @@ import prisma from '../../lib/prisma';
 import getNotes from '../../prisma/getNotes';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, trashed } = req.body;
+    const { id, trashed, userId } = req.body;
 
     if (trashed) {
         // permanently delete note
@@ -16,12 +16,17 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             where: { id: Number(id) },
             data: {
                 deleted: true,
-                deletedAt: new Date()
+                deletedAt: new Date(),
+                user: {
+                    connect: {
+                        id: Number(userId)
+                    }
+                }
             }
         });
     }
 
-    const response = await getNotes();
+    const response = await getNotes(userId);
 
     res.json({
         newNote: null,

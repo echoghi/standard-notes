@@ -60,7 +60,8 @@ const EditPanel = styled.textarea`
     resize: none;
 `;
 
-const Editor = () => {
+const Editor = ({ secretKey }) => {
+    const userId = useStoreState((state: any) => state.userId);
     const view = useStoreState((state: any) => state.view);
     const note = useStoreState((state: any) => state.activeNote);
     const setNotes = useStoreActions((store: any) => store.setNotes);
@@ -86,8 +87,8 @@ const Editor = () => {
 
     useEffect(() => {
         if (note) {
-            setEditorContent(decrypt(note?.content) || '');
-            setEditorTitle(decrypt(note?.title));
+            setEditorContent(decrypt(note?.content, secretKey) || '');
+            setEditorTitle(decrypt(note?.title, secretKey));
         }
     }, [note]);
 
@@ -98,6 +99,7 @@ const Editor = () => {
 
             const newNote = {
                 ...note,
+                userId,
                 content: editorContent ? editorContent : note?.content,
                 title: editorTitle ? editorTitle : note?.title,
                 trashed: view === 'trashed'
@@ -105,8 +107,8 @@ const Editor = () => {
 
             const saveNote = async () => {
                 try {
-                    newNote.content = encrypt(newNote.content);
-                    newNote.title = encrypt(newNote.title);
+                    newNote.content = encrypt(newNote.content, secretKey);
+                    newNote.title = encrypt(newNote.title, secretKey);
                     const updatedNotes: any = await fetcher('/edit', newNote);
 
                     setNotes(updatedNotes);
@@ -150,7 +152,7 @@ const Editor = () => {
                 <ActionContainer>
                     <SaveStatus />
                     <PinNote note={note} />
-                    <NoteMenu />
+                    <NoteMenu secretKey={secretKey} />
                 </ActionContainer>
             </TitleContainer>
             <EditPanel

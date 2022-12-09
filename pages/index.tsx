@@ -5,10 +5,13 @@ import Editor from '../components/Editor';
 import { useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import getNotes from '../prisma/getNotes';
+import AuthBar from '../components/AuthBar';
+import { GetServerSideProps } from 'next';
 
 const Container = styled.div`
     display: grid;
     grid-template-columns: ${(props: any) => (props.editorOpen ? '220px 400px 2fr' : '220px 1fr')};
+    grid-template-rows: 1fr 2rem;
     height: 100%;
     overflow: hidden;
     position: relative;
@@ -16,21 +19,29 @@ const Container = styled.div`
     width: 100%;
 `;
 
-export const getServerSideProps = async () => {
-    const response = await getNotes();
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const { synctoken, userId } = context.req.cookies;
+
+    const response = await getNotes(userId);
 
     return {
-        props: { noteData: { ...response, newNote: response.notes[0] } }
+        props: { noteData: { ...response, newNote: response.notes[0] }, secretKey: synctoken, userId }
     };
 };
 
-export default function Home({ noteData }) {
+export default function Home({ noteData, secretKey, userId }) {
+    const setUserId = useStoreActions((store: any) => store.setUserId);
     const starred = useStoreState((store: any) => store.starred);
     const deleted = useStoreState((store: any) => store.deleted);
     const notes = useStoreState((store: any) => store.notes);
     const activeNote = useStoreState((state: any) => state.activeNote);
 
     const setNotes = useStoreActions((store: any) => store.setNotes);
+
+    // save userId to store
+    useEffect(() => {
+        setUserId(userId);
+    }, []);
 
     // save prisma notes to store
     useEffect(() => {
@@ -40,9 +51,11 @@ export default function Home({ noteData }) {
     return (
         <Container id="app" editorOpen={activeNote}>
             <Navigation />
-            <Notes notes={notes} starred={starred} deleted={deleted} />
+            <Notes notes={notes} starred={starred} deleted={deleted} secretKey={secretKey} />
 
-            {activeNote && <Editor />}
+            {activeNote && <Editor secretKey={secretKey} />}
+
+            <AuthBar />
         </Container>
     );
 }

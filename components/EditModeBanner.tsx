@@ -34,6 +34,7 @@ const Container = styled.div`
 `;
 
 const EditModeBanner = ({ note }) => {
+    const userId = useStoreState((store: any) => store.userId);
     const view = useStoreState((store: any) => store.view);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
@@ -56,7 +57,8 @@ const EditModeBanner = ({ note }) => {
             const updatedNotes: any = await fetcher('/enableEdit', {
                 id: note.id,
                 editEnabled: true,
-                trashed: view === 'trashed'
+                trashed: view === 'trashed',
+                userId
             });
 
             setNotes(updatedNotes);
