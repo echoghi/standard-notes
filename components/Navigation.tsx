@@ -120,7 +120,6 @@ const Navigation = () => {
                         <BiTrash title="trash" size="18px" color="var(--sn-stylekit-neutral-color)" />
                         <NavItemName>Trash</NavItemName>
                     </div>
-                    <span>{deletedCount}</span>
                 </NavItem>
             </section>
         </Container>
