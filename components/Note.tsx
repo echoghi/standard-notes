@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { MdOutlineNotes } from 'react-icons/md';
+import { MdOutlineNotes, MdOutlineEditOff } from 'react-icons/md';
 import { formatDate } from '../lib/formatters';
 import { BsPinFill } from 'react-icons/bs';
 import { AiFillStar } from 'react-icons/ai';
@@ -99,19 +99,44 @@ const Note = ({ note }: any) => {
                 <NoteTime>{formatDate(note.createdAt)}</NoteTime>
             </ContentContainer>
             <NoteIcons>
+                {!note?.editEnabled && (
+                    <span>
+                        <MdOutlineEditOff
+                            size="14px"
+                            color="var(--sn-stylekit-info-color)"
+                            aria-label="Editing Disabled"
+                            title="Editing Disabled"
+                        />
+                    </span>
+                )}
                 {note?.deleted && (
                     <span>
-                        <BiTrash size="14px" color="var(--sn-stylekit-danger-color)" aria-label="Trashed" />
+                        <BiTrash
+                            size="14px"
+                            color="var(--sn-stylekit-danger-color)"
+                            aria-label="Trashed"
+                            title="Trashed"
+                        />
                     </span>
                 )}
                 {note?.pinned && (
                     <span>
-                        <BsPinFill size="14px" color="var(--sn-stylekit-info-color)" aria-label="Pinned" />
+                        <BsPinFill
+                            size="14px"
+                            color="var(--sn-stylekit-info-color)"
+                            aria-label="Pinned"
+                            title="Pinned"
+                        />
                     </span>
                 )}
                 {note?.starred && (
                     <span>
-                        <AiFillStar size="14px" color="var(--sn-stylekit-warning-color)" aria-label="Starred" />
+                        <AiFillStar
+                            size="14px"
+                            color="var(--sn-stylekit-warning-color)"
+                            aria-label="Starred"
+                            title="Starred"
+                        />
                     </span>
                 )}
             </NoteIcons>
