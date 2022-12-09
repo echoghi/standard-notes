@@ -18,15 +18,7 @@ export default function Seo({
                 url: currentURL,
                 title: pageTitle,
                 description,
-                images: [
-                    // {
-                    //     url: 'https://rennalabs.xyz/og-image.png',
-                    //     width: 300,
-                    //     height: 300,
-                    //     alt: 'Renna Labs Logo',
-                    //     type: 'image/png'
-                    // }
-                ],
+                images: [],
                 site_name: 'Standard Notes'
             }}
             additionalMetaTags={[
