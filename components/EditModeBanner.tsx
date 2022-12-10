@@ -58,14 +58,13 @@ const EditModeBanner = ({ note }) => {
 
         try {
             setLoading(true);
-            const updatedNotes: any = await fetcher('/enableEdit', {
+            const updatedNote: any = await fetcher('/update', {
                 id: note.id,
-                editEnabled: true,
-                trashed: view === 'deleted',
-                userId
+                data: { editEnabled: !note.editEnabled }
             });
 
-            setNotes(updatedNotes);
+            updateNote(updatedNote);
+            setLoading(false);
         } catch (err) {
             setError(true);
         }

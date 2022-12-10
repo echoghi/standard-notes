@@ -25,6 +25,19 @@ export const store = createStore({
         state.error = payload;
         state.loading = false;
     }),
+    updateDeletedNote: action((state: any, payload) => {
+        const updateNotes = [...state.deleted];
+
+        // Update note in notes array with the object passed in
+        updateNotes.map((note: any) => {
+            if (note.id === payload.id) {
+                return payload;
+            }
+            return note;
+        });
+
+        state.deleted = sortNotes(updateNotes, state.sortSetting);
+    }),
     deleteNote: action((state: any, payload) => {
         state.activeNote = null;
 
@@ -38,11 +51,27 @@ export const store = createStore({
             state.deleted = sortNotes(newNotes, state.sortSetting);
         }
     }),
+    emptyTrash: action((state: any, payload) => {
+        state.deleted = [];
+        state.activeNote = null;
+    }),
     createNote: action((state: any, payload) => {
         state.activeNote = payload;
 
         const newNotes = [...state.notes, payload];
 
+        state.notes = sortNotes(newNotes, state.sortSetting);
+    }),
+    restoreNote: action((state: any, payload) => {
+        state.activeNote = payload;
+        state.view = 'notes';
+
+        // remove from deleted
+        state.deleted = [...state.deleted].filter((note: any) => note.id !== payload.id);
+
+        const newNotes = [...state.notes, payload];
+
+        // add to notes
         state.notes = sortNotes(newNotes, state.sortSetting);
     }),
     updateNote: action((state: any, payload) => {
@@ -52,7 +81,7 @@ export const store = createStore({
 
         // Update note in notes array with the object passed in
         updateNotes = updateNotes.map((note: any) => {
-            if (note.id === payload.id) {
+            if (note.id === payload.id || note.temp) {
                 return payload;
             }
             return note;

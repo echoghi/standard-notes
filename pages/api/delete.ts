@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
-import getNotes from '../../prisma/getNotes';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, trashed, userId } = req.body;
+    const { id, trashed } = req.body;
+    const { userId } = req.cookies;
+
+    let newNote = null;
 
     if (trashed) {
         // permanently delete note
@@ -12,7 +14,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         });
     } else {
         // update note to be trashed
-        await prisma.note.update({
+        newNote = await prisma.note.update({
             where: { id: Number(id) },
             data: {
                 deleted: true,
@@ -26,10 +28,5 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         });
     }
 
-    const response = await getNotes(userId);
-
-    res.json({
-        newNote: null,
-        ...response
-    });
+    res.json(newNote);
 }

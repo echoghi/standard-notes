@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
-import getNotes from '../../prisma/getNotes';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, userId } = req.body;
+    const { id } = req.body;
+    const { userId } = req.cookies;
 
     // find note by id
     const noteToDuplicate = await prisma.note.findUnique({
@@ -24,10 +24,5 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
     });
 
-    const response = await getNotes(userId);
-
-    res.json({
-        newNote,
-        ...response
-    });
+    res.json(newNote);
 }

@@ -27,11 +27,7 @@ const MenuButton = styled.button`
 `;
 
 const PinNote = ({ note }) => {
-    const userId = useStoreState((store: any) => store.userId);
-    const view = useStoreState((store: any) => store.view);
     const updateNote = useStoreActions((store: any) => store.updateNote);
-    const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
-    const setNotes = useStoreActions((store: any) => store.setNotes);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
 
@@ -42,15 +38,13 @@ const PinNote = ({ note }) => {
         try {
             setLoading(true);
 
-            const updatedNotes: any = await fetcher('/pin', {
+            const updatedNote: any = await fetcher('/update', {
                 id: note.id,
-                pinned: !note.pinned,
-                trashed: view === 'deleted',
-                userId
+                data: { pinned: !note.pinned }
             });
 
-            setActiveNote(updatedNotes.newNote);
-            setNotes(updatedNotes);
+            updateNote(updatedNote);
+            setLoading(false);
         } catch (err) {
             setError(true);
         }

@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
-import getNotes from '../../prisma/getNotes';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, starred, userId } = req.body;
+    const { id, data } = req.body;
+    const { userId } = req.cookies;
 
     const newNote = await prisma.note.update({
         where: { id: Number(id) },
         data: {
-            starred,
+            ...data,
             user: {
                 connect: {
                     id: Number(userId)
@@ -17,10 +17,5 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         }
     });
 
-    const response = await getNotes(userId);
-
-    res.json({
-        newNote,
-        ...response
-    });
+    res.json(newNote);
 }
