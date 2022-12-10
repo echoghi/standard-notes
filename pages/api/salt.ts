@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.json(user.salt);
     } else {
         res.status(401);
-        res.json({ error: 'Incorrect login' });
+        res.json({ error: 'Account not found' });
     }
 };
 //

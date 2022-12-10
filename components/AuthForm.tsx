@@ -1,7 +1,6 @@
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, FormikHelpers } from 'formik';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { useStoreActions } from 'easy-peasy';
 import { getValidationSchema } from '../lib/validation';
 import { auth } from '../lib/mutations';
 import { useRouter } from 'next/router';
@@ -38,20 +37,6 @@ const SignInFormContainer = styled.div`
     min-width: 450px;
     background-color: var(--sn-stylekit-background-color);
 
-    h1 {
-        margin-top: 1.25rem;
-        font-size: 1.5rem;
-        font-weight: 700;
-        line-height: 2rem;
-    }
-
-    div {
-        font-weight: 500;
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-        margin-bottom: 1.25rem;
-    }
-
     input {
         font-size: 0.875rem;
         line-height: 1.25rem;
@@ -70,6 +55,26 @@ const SignInFormContainer = styled.div`
     }
 `;
 
+const Header = styled.h1`
+    margin-top: 1.25rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 2rem;
+`;
+
+const SubHead = styled.div`
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin-bottom: 1.25rem;
+`;
+const InputContainer = styled.div`
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin-bottom: 1.25rem;
+`;
+
 const Button = styled.button`
     font-weight: 700;
     font-size: 0.875rem;
@@ -84,6 +89,15 @@ const Button = styled.button`
     margin-bottom: 1.25rem;
     border: none;
     outline: none;
+
+    &:hover {
+        filter: brightness(1.25);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        filter: brightness(0.75);
+    }
 `;
 
 const Label = styled.label`
@@ -103,9 +117,16 @@ const SubText = styled.div`
     }
 `;
 
+const ErrorMsg = styled.div`
+    color: var(--sn-stylekit-danger-color);
+    margin-bottom: 1rem;
+    font-weight: 400;
+    font-size: 0.85rem;
+`;
+
 const AuthForm = ({ type }) => {
-    const setUserId = useStoreActions((store: any) => store.setUserId);
     const isSignIn = type === 'signin';
+    const buttonText = isSignIn ? 'Sign In' : 'Create account';
     const router = useRouter();
 
     const initialValues: Values = isSignIn
@@ -121,16 +142,24 @@ const AuthForm = ({ type }) => {
 
     const validationSchema = getValidationSchema(isSignIn);
 
-    const onSubmit = async (values: Values, { setSubmitting, resetForm }: any) => {
+    const onSubmit = async (values: Values, { setSubmitting, resetForm, setStatus }: FormikHelpers<Values>) => {
         const { email, password } = values;
+
+        setStatus('');
 
         let user;
         let encrypted;
 
         try {
             if (isSignIn) {
-                const salt = await fetcher('/salt', { email });
-                encrypted = await encryptPassword(password, salt);
+                try {
+                    const salt = await fetcher('/salt', { email });
+                    encrypted = await encryptPassword(password, salt);
+                } catch (err) {
+                    setStatus('Account does not exist');
+
+                    return;
+                }
             } else {
                 encrypted = await encryptPassword(password);
             }
@@ -142,13 +171,23 @@ const AuthForm = ({ type }) => {
             // save synctoken to localstorage
             setLocalStorage('synctoken', encrypted.password);
         } catch (err) {
-            console.log(err);
+            if (isSignIn) {
+                setStatus('Sign in failed');
+            } else {
+                setStatus('Sign up failed');
+            }
         }
 
-        if (user) router.push('/');
-
-        setSubmitting(false);
-        resetForm();
+        if (user) {
+            resetForm();
+            router.push('/');
+        } else {
+            if (isSignIn) {
+                setStatus('Incorrect email or password');
+            } else {
+                setStatus('Account already exists');
+            }
+        }
     };
 
     return (
@@ -162,32 +201,48 @@ const AuthForm = ({ type }) => {
                         fill="#086DD6"
                     ></path>
                 </svg>
-                <h1>{isSignIn ? 'Sign in' : 'Create your free account'}</h1>
-                <div>to continue to Standard Notes</div>
-                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-                    {({ isSubmitting }) => (
+                <Header>{isSignIn ? 'Sign in' : 'Create your free account'}</Header>
+                <SubHead>to continue to Standard Notes</SubHead>
+                <Formik
+                    initialValues={initialValues}
+                    validationSchema={validationSchema}
+                    onSubmit={onSubmit}
+                    validateOnBlur={false}
+                    validateOnChange={false}
+                >
+                    {({ isSubmitting, errors, touched, status }) => (
                         <Form>
-                            <div>
+                            <InputContainer>
                                 <Label htmlFor="email">Email:</Label>
                                 <Field id="email" name="email" type="email" placeholder="Email" />
-                            </div>
-                            <div>
+                                {errors.email && touched.email ? <ErrorMsg>{errors.email}</ErrorMsg> : null}
+                            </InputContainer>
+                            <InputContainer>
                                 <Label htmlFor="password">Password:</Label>
                                 <Field id="password" name="password" type="password" placeholder="Password" />
-                            </div>
+                                {errors.password && touched.password && !status ? (
+                                    <ErrorMsg>{errors.password}</ErrorMsg>
+                                ) : null}
+                            </InputContainer>
                             {!isSignIn && (
-                                <div>
-                                    <Label htmlFor="password">Repeat Password:</Label>
-                                    <Field
-                                        id="confirm-password"
-                                        name="confirmPassword"
-                                        type="password"
-                                        placeholder="Repeat Password"
-                                    />
-                                </div>
+                                <>
+                                    <InputContainer>
+                                        <Label htmlFor="password">Repeat Password:</Label>
+                                        <Field
+                                            id="confirm-password"
+                                            name="confirmPassword"
+                                            type="password"
+                                            placeholder="Repeat Password"
+                                        />
+                                    </InputContainer>
+                                    {errors.confirmPassword && touched.confirmPassword && !status ? (
+                                        <ErrorMsg>{errors.confirmPassword}</ErrorMsg>
+                                    ) : null}
+                                </>
                             )}
+                            {status ? <ErrorMsg>{status}</ErrorMsg> : null}
                             <Button type="submit" disabled={isSubmitting}>
-                                {isSignIn ? 'Sign In' : 'Create account'}
+                                {isSubmitting ? 'Signing in...' : buttonText}
                             </Button>
                         </Form>
                     )}
