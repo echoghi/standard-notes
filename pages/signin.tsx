@@ -1,4 +1,3 @@
-import { GetServerSideProps } from 'next';
 import AuthForm from '../components/AuthForm';
 
 const SignIn = () => {
