@@ -39,6 +39,7 @@ const EditModeBanner = ({ note }) => {
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
     const setNotes = useStoreActions((store: any) => store.setNotes);
+    const updateNote = useStoreActions((store: any) => store.updateNote);
 
     const [hover, setHover] = useState(false);
     const text = hover ? 'Enable editing' : 'Note editing disabled.';
@@ -52,6 +53,9 @@ const EditModeBanner = ({ note }) => {
     };
 
     const enableEditMode = useCallback(async () => {
+        // optimistic update
+        updateNote({ ...note, editEnabled: !note.editEnabled });
+
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/enableEdit', {

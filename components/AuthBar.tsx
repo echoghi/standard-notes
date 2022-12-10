@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { RiAccountCircleFill } from 'react-icons/ri';
 import { MdOutlinePalette } from 'react-icons/md';
+import { useStoreState, useStoreActions } from 'easy-peasy';
 
 const Container = styled.footer`
     position: relative;
@@ -58,6 +59,9 @@ const Button = styled.button`
 `;
 
 const AuthBar = () => {
+    const userId = useStoreState((state: any) => state.userId);
+    const status = userId ? '' : 'Offline';
+
     return (
         <Container>
             <Group>
@@ -69,7 +73,7 @@ const AuthBar = () => {
                 </Button>
             </Group>
             <Group>
-                <Status>Offline</Status>
+                <Status>{status}</Status>
             </Group>
         </Container>
     );

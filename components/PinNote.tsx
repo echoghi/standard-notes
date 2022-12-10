@@ -29,14 +29,19 @@ const MenuButton = styled.button`
 const PinNote = ({ note }) => {
     const userId = useStoreState((store: any) => store.userId);
     const view = useStoreState((store: any) => store.view);
+    const updateNote = useStoreActions((store: any) => store.updateNote);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
     const setNotes = useStoreActions((store: any) => store.setNotes);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
 
     const handlePinNote = useCallback(async () => {
+        // optimistic update
+        updateNote({ ...note, pinned: !note.pinned });
+
         try {
             setLoading(true);
+
             const updatedNotes: any = await fetcher('/pin', {
                 id: note.id,
                 pinned: !note.pinned,

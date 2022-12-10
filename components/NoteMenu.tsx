@@ -141,6 +141,8 @@ const NoteMenu = ({ secretKey }) => {
     const view = useStoreState((store: any) => store.view);
     const note = useStoreState((store: any) => store.activeNote);
     const deleted = useStoreState((store: any) => store.deleted);
+
+    const updateNote = useStoreActions((store: any) => store.updateNote);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
     const setNotes = useStoreActions((store: any) => store.setNotes);
@@ -154,6 +156,9 @@ const NoteMenu = ({ secretKey }) => {
     };
 
     const handlePinNote = useCallback(async () => {
+        // optimistic update
+        updateNote({ ...note, pinned: !note.pinned });
+
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/pin', {
@@ -169,6 +174,9 @@ const NoteMenu = ({ secretKey }) => {
     }, [note]);
 
     const handleStarNote = useCallback(async () => {
+        // optimistic update
+        updateNote({ ...note, starred: !note.starred });
+
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/star', {
@@ -184,6 +192,9 @@ const NoteMenu = ({ secretKey }) => {
     }, [note]);
 
     const handleDeleteNote = useCallback(async () => {
+        // optimistic update
+        updateNote({ ...note, starred: !note.starred, trashed: view === 'trashed' });
+
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/delete', {
@@ -199,6 +210,9 @@ const NoteMenu = ({ secretKey }) => {
     }, [note]);
 
     const handleSpellCheck = useCallback(async () => {
+        // optimistic update
+        updateNote({ ...note, spellCheck: !note.spellCheck });
+
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/spellCheck', {
@@ -214,6 +228,9 @@ const NoteMenu = ({ secretKey }) => {
     }, [note]);
 
     const toggleEditMode = useCallback(async () => {
+        // optimistic update
+        updateNote({ ...note, editEnabled: !note.editEnabled });
+
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/enableEdit', {
@@ -229,6 +246,9 @@ const NoteMenu = ({ secretKey }) => {
     }, [note]);
 
     const togglePreviewMode = useCallback(async () => {
+        // optimistic update
+        updateNote({ ...note, preview: !note.preview });
+
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/preview', {
@@ -255,6 +275,9 @@ const NoteMenu = ({ secretKey }) => {
     }, [note]);
 
     const handleRestoreNote = useCallback(async () => {
+        // optimistic update
+        updateNote({ ...note, deleted: false });
+
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/restore', {
