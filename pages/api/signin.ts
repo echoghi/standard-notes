@@ -4,20 +4,20 @@ import prisma from '../../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-    const { email, password } = req.body;
+    const { email, proof } = req.body;
 
     const user = await prisma.user.findUnique({
         where: { email }
     });
 
-    if (user && password === user.password) {
+    if (user && proof === user.proof) {
         const token = jwt.sign(
             {
                 id: user.id,
                 email: user.email,
                 time: Date.now()
             },
-            user.password,
+            proof,
             { expiresIn: '8h' }
         );
 

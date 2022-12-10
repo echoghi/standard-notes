@@ -12,6 +12,10 @@ export const store = createStore({
     activeNote: null,
     loading: false,
     error: null,
+    secretKey: null,
+    setKey: action((state: any, payload) => {
+        state.secretKey = payload;
+    }),
     setView: action((state: any, payload) => {
         state.view = payload;
     }),

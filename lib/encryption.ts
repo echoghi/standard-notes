@@ -1,4 +1,4 @@
-import { AES, PBKDF2, enc, lib } from 'crypto-js';
+import { AES, PBKDF2, enc, lib, HmacSHA256 } from 'crypto-js';
 
 // write a function that encrypts text using bcrypt and the secret key
 export function encrypt(text: string, secretKey?: string) {
@@ -39,8 +39,16 @@ export function encryptPassword(password: string, existingSalt?: string) {
 
     // Create a PBKDF2 hash of the password using the specified options
     const hash = PBKDF2(password, salt, { iterations, keySize });
+    const key = hash.toString();
 
-    // Print the PBKDF2 hash of the password
-    console.log(hash.toString());
-    return { password: hash.toString(), salt };
+    // generate a proof with the key
+    const proof = generateProof(key);
+
+    return { proof, salt, password: key };
+}
+
+export function generateProof(secretKey: string) {
+    const signedProof = HmacSHA256('proof', secretKey).toString();
+
+    return signedProof;
 }

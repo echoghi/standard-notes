@@ -28,7 +28,7 @@ export function getCookie(name: string): string | null {
 export function setCookie(name: string, value: string): void {
     try {
         // Set the cookie with the given name and value
-        document.cookie = `${name}=${value}`;
+        document.cookie = `${name}=${value}; SameSite=strict`;
     } catch (e) {
         throw new Error('Unable to set cookie');
     }

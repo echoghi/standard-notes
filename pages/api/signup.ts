@@ -4,7 +4,7 @@ import prisma from '../../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-    const { email, password, salt } = req.body;
+    const { email, proof, salt } = req.body;
 
     let user;
 
@@ -12,7 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         user = await prisma.user.create({
             data: {
                 email,
-                password,
+                proof,
                 salt
             }
         });
@@ -29,7 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             id: user.id,
             time: Date.now()
         },
-        password,
+        proof,
         { expiresIn: '8h' }
     );
 

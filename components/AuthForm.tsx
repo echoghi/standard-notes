@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { encryptPassword } from '../lib/encryption';
 import fetcher from '../lib/fetcher';
 import { setCookie } from '../lib/cookie';
+import { setLocalStorage } from '../lib/storage';
 
 interface Values {
     email: string;
@@ -121,9 +122,6 @@ const AuthForm = ({ type }) => {
     const validationSchema = getValidationSchema(isSignIn);
 
     const onSubmit = async (values: Values, { setSubmitting, resetForm }: any) => {
-        // Do something with the form values here, such as send a request to a server
-        // Then reset the form
-
         const { email, password } = values;
 
         let user;
@@ -137,11 +135,12 @@ const AuthForm = ({ type }) => {
                 encrypted = await encryptPassword(password);
             }
 
-            user = await auth(type, { email, password: encrypted.password, salt: encrypted.salt });
+            user = await auth(type, { email, proof: encrypted.proof, salt: encrypted.salt });
 
             // save the user id as userID and save the synctoken to cookies
             setCookie('userId', user.id);
-            setCookie('synctoken', encrypted.password);
+            // save synctoken to localstorage
+            setLocalStorage('synctoken', encrypted.password);
         } catch (err) {
             console.log(err);
         }

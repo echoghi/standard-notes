@@ -2,11 +2,12 @@ import Notes from '../components/Notes';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
 import Editor from '../components/Editor';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Navigation from '../components/Navigation';
 import getNotes from '../prisma/getNotes';
 import AuthBar from '../components/AuthBar';
 import { GetServerSideProps } from 'next';
+import { getLocalStorage } from '../lib/storage';
 
 const Container = styled.div`
     display: grid;
@@ -20,16 +21,17 @@ const Container = styled.div`
 `;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { synctoken, userId } = context.req.cookies;
+    const { userId } = context.req.cookies;
 
     const response = await getNotes(userId);
 
     return {
-        props: { noteData: { ...response, newNote: response.notes[0] }, secretKey: synctoken, userId }
+        props: { noteData: { ...response, newNote: response.notes[0] }, userId }
     };
 };
 
-export default function Home({ noteData, secretKey, userId }) {
+export default function Home({ noteData, userId }) {
+    const secretKey = useStoreState((store: any) => store.secretKey);
     const setUserId = useStoreActions((store: any) => store.setUserId);
     const starred = useStoreState((store: any) => store.starred);
     const deleted = useStoreState((store: any) => store.deleted);
@@ -37,10 +39,15 @@ export default function Home({ noteData, secretKey, userId }) {
     const activeNote = useStoreState((state: any) => state.activeNote);
 
     const setNotes = useStoreActions((store: any) => store.setNotes);
+    const setKey = useStoreActions((store: any) => store.setKey);
 
     // save userId to store
     useEffect(() => {
         setUserId(userId);
+
+        // get sync token from localstorage
+        const syncToken = getLocalStorage('synctoken');
+        setKey(syncToken);
     }, []);
 
     // save prisma notes to store
