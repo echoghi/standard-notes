@@ -5,7 +5,7 @@ This is a clone of the popular note-taking app Standard Notes, built with [Next.
 ## Features
 
 -   Create and edit notes
--   Securely store notes using encrypted end-to-end encryption
+-   Securely store notes using end-to-end encryption
 -   Organize notes using tags
 -   Dark mode
 -   Offline capabilities
@@ -14,11 +14,10 @@ This is a clone of the popular note-taking app Standard Notes, built with [Next.
 
 To get started with the app, follow these steps:
 
-1. Clone this repository to your local machine using `git clone https://github.com/your-username/standard-notes-clone.git`
+1. Clone this repository to your local machine using `git clone https://github.com/echoghi/standard-notes-clone.git`
 2. Install the dependencies using `npm install` or `yarn install`
 3. Create a `.env` file in the root of the project and set the following environment variable: DATABASE_URL=your-database-url
-4. Generate a new Prisma client using `npx prisma generate`
-5. Start the development server using `npm run dev` or `yarn dev`
+4. Start the development server using `npm run dev` or `yarn dev`
 
 ## Deployment
 
