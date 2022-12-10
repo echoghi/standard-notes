@@ -17,7 +17,6 @@ export const formatDate = (date = new Date()) => {
 };
 
 export const formatTitleDate = (date = new Date()) => {
-    // Use the toLocaleString method to format the date
     return date.toLocaleString('en-US', {
         weekday: 'long',
         year: 'numeric',

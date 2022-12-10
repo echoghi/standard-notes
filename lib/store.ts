@@ -1,4 +1,5 @@
 import { createStore, action } from 'easy-peasy';
+import { sortNotes } from './sort';
 
 export const store = createStore({
     userId: null,
@@ -9,6 +10,7 @@ export const store = createStore({
     deletedCount: 0,
     notesCount: 0,
     view: 'notes',
+    sortSetting: 'createdAt',
     activeNote: null,
     loading: false,
     error: null,
@@ -31,21 +33,9 @@ export const store = createStore({
         } else {
             state.notes = [...state.notes].filter((note: any) => note.id !== payload.id);
 
-            const newNotes = [...state.deleted];
-            // add new note to notes array
-            newNotes.push(payload);
+            const newNotes = [...state.deleted, payload];
 
-            newNotes.sort((a: any, b: any) => {
-                if (a.pinned && !b.pinned) {
-                    return -1;
-                }
-                if (!a.pinned && b.pinned) {
-                    return 1;
-                }
-                return new Date(b.createdAt) - new Date(a.createdAt);
-            });
-
-            state.deleted = newNotes;
+            state.deleted = sortNotes(newNotes, state.sortSetting);
         }
     }),
     createNote: action((state: any, payload) => {
@@ -53,17 +43,7 @@ export const store = createStore({
 
         const newNotes = [...state.notes, payload];
 
-        newNotes.sort((a: any, b: any) => {
-            if (a.pinned && !b.pinned) {
-                return -1;
-            }
-            if (!a.pinned && b.pinned) {
-                return 1;
-            }
-            return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-
-        state.notes = newNotes;
+        state.notes = sortNotes(newNotes, state.sortSetting);
     }),
     updateNote: action((state: any, payload) => {
         if (payload.trashed) {
@@ -73,22 +53,14 @@ export const store = createStore({
         } else {
             state.activeNote = payload;
             // Update note in notes array with the object passed in
-            state.notes = [...state.notes]
-                .map((note: any) => {
-                    if (note.id === payload.id) {
-                        return payload;
-                    }
-                    return note;
-                })
-                .sort((a: any, b: any) => {
-                    if (a.pinned && !b.pinned) {
-                        return -1;
-                    }
-                    if (!a.pinned && b.pinned) {
-                        return 1;
-                    }
-                    return new Date(b.createdAt) - new Date(a.createdAt);
-                });
+            const updateNotes = [...state.notes].map((note: any) => {
+                if (note.id === payload.id) {
+                    return payload;
+                }
+                return note;
+            });
+
+            state.notes = sortNotes(updateNotes, state.sortSetting);
         }
     }),
     setLoading: action((state: any, payload) => {
