@@ -87,7 +87,7 @@ export const store = createStore({
                     if (!a.pinned && b.pinned) {
                         return 1;
                     }
-                    return b.createdAt - a.createdAt;
+                    return new Date(b.createdAt) - new Date(a.createdAt);
                 });
         }
     }),
