@@ -134,7 +134,7 @@ const SmallText = styled.div`
     color: var(--sn-stylekit-contrast-foreground-color);
 `;
 
-const NoteMenu = ({ secretKey }) => {
+const NoteMenu = () => {
     const ref = useRef();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const userId = useStoreState((state: any) => state.userId);
@@ -148,7 +148,7 @@ const NoteMenu = ({ secretKey }) => {
     const setError = useStoreActions((store: any) => store.setError);
     const setNotes = useStoreActions((store: any) => store.setNotes);
 
-    const isTrash = view === 'trashed';
+    const isTrash = view === 'deleted';
 
     useOnClickOutside(ref, () => setIsMenuOpen(false));
 
@@ -194,13 +194,13 @@ const NoteMenu = ({ secretKey }) => {
 
     const handleDeleteNote = useCallback(async () => {
         // optimistic update
-        deleteNote({ ...note, deleted: !note.deleted, trashed: view === 'trashed' });
+        deleteNote({ ...note, deleted: !note.deleted, trashed: view === 'deleted' });
 
         try {
             setLoading(true);
             const updatedNotes: any = await fetcher('/delete', {
                 ...note,
-                trashed: view === 'trashed',
+                trashed: view === 'deleted',
                 userId
             });
 
@@ -295,11 +295,8 @@ const NoteMenu = ({ secretKey }) => {
     const handleExportNote = useCallback(async () => {
         try {
             const element = document.createElement('a');
-            element.setAttribute(
-                'href',
-                'data:text/plain;charset=utf-8,' + encodeURIComponent(decrypt(note.content, secretKey))
-            );
-            element.setAttribute('download', `${decrypt(note.title, secretKey)}.txt`);
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(decrypt(note.content)));
+            element.setAttribute('download', `${decrypt(note.title)}.txt`);
             element.style.display = 'none';
             document.body.appendChild(element);
             element.click();

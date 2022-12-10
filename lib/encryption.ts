@@ -1,7 +1,10 @@
 import { AES, PBKDF2, enc, lib, HmacSHA256 } from 'crypto-js';
+import { getLocalStorage } from './storage';
 
 // write a function that encrypts text using bcrypt and the secret key
-export function encrypt(text: string, secretKey?: string) {
+export function encrypt(text: string) {
+    const secretKey = getLocalStorage('synctoken');
+
     if (!secretKey) {
         console.log('user is not logged in, bypassing encryption');
         return text;
@@ -12,7 +15,9 @@ export function encrypt(text: string, secretKey?: string) {
 }
 
 // write a function that decrypts text using bcrypt and the secret key
-export function decrypt(text: string, secretKey?: string) {
+export function decrypt(text: string) {
+    const secretKey = getLocalStorage('synctoken');
+
     if (!secretKey) {
         console.log('user is not logged in, bypassing decryption');
         return text;

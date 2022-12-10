@@ -74,7 +74,7 @@ const IconWrapper = styled.div`
     margin-right: 0;
 `;
 
-const Note = ({ note, secretKey }: any) => {
+const Note = ({ note }: any) => {
     const activeNote = useStoreState((state: any) => state.activeNote);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
 
@@ -90,10 +90,10 @@ const Note = ({ note, secretKey }: any) => {
                 <MdOutlineNotes title="note" size="20px" color="var(--sn-stylekit-accessory-tint-color-1)" />
             </IconWrapper>
             <ContentContainer>
-                <NoteTitle>{decrypt(note.title, secretKey)}</NoteTitle>
+                <NoteTitle>{decrypt(note.title)}</NoteTitle>
                 {note?.preview ? (
                     <NoteContent>
-                        <NoteInner>{decrypt(note.content, secretKey)}</NoteInner>
+                        <NoteInner>{decrypt(note.content)}</NoteInner>
                     </NoteContent>
                 ) : null}
                 <NoteTime>{formatDate(note.createdAt)}</NoteTime>

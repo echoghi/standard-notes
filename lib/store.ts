@@ -46,22 +46,19 @@ export const store = createStore({
         state.notes = sortNotes(newNotes, state.sortSetting);
     }),
     updateNote: action((state: any, payload) => {
-        if (payload.trashed) {
-            state.activeNote = null;
-            // filter out the note from the notes array
-            state.notes = [...state.notes].filter((note: any) => note.id !== payload.id);
-        } else {
-            state.activeNote = payload;
-            // Update note in notes array with the object passed in
-            const updateNotes = [...state.notes].map((note: any) => {
-                if (note.id === payload.id) {
-                    return payload;
-                }
-                return note;
-            });
+        state.activeNote = payload;
 
-            state.notes = sortNotes(updateNotes, state.sortSetting);
-        }
+        let updateNotes = [...state[`${state.view}`]];
+
+        // Update note in notes array with the object passed in
+        updateNotes = updateNotes.map((note: any) => {
+            if (note.id === payload.id) {
+                return payload;
+            }
+            return note;
+        });
+
+        state[`${state.view}`] = sortNotes(updateNotes, state.sortSetting);
     }),
     setLoading: action((state: any, payload) => {
         state.loading = payload;

@@ -31,7 +31,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function Home({ noteData, userId }) {
-    const secretKey = useStoreState((store: any) => store.secretKey);
     const setUserId = useStoreActions((store: any) => store.setUserId);
     const starred = useStoreState((store: any) => store.starred);
     const deleted = useStoreState((store: any) => store.deleted);
@@ -39,16 +38,11 @@ export default function Home({ noteData, userId }) {
     const activeNote = useStoreState((state: any) => state.activeNote);
 
     const setNotes = useStoreActions((store: any) => store.setNotes);
-    const setKey = useStoreActions((store: any) => store.setKey);
 
     // save userId to store
     useEffect(() => {
         setUserId(userId);
-
-        // get sync token from localstorage
-        const syncToken = getLocalStorage('synctoken');
-        setKey(syncToken);
-    }, []);
+    }, [userId]);
 
     // save prisma notes to store
     useEffect(() => {
@@ -58,9 +52,9 @@ export default function Home({ noteData, userId }) {
     return (
         <Container id="app" editorOpen={activeNote}>
             <Navigation />
-            <Notes notes={notes} starred={starred} deleted={deleted} secretKey={secretKey} />
+            <Notes notes={notes} starred={starred} deleted={deleted} />
 
-            {activeNote && <Editor secretKey={secretKey} />}
+            {activeNote && <Editor />}
 
             <AuthBar />
         </Container>

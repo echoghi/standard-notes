@@ -60,7 +60,7 @@ const EditPanel = styled.textarea`
     resize: none;
 `;
 
-const Editor = ({ secretKey }) => {
+const Editor = () => {
     const userId = useStoreState((state: any) => state.userId);
     const note = useStoreState((state: any) => state.activeNote);
 
@@ -90,8 +90,8 @@ const Editor = ({ secretKey }) => {
 
     useEffect(() => {
         if (note) {
-            setEditorContent(decrypt(note?.content, secretKey) || '');
-            setEditorTitle(decrypt(note?.title, secretKey));
+            setEditorContent(decrypt(note?.content) || '');
+            setEditorTitle(decrypt(note?.title));
         }
     }, [note]);
 
@@ -108,8 +108,8 @@ const Editor = ({ secretKey }) => {
             };
 
             // encrypt note
-            newNote.content = encrypt(newNote.content, secretKey);
-            newNote.title = encrypt(newNote.title, secretKey);
+            newNote.content = encrypt(newNote.content);
+            newNote.title = encrypt(newNote.title);
 
             if (note.id) {
                 // optimistically update note
@@ -164,7 +164,7 @@ const Editor = ({ secretKey }) => {
                 <ActionContainer>
                     <SaveStatus />
                     <PinNote note={note} />
-                    <NoteMenu secretKey={secretKey} />
+                    <NoteMenu />
                 </ActionContainer>
             </TitleContainer>
             <EditPanel

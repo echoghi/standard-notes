@@ -61,7 +61,7 @@ const EditModeBanner = ({ note }) => {
             const updatedNotes: any = await fetcher('/enableEdit', {
                 id: note.id,
                 editEnabled: true,
-                trashed: view === 'trashed',
+                trashed: view === 'deleted',
                 userId
             });
 

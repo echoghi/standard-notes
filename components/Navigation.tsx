@@ -87,13 +87,13 @@ const Navigation = () => {
                 setActiveNote(null);
             }
             setView('starred');
-        } else if (nextView === 'trashed') {
+        } else if (nextView === 'deleted') {
             if (deleted.length) {
                 setActiveNote(deleted[0]);
             } else {
                 setActiveNote(null);
             }
-            setView('trashed');
+            setView('deleted');
         }
     };
 
@@ -115,7 +115,7 @@ const Navigation = () => {
                     </div>
                     <span>{starredCount}</span>
                 </NavItem>
-                <NavItem onClick={() => handleViewChange('trashed')} active={view === 'trashed'}>
+                <NavItem onClick={() => handleViewChange('deleted')} active={view === 'deleted'}>
                     <div>
                         <BiTrash title="trash" size="18px" color="var(--sn-stylekit-neutral-color)" />
                         <NavItemName>Trash</NavItemName>

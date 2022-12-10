@@ -45,7 +45,7 @@ const PinNote = ({ note }) => {
             const updatedNotes: any = await fetcher('/pin', {
                 id: note.id,
                 pinned: !note.pinned,
-                trashed: view === 'trashed',
+                trashed: view === 'deleted',
                 userId
             });
 
