@@ -62,11 +62,14 @@ const EditPanel = styled.textarea`
 
 const Editor = ({ secretKey }) => {
     const userId = useStoreState((state: any) => state.userId);
-    const view = useStoreState((state: any) => state.view);
     const note = useStoreState((state: any) => state.activeNote);
+
     const setNotes = useStoreActions((store: any) => store.setNotes);
+    const createNote = useStoreActions((store: any) => store.createNote);
+    const updateNote = useStoreActions((store: any) => store.updateNote);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
+
     const [editorContent, setEditorContent] = useState(note?.content || '');
     const [editorTitle, setEditorTitle] = useState(note?.title || formatDate(new Date()));
     const [isEditing, setIsEditing] = useState(false);
@@ -101,14 +104,23 @@ const Editor = ({ secretKey }) => {
                 ...note,
                 userId,
                 content: editorContent ? editorContent : note?.content,
-                title: editorTitle ? editorTitle : note?.title,
-                trashed: view === 'trashed'
+                title: editorTitle ? editorTitle : note?.title
             };
+
+            // encrypt note
+            newNote.content = encrypt(newNote.content, secretKey);
+            newNote.title = encrypt(newNote.title, secretKey);
+
+            if (note.id) {
+                // optimistically update note
+                updateNote(newNote);
+            } else {
+                // optimistically create note
+                createNote({ id: Math.floor(Math.random() * 999999999999) + 1, ...newNote });
+            }
 
             const saveNote = async () => {
                 try {
-                    newNote.content = encrypt(newNote.content, secretKey);
-                    newNote.title = encrypt(newNote.title, secretKey);
                     const updatedNotes: any = await fetcher('/edit', newNote);
 
                     setNotes(updatedNotes);

@@ -85,7 +85,10 @@ const Notes = ({ notes, deleted, starred, secretKey }) => {
             title: encrypt(formatTitleDate(new Date()), secretKey),
             content: '',
             editEnabled: true,
-            spellCheck: true
+            spellCheck: true,
+            preview: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
         });
         if (view !== 'notes') {
             setView('notes');

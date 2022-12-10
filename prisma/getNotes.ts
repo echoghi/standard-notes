@@ -51,6 +51,37 @@ const getNotes = async (userId: string) => {
         }
     });
 
+    // sort notes
+    notes.sort((a: any, b: any) => {
+        if (a.pinned && !b.pinned) {
+            return -1;
+        }
+        if (!a.pinned && b.pinned) {
+            return 1;
+        }
+        return b.createdAt - a.createdAt;
+    });
+
+    starred.sort((a: any, b: any) => {
+        if (a.pinned && !b.pinned) {
+            return -1;
+        }
+        if (!a.pinned && b.pinned) {
+            return 1;
+        }
+        return b.createdAt - a.createdAt;
+    });
+
+    deleted.sort((a: any, b: any) => {
+        if (a.pinned && !b.pinned) {
+            return -1;
+        }
+        if (!a.pinned && b.pinned) {
+            return 1;
+        }
+        return b.createdAt - a.createdAt;
+    });
+
     // get Number of deleted notes
     const deletedCount = deleted.length;
 

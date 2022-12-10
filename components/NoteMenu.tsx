@@ -143,6 +143,7 @@ const NoteMenu = ({ secretKey }) => {
     const deleted = useStoreState((store: any) => store.deleted);
 
     const updateNote = useStoreActions((store: any) => store.updateNote);
+    const deleteNote = useStoreActions((store: any) => store.deleteNote);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
     const setNotes = useStoreActions((store: any) => store.setNotes);
@@ -193,7 +194,7 @@ const NoteMenu = ({ secretKey }) => {
 
     const handleDeleteNote = useCallback(async () => {
         // optimistic update
-        updateNote({ ...note, starred: !note.starred, trashed: view === 'trashed' });
+        deleteNote({ ...note, deleted: !note.deleted, trashed: view === 'trashed' });
 
         try {
             setLoading(true);

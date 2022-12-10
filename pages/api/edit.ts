@@ -4,7 +4,7 @@ import getNotes from '../../prisma/getNotes';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
     const { id, title, content, userId } = req.body;
-    console.log(userId);
+
     let newNote;
 
     if (id) {

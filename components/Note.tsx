@@ -75,7 +75,6 @@ const IconWrapper = styled.div`
 `;
 
 const Note = ({ note, secretKey }: any) => {
-    const view = useStoreState((state: any) => state.view);
     const activeNote = useStoreState((state: any) => state.activeNote);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
 
