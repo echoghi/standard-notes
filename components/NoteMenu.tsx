@@ -143,6 +143,7 @@ const NoteMenu = () => {
     const deleted = useStoreState((store: any) => store.deleted);
 
     const updateNote = useStoreActions((store: any) => store.updateNote);
+    const updateStarred = useStoreActions((store: any) => store.updateStarred);
     const emptyTrash = useStoreActions((store: any) => store.emptyTrash);
     const deleteNote = useStoreActions((store: any) => store.deleteNote);
     const updateDeletedNote = useStoreActions((store: any) => store.updateDeletedNote);
@@ -179,7 +180,13 @@ const NoteMenu = () => {
 
     const handleStarNote = useCallback(async () => {
         // optimistic update
-        updateNote({ ...note, starred: !note.starred });
+        const tempNote = { ...note, starred: !note.starred };
+
+        if (isTrash) {
+            updateNote(tempNote);
+        } else {
+            updateStarred(tempNote);
+        }
 
         try {
             setLoading(true);
@@ -188,7 +195,11 @@ const NoteMenu = () => {
                 data: { starred: !note.starred }
             });
 
-            updateNote(updatedNote);
+            if (isTrash) {
+                updateNote(updatedNote);
+            } else {
+                updateStarred(updatedNote);
+            }
             setLoading(false);
         } catch (err) {
             setError(true);
@@ -197,7 +208,7 @@ const NoteMenu = () => {
 
     const handleDeleteNote = useCallback(async () => {
         // optimistic update
-        deleteNote({ ...note, deleted: !note.deleted, trashed: view === 'deleted' });
+        deleteNote({ ...note, deleted: !note.deleted });
 
         try {
             setLoading(true);

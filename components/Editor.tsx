@@ -64,7 +64,6 @@ const Editor = () => {
     const userId = useStoreState((state: any) => state.userId);
     const note = useStoreState((state: any) => state.activeNote);
 
-    const setNotes = useStoreActions((store: any) => store.setNotes);
     const createNote = useStoreActions((store: any) => store.createNote);
     const updateNote = useStoreActions((store: any) => store.updateNote);
     const setLoading = useStoreActions((store: any) => store.setLoading);
@@ -116,14 +115,15 @@ const Editor = () => {
                 updateNote(newNote);
             } else {
                 // optimistically create note
-                createNote({ id: Math.floor(Math.random() * 999999999999) + 1, ...newNote });
+                createNote({ id: Math.floor(Math.random() * 999999999999) + 1, temp: true, ...newNote });
             }
 
             const saveNote = async () => {
                 try {
-                    const updatedNotes: any = await fetcher('/edit', newNote);
+                    const updatedNote = await fetcher('/edit', newNote);
 
-                    setNotes(updatedNotes);
+                    updateNote(updatedNote);
+                    setLoading(false);
                 } catch (err) {
                     setError(true);
                 }

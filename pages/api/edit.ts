@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../lib/prisma';
-import getNotes from '../../prisma/getNotes';
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { id, title, content, userId } = req.body;
+    const { id, title, content } = req.body;
+    const { userId } = req.cookies;
 
     let newNote;
 
@@ -37,10 +37,5 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         });
     }
 
-    const response = await getNotes(userId);
-
-    res.json({
-        newNote,
-        ...response
-    });
+    res.json(newNote);
 }
