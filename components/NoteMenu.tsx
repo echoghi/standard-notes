@@ -13,7 +13,7 @@ import { useOnClickOutside } from '@echoghi/hooks';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
 import fetcher from '../lib/fetcher';
-import { decrypt } from '../lib/encryption';
+import { decrypt, generateUuid } from '../lib/encryption';
 
 const MenuButton = styled.button`
     height: 2rem;
@@ -146,7 +146,6 @@ const NoteMenu = () => {
     const updateStarred = useStoreActions((store: any) => store.updateStarred);
     const emptyTrash = useStoreActions((store: any) => store.emptyTrash);
     const deleteNote = useStoreActions((store: any) => store.deleteNote);
-    const updateDeletedNote = useStoreActions((store: any) => store.updateDeletedNote);
     const restoreNote = useStoreActions((store: any) => store.restoreNote);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
@@ -166,12 +165,11 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
-            const updatedNote: any = await fetcher('/update', {
+            await fetcher('/update', {
                 id: note.id,
                 data: { pinned: !note.pinned }
             });
 
-            updateNote(updatedNote);
             setLoading(false);
         } catch (err) {
             setError(true);
@@ -190,16 +188,11 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
-            const updatedNote: any = await fetcher('/update', {
+            await fetcher('/update', {
                 id: note.id,
                 data: { starred: !note.starred }
             });
 
-            if (isTrash) {
-                updateNote(updatedNote);
-            } else {
-                updateStarred(updatedNote);
-            }
             setLoading(false);
         } catch (err) {
             setError(true);
@@ -212,12 +205,11 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
-            const updatedNote = await fetcher('/delete', {
+            await fetcher('/delete', {
                 id: note.id,
                 trashed: view === 'deleted'
             });
 
-            if (updatedNote) updateDeletedNote(updatedNote);
             setLoading(false);
         } catch (err) {
             setError(true);
@@ -230,12 +222,11 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
-            const updatedNote: any = await fetcher('/update', {
+            await fetcher('/update', {
                 id: note.id,
                 data: { spellCheck: !note.spellCheck }
             });
 
-            updateNote(updatedNote);
             setLoading(false);
         } catch (err) {
             setError(true);
@@ -248,12 +239,11 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
-            const updatedNote: any = await fetcher('/update', {
+            await fetcher('/update', {
                 id: note.id,
                 data: { editEnabled: !note.editEnabled }
             });
 
-            updateNote(updatedNote);
             setLoading(false);
         } catch (err) {
             setError(true);
@@ -266,12 +256,11 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
-            const updatedNote: any = await fetcher('/update', {
+            await fetcher('/update', {
                 id: note.id,
                 data: { preview: !note.preview }
             });
 
-            updateNote(updatedNote);
             setLoading(false);
         } catch (err) {
             setError(true);
@@ -295,12 +284,11 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
-            const updatedNote: any = await fetcher('/update', {
+            await fetcher('/update', {
                 id: note.id,
                 data: { deleted: false, deletedAt: null }
             });
 
-            updateNote(updatedNote);
             setLoading(false);
         } catch (err) {
             setError(true);
@@ -323,15 +311,16 @@ const NoteMenu = () => {
 
     const handleDuplicateNote = useCallback(async () => {
         // optimistically create note
-        createNote({ id: Math.floor(Math.random() * 999999999999) + 1, temp: true, ...note });
+        const newId = generateUuid();
+        createNote({ id: newId, temp: true, ...note });
 
         try {
             setLoading(true);
-            const updatedNote = await fetcher('/duplicate', {
-                id: note.id
+            await fetcher('/duplicate', {
+                id: note.id,
+                newId
             });
 
-            updateNote(updatedNote);
             setLoading(false);
         } catch (err) {
             setError(true);

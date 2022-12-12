@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getValidationSchema } from '../lib/validation';
 import { auth } from '../lib/mutations';
 import { useRouter } from 'next/router';
-import { encryptPassword } from '../lib/encryption';
+import { encryptPassword, generateUuid } from '../lib/encryption';
 import fetcher from '../lib/fetcher';
 import { setCookie } from '../lib/cookie';
 import { setLocalStorage } from '../lib/storage';
@@ -149,27 +149,30 @@ const AuthForm = ({ type }) => {
 
         let user;
         let encrypted;
+        let id;
 
         try {
             if (isSignIn) {
                 try {
-                    const salt = await fetcher('/salt', { email });
-                    encrypted = await encryptPassword(password, salt);
+                    const res = await fetcher('/matchUser', { email });
+                    id = res.id;
+                    encrypted = await encryptPassword(password, res.salt);
                 } catch (err) {
                     setStatus('Account does not exist');
 
                     return;
                 }
             } else {
+                id = generateUuid();
                 encrypted = await encryptPassword(password);
             }
 
-            user = await auth(type, { email, proof: encrypted.proof, salt: encrypted.salt });
+            user = await auth(type, { email, proof: encrypted.proof, salt: encrypted.salt, id });
 
             // save the user id as userID and save the synctoken to cookies
             setCookie('userId', user.id);
-            // save synctoken to localstorage
-            setLocalStorage('synctoken', encrypted.password);
+            // save key to localstorage
+            setLocalStorage('pk', encrypted.password);
         } catch (err) {
             if (isSignIn) {
                 setStatus('Sign in failed');
@@ -177,7 +180,7 @@ const AuthForm = ({ type }) => {
                 setStatus('Sign up failed');
             }
         }
-
+        console.log(id);
         if (user) {
             resetForm();
             router.push('/');
@@ -185,6 +188,7 @@ const AuthForm = ({ type }) => {
             if (isSignIn) {
                 setStatus('Incorrect email or password');
             } else {
+                console.log(user);
                 setStatus('Account already exists');
             }
         }

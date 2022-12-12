@@ -9,10 +9,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (user) {
-        res.json(user.salt);
+        res.json({ salt: user.salt, id: user.id });
     } else {
         res.status(401);
         res.json({ error: 'Account not found' });
     }
 };
-//

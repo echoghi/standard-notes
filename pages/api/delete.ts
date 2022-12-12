@@ -10,18 +10,18 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     if (trashed) {
         // permanently delete note
         await prisma.note.delete({
-            where: { id: Number(id) }
+            where: { id }
         });
     } else {
         // update note to be trashed
         newNote = await prisma.note.update({
-            where: { id: Number(id) },
+            where: { id },
             data: {
                 deleted: true,
                 deletedAt: new Date(),
                 user: {
                     connect: {
-                        id: Number(userId)
+                        id: userId
                     }
                 }
             }

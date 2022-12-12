@@ -6,12 +6,12 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     const { userId } = req.cookies;
 
     const newNote = await prisma.note.update({
-        where: { id: Number(id) },
+        where: { id },
         data: {
             ...data,
             user: {
                 connect: {
-                    id: Number(userId)
+                    id: userId
                 }
             }
         }

@@ -8,7 +8,7 @@ const getNotes = async (userId: string) => {
         where: {
             AND: [
                 {
-                    userId: Number(userId)
+                    userId
                 },
                 {
                     deleted: false
@@ -25,7 +25,7 @@ const getNotes = async (userId: string) => {
         where: {
             AND: [
                 {
-                    userId: Number(userId)
+                    userId
                 },
                 {
                     starred: true
@@ -42,7 +42,7 @@ const getNotes = async (userId: string) => {
         where: {
             AND: [
                 {
-                    userId: Number(userId)
+                    userId
                 },
                 {
                     deleted: true

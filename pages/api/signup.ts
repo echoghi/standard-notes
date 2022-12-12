@@ -4,7 +4,7 @@ import prisma from '../../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-    const { email, proof, salt } = req.body;
+    const { email, proof, salt, id } = req.body;
 
     let user;
 
@@ -13,7 +13,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             data: {
                 email,
                 proof,
-                salt
+                salt,
+                id
             }
         });
     } catch (e) {
@@ -30,7 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             time: Date.now()
         },
         proof,
-        { expiresIn: '8h' }
+        { expiresIn: '24h' }
     );
 
     res.setHeader(

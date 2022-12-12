@@ -7,7 +7,7 @@ import SaveStatus from './SaveStatus';
 import NoteMenu from './NoteMenu';
 import PinNote from './PinNote';
 import EditModeBanner from './EditModeBanner';
-import { decrypt, encrypt } from '../lib/encryption';
+import { decrypt, encrypt, generateUuid } from '../lib/encryption';
 
 const Container = styled.div`
     display: flex;
@@ -115,14 +115,14 @@ const Editor = () => {
                 updateNote(newNote);
             } else {
                 // optimistically create note
-                createNote({ id: Math.floor(Math.random() * 999999999999) + 1, temp: true, ...newNote });
+                newNote.id = generateUuid();
+                createNote(newNote);
             }
 
             const saveNote = async () => {
                 try {
                     const updatedNote = await fetcher('/edit', newNote);
 
-                    updateNote(updatedNote);
                     setLoading(false);
                 } catch (err) {
                     setError(true);

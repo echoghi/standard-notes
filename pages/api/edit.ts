@@ -5,18 +5,23 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     const { id, title, content } = req.body;
     const { userId } = req.cookies;
 
+    // check if note exists
+    const noteExists = await prisma.note.findUnique({
+        where: { id }
+    });
+
     let newNote;
 
-    if (id) {
+    if (noteExists) {
         newNote = await prisma.note.update({
-            where: { id: Number(id) },
+            where: { id },
             data: {
                 title,
                 content,
                 updatedAt: new Date(),
                 user: {
                     connect: {
-                        id: Number(userId)
+                        id: userId
                     }
                 }
             }
@@ -26,11 +31,12 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
             data: {
                 title,
                 content,
+                id,
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 user: {
                     connect: {
-                        id: Number(userId)
+                        id: userId
                     }
                 }
             }

@@ -38,12 +38,11 @@ const PinNote = ({ note }) => {
         try {
             setLoading(true);
 
-            const updatedNote: any = await fetcher('/update', {
+            await fetcher('/update', {
                 id: note.id,
                 data: { pinned: !note.pinned }
             });
 
-            updateNote(updatedNote);
             setLoading(false);
         } catch (err) {
             setError(true);

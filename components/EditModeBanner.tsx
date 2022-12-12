@@ -34,11 +34,8 @@ const Container = styled.div`
 `;
 
 const EditModeBanner = ({ note }) => {
-    const userId = useStoreState((store: any) => store.userId);
-    const view = useStoreState((store: any) => store.view);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
-    const setNotes = useStoreActions((store: any) => store.setNotes);
     const updateNote = useStoreActions((store: any) => store.updateNote);
 
     const [hover, setHover] = useState(false);
@@ -63,7 +60,6 @@ const EditModeBanner = ({ note }) => {
                 data: { editEnabled: !note.editEnabled }
             });
 
-            updateNote(updatedNote);
             setLoading(false);
         } catch (err) {
             setError(true);

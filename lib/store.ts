@@ -25,19 +25,6 @@ export const store = createStore({
         state.error = payload;
         state.loading = false;
     }),
-    updateDeletedNote: action((state: any, payload) => {
-        const updateNotes = [...state.deleted];
-
-        // Update note in notes array with the object passed in
-        updateNotes.map((note: any) => {
-            if (note.id === payload.id) {
-                return payload;
-            }
-            return note;
-        });
-
-        state.deleted = sortNotes(updateNotes, state.sortSetting);
-    }),
     deleteNote: action((state: any, payload) => {
         state.activeNote = null;
         const isStarred = payload.starred;

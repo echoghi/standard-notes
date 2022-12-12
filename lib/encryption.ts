@@ -1,9 +1,9 @@
-import { AES, PBKDF2, enc, lib, HmacSHA256 } from 'crypto-js';
+import { AES, PBKDF2, enc, lib, HmacSHA256, uuid } from 'crypto-js';
 import { getLocalStorage } from './storage';
 
 // write a function that encrypts text using bcrypt and the secret key
 export function encrypt(text: string) {
-    const secretKey = getLocalStorage('synctoken');
+    const secretKey = getLocalStorage('pk');
 
     if (!secretKey) {
         console.log('user is not logged in, bypassing encryption');
@@ -16,7 +16,7 @@ export function encrypt(text: string) {
 
 // write a function that decrypts text using bcrypt and the secret key
 export function decrypt(text: string) {
-    const secretKey = getLocalStorage('synctoken');
+    const secretKey = getLocalStorage('pk');
 
     if (!secretKey) {
         console.log('user is not logged in, bypassing decryption');
@@ -34,6 +34,12 @@ function generateSalt() {
 
     // Return the salt as a hexadecimal string
     return salt.toString();
+}
+
+export function generateUuid() {
+    if (!window.crypto) throw new Error('window.crypto is not available');
+
+    return crypto.randomUUID();
 }
 
 export function encryptPassword(password: string, existingSalt?: string) {
