@@ -12,8 +12,8 @@ import Switch from './Switch';
 import { useOnClickOutside } from '@echoghi/hooks';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
-import fetcher from '../lib/fetcher';
 import { decrypt, generateUuid } from '../lib/encryption';
+import { clearTrash, remove, update, duplicate } from '../lib/mutations';
 
 const MenuButton = styled.button`
     height: 2rem;
@@ -160,12 +160,11 @@ const NoteMenu = () => {
     };
 
     const handlePinNote = useCallback(async () => {
-        // optimistic update
         updateNote({ ...note, pinned: !note.pinned });
 
         try {
             setLoading(true);
-            await fetcher('/update', {
+            await update({
                 id: note.id,
                 data: { pinned: !note.pinned }
             });
@@ -177,7 +176,6 @@ const NoteMenu = () => {
     }, [note]);
 
     const handleStarNote = useCallback(async () => {
-        // optimistic update
         const tempNote = { ...note, starred: !note.starred };
 
         if (isTrash) {
@@ -188,7 +186,7 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
-            await fetcher('/update', {
+            await update({
                 id: note.id,
                 data: { starred: !note.starred }
             });
@@ -200,12 +198,11 @@ const NoteMenu = () => {
     }, [note]);
 
     const handleDeleteNote = useCallback(async () => {
-        // optimistic update
         deleteNote({ ...note, deleted: !note.deleted });
 
         try {
             setLoading(true);
-            await fetcher('/delete', {
+            await remove({
                 id: note.id,
                 trashed: view === 'deleted'
             });
@@ -217,12 +214,11 @@ const NoteMenu = () => {
     }, [note]);
 
     const handleSpellCheck = useCallback(async () => {
-        // optimistic update
         updateNote({ ...note, spellCheck: !note.spellCheck });
 
         try {
             setLoading(true);
-            await fetcher('/update', {
+            await update({
                 id: note.id,
                 data: { spellCheck: !note.spellCheck }
             });
@@ -234,12 +230,11 @@ const NoteMenu = () => {
     }, [note]);
 
     const toggleEditMode = useCallback(async () => {
-        // optimistic update
         updateNote({ ...note, editEnabled: !note.editEnabled });
 
         try {
             setLoading(true);
-            await fetcher('/update', {
+            await update({
                 id: note.id,
                 data: { editEnabled: !note.editEnabled }
             });
@@ -251,12 +246,11 @@ const NoteMenu = () => {
     }, [note]);
 
     const togglePreviewMode = useCallback(async () => {
-        // optimistic update
         updateNote({ ...note, preview: !note.preview });
 
         try {
             setLoading(true);
-            await fetcher('/update', {
+            await update({
                 id: note.id,
                 data: { preview: !note.preview }
             });
@@ -272,19 +266,18 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
-            await fetcher('/emptyTrash');
+            await clearTrash();
         } catch (err) {
             setError(true);
         }
     }, [note]);
 
     const handleRestoreNote = useCallback(async () => {
-        // optimistic update
         restoreNote({ ...note, deleted: false, deletedAt: null });
 
         try {
             setLoading(true);
-            await fetcher('/update', {
+            await update({
                 id: note.id,
                 data: { deleted: false, deletedAt: null }
             });
@@ -310,13 +303,12 @@ const NoteMenu = () => {
     }, [note]);
 
     const handleDuplicateNote = useCallback(async () => {
-        // optimistically create note
         const newId = generateUuid();
-        createNote({ id: newId, temp: true, ...note });
+        createNote({ ...note, id: newId });
 
         try {
             setLoading(true);
-            await fetcher('/duplicate', {
+            await duplicate({
                 id: note.id,
                 newId
             });

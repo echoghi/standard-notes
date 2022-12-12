@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { BsPin } from 'react-icons/bs';
-import { useStoreActions, useStoreState } from 'easy-peasy';
+import { useStoreActions } from 'easy-peasy';
 import { useCallback } from 'react';
-import fetcher from '../lib/fetcher';
+import { update } from '../lib/mutations';
 
 const MenuButton = styled.button`
     height: 2rem;
@@ -38,7 +38,7 @@ const PinNote = ({ note }) => {
         try {
             setLoading(true);
 
-            await fetcher('/update', {
+            await update({
                 id: note.id,
                 data: { pinned: !note.pinned }
             });

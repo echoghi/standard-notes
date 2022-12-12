@@ -3,6 +3,7 @@ import { MdOutlineEditOff, MdOutlineEdit } from 'react-icons/md';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
 import fetcher from '../lib/fetcher';
+import { update } from '../lib/mutations';
 
 const Container = styled.div`
     font-size: 0.875rem;
@@ -55,7 +56,7 @@ const EditModeBanner = ({ note }) => {
 
         try {
             setLoading(true);
-            const updatedNote: any = await fetcher('/update', {
+            await update({
                 id: note.id,
                 data: { editEnabled: !note.editEnabled }
             });

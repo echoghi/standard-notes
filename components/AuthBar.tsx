@@ -58,9 +58,8 @@ const Button = styled.button`
     }
 `;
 
-const AuthBar = () => {
-    const userId = useStoreState((state: any) => state.userId);
-    const status = userId ? '' : 'Offline';
+const AuthBar = ({ id }) => {
+    const status = id ? '' : 'Offline';
 
     return (
         <Container>

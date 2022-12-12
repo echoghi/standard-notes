@@ -2,7 +2,6 @@ import { createStore, action } from 'easy-peasy';
 import { sortNotes } from './sort';
 
 export const store = createStore({
-    userId: null,
     notes: [],
     starred: [],
     deleted: [],
@@ -14,10 +13,6 @@ export const store = createStore({
     activeNote: null,
     loading: false,
     error: null,
-    secretKey: null,
-    setKey: action((state: any, payload) => {
-        state.secretKey = payload;
-    }),
     setView: action((state: any, payload) => {
         state.view = payload;
     }),
@@ -92,7 +87,7 @@ export const store = createStore({
 
         // Update note in notes array with the object passed in
         updatedNotes = updatedNotes.map((note: any) => {
-            if (note.id === payload.id || note.temp) {
+            if (note.id === payload.id) {
                 return payload;
             }
             return note;
@@ -113,7 +108,7 @@ export const store = createStore({
         }
 
         updatedNotes = updatedNotes.map((note: any) => {
-            if (note.id === payload.id || note.temp) {
+            if (note.id === payload.id) {
                 return payload;
             }
             return note;
@@ -129,9 +124,6 @@ export const store = createStore({
     }),
     setActiveNote: action((state: any, payload) => {
         state.activeNote = payload;
-    }),
-    setUserId: action((state: any, payload) => {
-        state.userId = payload;
     }),
     setNotes: action((state: any, payload) => {
         state.loading = false;

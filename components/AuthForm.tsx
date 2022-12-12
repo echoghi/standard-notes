@@ -1,21 +1,14 @@
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { getValidationSchema } from '../lib/validation';
-import { auth } from '../lib/mutations';
 import { useRouter } from 'next/router';
+
+import { getValidationSchema } from '../lib/validation';
+import { auth, matchUser } from '../lib/mutations';
 import { encryptPassword, generateUuid } from '../lib/encryption';
-import fetcher from '../lib/fetcher';
 import { setCookie } from '../lib/cookie';
 import { setLocalStorage } from '../lib/storage';
 
-interface Values {
-    email: string;
-    password: string;
-    confirmPassword?: string;
-}
-
-// make a styled component container to center the formcontainer in the middle of the page
 const Container = styled.div`
     display: flex;
     position: absolute;
@@ -124,6 +117,12 @@ const ErrorMsg = styled.div`
     font-size: 0.85rem;
 `;
 
+interface Values {
+    email: string;
+    password: string;
+    confirmPassword?: string;
+}
+
 const AuthForm = ({ type }) => {
     const isSignIn = type === 'signin';
     const buttonText = isSignIn ? 'Sign In' : 'Create account';
@@ -154,9 +153,9 @@ const AuthForm = ({ type }) => {
         try {
             if (isSignIn) {
                 try {
-                    const res = await fetcher('/matchUser', { email });
+                    const res = await matchUser({ email });
                     id = res.id;
-                    encrypted = await encryptPassword(password, res.salt);
+                    encrypted = encryptPassword(password, res.salt);
                 } catch (err) {
                     setStatus('Account does not exist');
 
@@ -164,14 +163,12 @@ const AuthForm = ({ type }) => {
                 }
             } else {
                 id = generateUuid();
-                encrypted = await encryptPassword(password);
+                encrypted = encryptPassword(password);
             }
 
             user = await auth(type, { email, proof: encrypted.proof, salt: encrypted.salt, id });
 
-            // save the user id as userID and save the synctoken to cookies
             setCookie('userId', user.id);
-            // save key to localstorage
             setLocalStorage('pk', encrypted.password);
         } catch (err) {
             if (isSignIn) {
@@ -180,7 +177,7 @@ const AuthForm = ({ type }) => {
                 setStatus('Sign up failed');
             }
         }
-        console.log(id);
+
         if (user) {
             resetForm();
             router.push('/');

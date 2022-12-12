@@ -1,4 +1,4 @@
-import { AES, PBKDF2, enc, lib, HmacSHA256, uuid } from 'crypto-js';
+import { AES, PBKDF2, enc, lib, HmacSHA256 } from 'crypto-js';
 import { getLocalStorage } from './storage';
 
 // write a function that encrypts text using bcrypt and the secret key

@@ -2,12 +2,11 @@ import Notes from '../components/Notes';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
 import Editor from '../components/Editor';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import getNotes from '../prisma/getNotes';
 import AuthBar from '../components/AuthBar';
 import { GetServerSideProps } from 'next';
-import { getLocalStorage } from '../lib/storage';
 
 const Container = styled.div`
     display: grid;
@@ -31,18 +30,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function Home({ noteData, userId }) {
-    const setUserId = useStoreActions((store: any) => store.setUserId);
     const starred = useStoreState((store: any) => store.starred);
     const deleted = useStoreState((store: any) => store.deleted);
     const notes = useStoreState((store: any) => store.notes);
     const activeNote = useStoreState((state: any) => state.activeNote);
 
     const setNotes = useStoreActions((store: any) => store.setNotes);
-
-    // save userId to store
-    useEffect(() => {
-        setUserId(userId);
-    }, [userId]);
 
     // save prisma notes to store
     useEffect(() => {
@@ -56,7 +49,7 @@ export default function Home({ noteData, userId }) {
 
             {activeNote && <Editor />}
 
-            <AuthBar />
+            <AuthBar id={userId} />
         </Container>
     );
 }

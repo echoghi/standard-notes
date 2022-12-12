@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import React, { useCallback, useEffect, useState } from 'react';
-import fetcher from '../lib/fetcher';
+
 import { formatDate } from '../lib/formatters';
 import SaveStatus from './SaveStatus';
 import NoteMenu from './NoteMenu';
 import PinNote from './PinNote';
 import EditModeBanner from './EditModeBanner';
 import { decrypt, encrypt, generateUuid } from '../lib/encryption';
+import { edit } from '../lib/mutations';
 
 const Container = styled.div`
     display: flex;
@@ -61,7 +62,6 @@ const EditPanel = styled.textarea`
 `;
 
 const Editor = () => {
-    const userId = useStoreState((state: any) => state.userId);
     const note = useStoreState((state: any) => state.activeNote);
 
     const createNote = useStoreActions((store: any) => store.createNote);
@@ -101,7 +101,6 @@ const Editor = () => {
 
             const newNote = {
                 ...note,
-                userId,
                 content: editorContent ? editorContent : note?.content,
                 title: editorTitle ? editorTitle : note?.title
             };
@@ -121,7 +120,7 @@ const Editor = () => {
 
             const saveNote = async () => {
                 try {
-                    const updatedNote = await fetcher('/edit', newNote);
+                    await edit(newNote);
 
                     setLoading(false);
                 } catch (err) {
@@ -133,7 +132,7 @@ const Editor = () => {
         }
     }, [isEditing, hasEdited]);
 
-    const onEditTitle = async (e: any) => {
+    const onEditTitle = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setIsEditing(true);
         setHasEdited(true);
         setEditorTitle(e.target.value);
