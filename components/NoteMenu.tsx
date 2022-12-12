@@ -159,21 +159,32 @@ const NoteMenu = () => {
         setIsMenuOpen((prev) => !prev);
     };
 
-    const handlePinNote = useCallback(async () => {
-        updateNote({ ...note, pinned: !note.pinned });
+    const handleUpdate = useCallback(
+        async (data: any) => {
+            updateNote({ ...note, ...data });
 
-        try {
-            setLoading(true);
-            await update({
-                id: note.id,
-                data: { pinned: !note.pinned }
-            });
+            try {
+                setLoading(true);
+                await update({
+                    id: note.id,
+                    data
+                });
 
-            setLoading(false);
-        } catch (err) {
-            setError(true);
-        }
-    }, [note]);
+                setLoading(false);
+            } catch (err) {
+                setError(true);
+            }
+        },
+        [note]
+    );
+
+    const handlePinNote = () => handleUpdate({ pinned: !note.pinned });
+
+    const handleSpellCheck = () => handleUpdate({ spellCheck: !note.spellCheck });
+
+    const toggleEditMode = () => handleUpdate({ editEnabled: !note.editEnabled });
+
+    const togglePreviewMode = () => handleUpdate({ preview: !note.preview });
 
     const handleStarNote = useCallback(async () => {
         const tempNote = { ...note, starred: !note.starred };
@@ -189,6 +200,22 @@ const NoteMenu = () => {
             await update({
                 id: note.id,
                 data: { starred: !note.starred }
+            });
+
+            setLoading(false);
+        } catch (err) {
+            setError(true);
+        }
+    }, [note]);
+
+    const handleRestoreNote = useCallback(async () => {
+        restoreNote({ ...note, deleted: false, deletedAt: null });
+
+        try {
+            setLoading(true);
+            await update({
+                id: note.id,
+                data: { deleted: false, deletedAt: null }
             });
 
             setLoading(false);
@@ -213,76 +240,12 @@ const NoteMenu = () => {
         }
     }, [note]);
 
-    const handleSpellCheck = useCallback(async () => {
-        updateNote({ ...note, spellCheck: !note.spellCheck });
-
-        try {
-            setLoading(true);
-            await update({
-                id: note.id,
-                data: { spellCheck: !note.spellCheck }
-            });
-
-            setLoading(false);
-        } catch (err) {
-            setError(true);
-        }
-    }, [note]);
-
-    const toggleEditMode = useCallback(async () => {
-        updateNote({ ...note, editEnabled: !note.editEnabled });
-
-        try {
-            setLoading(true);
-            await update({
-                id: note.id,
-                data: { editEnabled: !note.editEnabled }
-            });
-
-            setLoading(false);
-        } catch (err) {
-            setError(true);
-        }
-    }, [note]);
-
-    const togglePreviewMode = useCallback(async () => {
-        updateNote({ ...note, preview: !note.preview });
-
-        try {
-            setLoading(true);
-            await update({
-                id: note.id,
-                data: { preview: !note.preview }
-            });
-
-            setLoading(false);
-        } catch (err) {
-            setError(true);
-        }
-    }, [note]);
-
     const handleEmptyTrash = useCallback(async () => {
         emptyTrash();
 
         try {
             setLoading(true);
             await clearTrash();
-        } catch (err) {
-            setError(true);
-        }
-    }, [note]);
-
-    const handleRestoreNote = useCallback(async () => {
-        restoreNote({ ...note, deleted: false, deletedAt: null });
-
-        try {
-            setLoading(true);
-            await update({
-                id: note.id,
-                data: { deleted: false, deletedAt: null }
-            });
-
-            setLoading(false);
         } catch (err) {
             setError(true);
         }
