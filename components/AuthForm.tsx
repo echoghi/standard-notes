@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { getValidationSchema } from '../lib/validation';
 import { auth, matchUser } from '../lib/mutations';
 import { encryptPassword, generateUuid } from '../lib/encryption';
-import { setCookie } from '../lib/cookie';
 import { setLocalStorage } from '../lib/storage';
 
 const Container = styled.div`
@@ -152,15 +151,15 @@ const AuthForm = ({ type }) => {
 
         try {
             if (isSignIn) {
-                try {
-                    const res = await matchUser({ email });
-                    id = res.id;
-                    encrypted = encryptPassword(password, res.salt);
-                } catch (err) {
-                    setStatus('Account does not exist');
+                const res = await matchUser({ email });
 
+                if (res.error) {
+                    setStatus('Account does not exist');
                     return;
                 }
+
+                id = res.id;
+                encrypted = encryptPassword(password, res.salt);
             } else {
                 id = generateUuid();
                 encrypted = encryptPassword(password);
@@ -168,7 +167,6 @@ const AuthForm = ({ type }) => {
 
             user = await auth(type, { email, proof: encrypted.proof, salt: encrypted.salt, id });
 
-            setCookie('userId', user.id);
             setLocalStorage('pk', encrypted.password);
         } catch (err) {
             if (isSignIn) {

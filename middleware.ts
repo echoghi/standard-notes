@@ -5,7 +5,7 @@ const signedinPages = ['/'];
 const authPages = ['/signin', '/signup'];
 
 export default function middleware(req: NextRequest) {
-    const token = req.cookies.get('APP_ACCESS_TOKEN')?.value;
+    const token = req.cookies.get('_sn_session')?.value;
 
     if (signedinPages.find((p) => p === req.nextUrl.pathname)) {
         if (!token) {

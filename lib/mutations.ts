@@ -5,6 +5,10 @@ export const auth = (mode: 'signin' | 'signup', body: { email: string; password:
     return fetcher(`/${mode}`, body);
 };
 
+export const logOut = () => {
+    return fetcher('/logout');
+};
+
 export const update = (body: { id: string; data: any }) => {
     return fetcher('/update', body);
 };

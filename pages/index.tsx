@@ -1,4 +1,5 @@
 import Notes from '../components/Notes';
+import jwt from 'jsonwebtoken';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
 import Editor from '../components/Editor';
@@ -7,6 +8,7 @@ import Navigation from '../components/Navigation';
 import getNotes from '../prisma/getNotes';
 import AuthBar from '../components/AuthBar';
 import { GetServerSideProps } from 'next';
+import { Note } from '../types';
 
 const Container = styled.div`
     display: grid;
@@ -19,17 +21,35 @@ const Container = styled.div`
     width: 100%;
 `;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { userId } = context.req.cookies;
+interface NoteData {
+    notes: Note[];
+    deleted: Note[];
+    starred: Note[];
+    newNote: Note;
+    starredCount: number;
+    deletedCount: number;
+    notesCount: number;
+}
 
-    const response = await getNotes(userId);
+interface Props {
+    noteData: NoteData;
+    userId: string;
+    email: string;
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const { proof, _sn_session } = context.req.cookies;
+
+    const { id, email } = jwt.verify(_sn_session, proof);
+
+    const response = await getNotes(id);
 
     return {
-        props: { noteData: { ...response, newNote: response.notes[0] }, userId }
+        props: { noteData: { ...response, newNote: response.notes[0] }, userId: id, email }
     };
 };
 
-export default function Home({ noteData, userId }) {
+export default function Home({ noteData, userId, email }: Props) {
     const starred = useStoreState((store: any) => store.starred);
     const deleted = useStoreState((store: any) => store.deleted);
     const notes = useStoreState((store: any) => store.notes);
@@ -49,7 +69,7 @@ export default function Home({ noteData, userId }) {
 
             {activeNote && <Editor />}
 
-            <AuthBar id={userId} />
+            <AuthBar id={userId} email={email} />
         </Container>
     );
 }

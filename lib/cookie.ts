@@ -25,11 +25,21 @@ export function getCookie(name: string): string | null {
     return null;
 }
 
-export function setCookie(name: string, value: string): void {
+export function setCookie(name: string, value: string, expiration: number = 7): void {
     try {
+        // set default expiration to 7 days
+        const date = new Date();
+        date.setTime(date.getTime() + expiration * 24 * 60 * 60 * 1000);
+        const expires = `expires=${date.toUTCString()}`;
+
         // Set the cookie with the given name and value
-        document.cookie = `${name}=${value}; SameSite=strict`;
+        document.cookie = `${name}=${value}; SameSite=strict ${expires}}; path=/`;
     } catch (e) {
         throw new Error('Unable to set cookie');
     }
+}
+
+export function removeCookie(name: string): void {
+    // remove cookie by setting expiration to -1
+    setCookie(name, '', -1);
 }

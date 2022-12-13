@@ -18,23 +18,28 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 time: Date.now()
             },
             proof,
-            { expiresIn: '8h' }
+            { expiresIn: '7d' }
         );
 
-        res.setHeader(
-            'Set-Cookie',
-            cookie.serialize('APP_ACCESS_TOKEN', token, {
+        res.setHeader('Set-Cookie', [
+            cookie.serialize('_sn_session', token, {
                 httpOnly: true,
-                maxAge: 8 * 60 * 60,
+                maxAge: 7 * 24 * 60 * 60 * 1000,
                 path: '/',
-                sameSite: 'lax',
+                sameSite: 'Strict',
+                secure: process.env.NODE_ENV === 'production'
+            }),
+            cookie.serialize('proof', proof, {
+                httpOnly: true,
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+                path: '/',
+                sameSite: 'Strict',
                 secure: process.env.NODE_ENV === 'production'
             })
-        );
+        ]);
 
-        res.json(user);
+        res.status(200).json(user);
     } else {
-        res.status(401);
-        res.json({ error: 'Incorrect login' });
+        res.status(401).json({ error: 'Incorrect login' });
     }
 };
