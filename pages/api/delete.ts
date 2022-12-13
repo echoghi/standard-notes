@@ -31,5 +31,13 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         });
     }
 
+    // upadte the lastUpdated field on the user
+    await prisma.user.update({
+        where: { id: userId },
+        data: {
+            updatedAt: new Date()
+        }
+    });
+
     res.json(newNote);
 }

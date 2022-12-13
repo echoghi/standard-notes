@@ -14,6 +14,7 @@ import { useStoreActions, useStoreState } from 'easy-peasy';
 import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
 import { decrypt, generateUuid } from '../lib/encryption';
 import { clearTrash, remove, update, duplicate } from '../lib/mutations';
+import Modal from './Modal';
 
 const MenuButton = styled.button`
     height: 2rem;
@@ -54,9 +55,8 @@ const MenuContainer = styled.div`
     flex-direction: column;
     z-index: var(--z-index-dropdown-menu);
     will-change: transform;
-    transform: translate(-285px, 10px);
-    left: 0;
-    right: 0;
+    top: 90px;
+    right: 14px;
 `;
 
 const Menu = styled.menu`
@@ -287,141 +287,145 @@ const NoteMenu = () => {
             <MenuButton onClick={handleClick}>
                 <SlOptions size="16px" color="var(--sn-stylekit-neutral-color)" />
             </MenuButton>
-            {note && (
-                <MenuContainer open={isMenuOpen && note}>
-                    <Menu aria-label="Note Options Menu">
-                        <MenuItem>
-                            <Item onClick={toggleEditMode}>
-                                <ItemContent>
-                                    <MdOutlineEditOff size="22px" color="var(--sn-stylekit-neutral-color)" />
-                                    <ItemText>Prevent editing</ItemText>
-                                </ItemContent>
-                                <div>
-                                    <Switch value={!note?.editEnabled} />
-                                </div>
-                            </Item>
-                        </MenuItem>
-                        <MenuItem>
-                            <Item onClick={togglePreviewMode}>
-                                <ItemContent>
-                                    <VscPreview size="22px" color="var(--sn-stylekit-neutral-color)" />
-                                    <ItemText>Show preview</ItemText>
-                                </ItemContent>
-                                <div>
-                                    <Switch value={note?.preview} />
-                                </div>
-                            </Item>
-                        </MenuItem>
-                        <Divider />
-                        <MenuItem>
-                            <Item onClick={handleStarNote}>
-                                <ItemContent>
-                                    <AiOutlineStar size="22px" color="var(--sn-stylekit-neutral-color)" />
-                                    <ItemText>{note?.starred ? 'Unstar' : 'Star'}</ItemText>
-                                </ItemContent>
-                            </Item>
-                        </MenuItem>
-                        <MenuItem>
-                            <Item onClick={handlePinNote}>
-                                <ItemContent>
-                                    {note?.pinned ? (
-                                        <>
-                                            <BsPin size="22px" color="var(--sn-stylekit-neutral-color)" />
-                                            <ItemText>Unpin</ItemText>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <BsPin size="22px" color="var(--sn-stylekit-neutral-color)" />
-                                            <ItemText>Pin to top</ItemText>
-                                        </>
-                                    )}
-                                </ItemContent>
-                            </Item>
-                        </MenuItem>
-                        <MenuItem>
-                            <Item onClick={handleExportNote}>
-                                <ItemContent>
-                                    <MdOutlineDownload size="22px" color="var(--sn-stylekit-neutral-color)" />
-                                    <ItemText>Export</ItemText>
-                                </ItemContent>
-                            </Item>
-                        </MenuItem>
-                        <MenuItem>
-                            <Item onClick={handleDuplicateNote}>
-                                <ItemContent>
-                                    <IoMdCopy size="22px" color="var(--sn-stylekit-neutral-color)" />
-                                    <ItemText>Duplicate</ItemText>
-                                </ItemContent>
-                            </Item>
-                        </MenuItem>
-                        {!isTrash && (
+            {isMenuOpen && (
+                <Modal>
+                    <MenuContainer open={isMenuOpen && note}>
+                        <Menu aria-label="Note Options Menu">
                             <MenuItem>
-                                <Item onClick={handleDeleteNote}>
+                                <Item onClick={toggleEditMode}>
                                     <ItemContent>
-                                        <BiTrash size="22px" color="var(--sn-stylekit-danger-color)" />
-                                        <ItemText color="var(--sn-stylekit-danger-color)">Move to trash</ItemText>
+                                        <MdOutlineEditOff size="22px" color="var(--sn-stylekit-neutral-color)" />
+                                        <ItemText>Prevent editing</ItemText>
+                                    </ItemContent>
+                                    <div>
+                                        <Switch value={!note?.editEnabled} />
+                                    </div>
+                                </Item>
+                            </MenuItem>
+                            <MenuItem>
+                                <Item onClick={togglePreviewMode}>
+                                    <ItemContent>
+                                        <VscPreview size="22px" color="var(--sn-stylekit-neutral-color)" />
+                                        <ItemText>Show preview</ItemText>
+                                    </ItemContent>
+                                    <div>
+                                        <Switch value={note?.preview} />
+                                    </div>
+                                </Item>
+                            </MenuItem>
+                            <Divider />
+                            <MenuItem>
+                                <Item onClick={handleStarNote}>
+                                    <ItemContent>
+                                        <AiOutlineStar size="22px" color="var(--sn-stylekit-neutral-color)" />
+                                        <ItemText>{note?.starred ? 'Unstar' : 'Star'}</ItemText>
                                     </ItemContent>
                                 </Item>
                             </MenuItem>
-                        )}
-                        {isTrash && (
-                            <>
-                                <MenuItem>
-                                    <Item onClick={handleRestoreNote}>
-                                        <ItemContent>
-                                            <MdSettingsBackupRestore
-                                                size="22px"
-                                                color="var(--sn-stylekit-success-color)"
-                                            />
-                                            <ItemText color="var(--sn-stylekit-success-color)">Restore</ItemText>
-                                        </ItemContent>
-                                    </Item>
-                                </MenuItem>
+                            <MenuItem>
+                                <Item onClick={handlePinNote}>
+                                    <ItemContent>
+                                        {note?.pinned ? (
+                                            <>
+                                                <BsPin size="22px" color="var(--sn-stylekit-neutral-color)" />
+                                                <ItemText>Unpin</ItemText>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <BsPin size="22px" color="var(--sn-stylekit-neutral-color)" />
+                                                <ItemText>Pin to top</ItemText>
+                                            </>
+                                        )}
+                                    </ItemContent>
+                                </Item>
+                            </MenuItem>
+                            <MenuItem>
+                                <Item onClick={handleExportNote}>
+                                    <ItemContent>
+                                        <MdOutlineDownload size="22px" color="var(--sn-stylekit-neutral-color)" />
+                                        <ItemText>Export</ItemText>
+                                    </ItemContent>
+                                </Item>
+                            </MenuItem>
+                            <MenuItem>
+                                <Item onClick={handleDuplicateNote}>
+                                    <ItemContent>
+                                        <IoMdCopy size="22px" color="var(--sn-stylekit-neutral-color)" />
+                                        <ItemText>Duplicate</ItemText>
+                                    </ItemContent>
+                                </Item>
+                            </MenuItem>
+                            {!isTrash && (
                                 <MenuItem>
                                     <Item onClick={handleDeleteNote}>
                                         <ItemContent>
-                                            <IoMdClose size="22px" color="var(--sn-stylekit-danger-color)" />
-                                            <ItemText color="var(--sn-stylekit-danger-color)">
-                                                Delete permanently
-                                            </ItemText>
+                                            <BiTrash size="22px" color="var(--sn-stylekit-danger-color)" />
+                                            <ItemText color="var(--sn-stylekit-danger-color)">Move to trash</ItemText>
                                         </ItemContent>
                                     </Item>
                                 </MenuItem>
-                                <MenuItem>
-                                    <Item onClick={handleEmptyTrash}>
-                                        <ItemContent alignAlt={true}>
-                                            <CgTrashEmpty size="22px" color="var(--sn-stylekit-danger-color)" />
-                                            <FlexText>
-                                                <ItemText color="var(--sn-stylekit-danger-color)">Empty Trash</ItemText>
-                                                <SmallText>{`${deleted.length} notes in Trash`}</SmallText>
-                                            </FlexText>
-                                        </ItemContent>
-                                    </Item>
-                                </MenuItem>
-                            </>
-                        )}
-                        <Divider />
-                        <MenuItem>
-                            <Item onClick={handleSpellCheck}>
-                                <ItemContent>
-                                    <CgNotes size="22px" color="var(--sn-stylekit-neutral-color)" />
-                                    <ItemText>Spellcheck</ItemText>
-                                </ItemContent>
-                                <div>
-                                    <Switch value={note?.spellCheck} />
-                                </div>
-                            </Item>
-                        </MenuItem>
-                        <Divider />
-                        <Info>
-                            <div>{getNoteStats(note.content)}</div>
-                            <div>Read time: {getReadTime(note.content)}</div>
-                            <div>Last modified: {formatDate(note.updatedAt)}</div>
-                            <div>Created: {formatDate(note.createdAt)}</div>
-                            <div>Note ID: {note.id}</div>
-                        </Info>
-                    </Menu>
-                </MenuContainer>
+                            )}
+                            {isTrash && (
+                                <>
+                                    <MenuItem>
+                                        <Item onClick={handleRestoreNote}>
+                                            <ItemContent>
+                                                <MdSettingsBackupRestore
+                                                    size="22px"
+                                                    color="var(--sn-stylekit-success-color)"
+                                                />
+                                                <ItemText color="var(--sn-stylekit-success-color)">Restore</ItemText>
+                                            </ItemContent>
+                                        </Item>
+                                    </MenuItem>
+                                    <MenuItem>
+                                        <Item onClick={handleDeleteNote}>
+                                            <ItemContent>
+                                                <IoMdClose size="22px" color="var(--sn-stylekit-danger-color)" />
+                                                <ItemText color="var(--sn-stylekit-danger-color)">
+                                                    Delete permanently
+                                                </ItemText>
+                                            </ItemContent>
+                                        </Item>
+                                    </MenuItem>
+                                    <MenuItem>
+                                        <Item onClick={handleEmptyTrash}>
+                                            <ItemContent alignAlt={true}>
+                                                <CgTrashEmpty size="22px" color="var(--sn-stylekit-danger-color)" />
+                                                <FlexText>
+                                                    <ItemText color="var(--sn-stylekit-danger-color)">
+                                                        Empty Trash
+                                                    </ItemText>
+                                                    <SmallText>{`${deleted.length} notes in Trash`}</SmallText>
+                                                </FlexText>
+                                            </ItemContent>
+                                        </Item>
+                                    </MenuItem>
+                                </>
+                            )}
+                            <Divider />
+                            <MenuItem>
+                                <Item onClick={handleSpellCheck}>
+                                    <ItemContent>
+                                        <CgNotes size="22px" color="var(--sn-stylekit-neutral-color)" />
+                                        <ItemText>Spellcheck</ItemText>
+                                    </ItemContent>
+                                    <div>
+                                        <Switch value={note?.spellCheck} />
+                                    </div>
+                                </Item>
+                            </MenuItem>
+                            <Divider />
+                            <Info>
+                                <div>{getNoteStats(note.content)}</div>
+                                <div>Read time: {getReadTime(note.content)}</div>
+                                <div>Last modified: {formatDate(note.updatedAt)}</div>
+                                <div>Created: {formatDate(note.createdAt)}</div>
+                                <div>Note ID: {note.id}</div>
+                            </Info>
+                        </Menu>
+                    </MenuContainer>
+                </Modal>
             )}
         </Container>
     );

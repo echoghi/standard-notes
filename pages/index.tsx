@@ -70,6 +70,7 @@ export default function Home({ noteData, userId, email }: Props) {
             {activeNote && <Editor />}
 
             <AuthBar id={userId} email={email} />
+            <div id="modal-root" />
         </Container>
     );
 }

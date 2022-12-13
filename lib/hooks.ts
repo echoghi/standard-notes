@@ -1,12 +1,13 @@
 import useSWR from 'swr';
+import { User } from '../types';
 import fetcher from './fetcher';
 
-// export const useNotes = () => {
-//     const { data, error } = useSWR('/items', fetcher);
+export const useUser = () => {
+    const { data, error } = useSWR('/user', fetcher);
 
-//     return {
-//         notes: (data as any) || [],
-//         isLoading: !data && !error,
-//         isError: error
-//     };
-// };
+    return {
+        user: (data as User) || null,
+        isLoading: !data && !error,
+        isError: error
+    };
+};

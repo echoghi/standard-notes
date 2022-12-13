@@ -1,11 +1,15 @@
 import styled from 'styled-components';
 import { RiAccountCircleFill } from 'react-icons/ri';
 import { MdOutlinePalette, MdLogout } from 'react-icons/md';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { useOnClickOutside } from '@echoghi/hooks';
 import { IoMdClose } from 'react-icons/io';
 import { useRef, useState } from 'react';
 import { logOut } from '../lib/mutations';
 import { useRouter } from 'next/router';
+import { useUser } from '../lib/hooks';
+import { formatDate } from '../lib/formatters';
+import Modal from './Modal';
 
 const Container = styled.footer`
     position: relative;
@@ -146,6 +150,8 @@ const MenuTitle = styled.div`
 
 const MenuStatus = styled.div`
     padding: 0 0.75rem;
+    font-size: 14px;
+    margin-bottom: 0.75rem;
 `;
 
 const Email = styled.div`
@@ -163,7 +169,38 @@ const Divider = styled.hr`
     border-style: none;
 `;
 
+const SyncContainer = styled.div`
+    display: flex;
+    padding: 0 0.75rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+`;
+
+const SyncStatus = styled.div`
+    display: flex;
+    align-items: flex-start;
+
+    svg {
+        margin-right: 0.5rem;
+    }
+`;
+
+const SyncTitle = styled.div`
+    color: var(--sn-stylekit-success-color);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+`;
+
+const LastUpdated = styled.div`
+    color: var(--sn-stylekit-contrast-foreground-color);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+`;
+
 const AuthBar = ({ id, email }: { id: String; email: string }) => {
+    const { user } = useUser();
     const router = useRouter();
     const ref = useRef();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -182,7 +219,7 @@ const AuthBar = ({ id, email }: { id: String; email: string }) => {
     };
 
     return (
-        <Container>
+        <Container ref={ref}>
             <Group>
                 <Button onClick={handleClick}>
                     <RiAccountCircleFill size="20px" color="var(--sn-stylekit-neutral-color)" />
@@ -194,27 +231,41 @@ const AuthBar = ({ id, email }: { id: String; email: string }) => {
             <Group>
                 <Status>{status}</Status>
             </Group>
-            <MenuContainer open={isMenuOpen} ref={ref}>
-                <Menu>
-                    <MenuTitle>
-                        <div>Account</div>
-                        <IoMdClose size="22px" color="var(--sn-stylekit-neutral-color)" onClick={handleClick} />
-                    </MenuTitle>
-                    <MenuStatus>
-                        <div>You're signed in as:</div>
-                        <Email>{email}</Email>
-                    </MenuStatus>
-                    <Divider />
-                    <MenuItem>
-                        <Item onClick={handleSignOut}>
-                            <ItemContent>
-                                <MdLogout size="22px" color="var(--sn-stylekit-neutral-color)" />
-                                <ItemText>Sign out</ItemText>
-                            </ItemContent>
-                        </Item>
-                    </MenuItem>
-                </Menu>
-            </MenuContainer>
+
+            {isMenuOpen && (
+                <Modal>
+                    <MenuContainer open={isMenuOpen}>
+                        <Menu>
+                            <MenuTitle>
+                                <div>Account</div>
+                                <IoMdClose size="18px" color="var(--sn-stylekit-neutral-color)" onClick={handleClick} />
+                            </MenuTitle>
+                            <MenuStatus>
+                                <div>You're signed in as:</div>
+                                <Email>{email}</Email>
+                            </MenuStatus>
+                            <SyncContainer>
+                                <SyncStatus>
+                                    <AiOutlineCheckCircle size="22px" color="var(--sn-stylekit-success-color)" />
+                                    <div>
+                                        <SyncTitle>Last synced:</SyncTitle>
+                                        <LastUpdated>{formatDate(user?.updatedAt)}</LastUpdated>
+                                    </div>
+                                </SyncStatus>
+                            </SyncContainer>
+                            <Divider />
+                            <MenuItem>
+                                <Item onClick={handleSignOut}>
+                                    <ItemContent>
+                                        <MdLogout size="22px" color="var(--sn-stylekit-neutral-color)" />
+                                        <ItemText>Sign out workspace</ItemText>
+                                    </ItemContent>
+                                </Item>
+                            </MenuItem>
+                        </Menu>
+                    </MenuContainer>
+                </Modal>
+            )}
         </Container>
     );
 };
