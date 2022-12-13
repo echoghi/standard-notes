@@ -6,18 +6,21 @@ import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { decrypt } from '../lib/encryption';
+import { Note as NoteType } from '../types';
 
 const NoteContainer = styled.div`
     display: flex;
     align-items: stretch;
     width: 100%;
+    color: var(--sn-stylekit-foreground-color);
     border-left: ${(props: any) => (props.isActive ? '2px solid var(--sn-stylekit-accessory-tint-color-1)' : '0')};
     border-bottom: 1px solid var(--sn-stylekit-border-color);
     cursor: pointer;
-    background: ${(props: any) => (props.isActive ? 'var(--sn-stylekit-passive-color-5)' : '#FFFFFF')};
+    background: ${(props: any) =>
+        props.isActive ? 'var(--item-cell-selected-background-color)' : 'var(--sn-stylekit-background-color)'};
 
     &:hover {
-        background: var(--sn-stylekit-passive-color-5);
+        background: var(--item-cell-selected-background-color);
     }
 `;
 
@@ -35,7 +38,6 @@ const NoteTitle = styled.div`
 
 const NoteContent = styled.div`
     font-size: 0.8rem;
-    color: var(--sn-stylekit-contrast-foreground-color);
     line-height: 1.75rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -74,7 +76,8 @@ const IconWrapper = styled.div`
     margin-right: 0;
 `;
 
-const Note = ({ note }: any) => {
+const Note = ({ note }: { note: NoteType }) => {
+    const sortSetting = useStoreState((state: any) => state.sortSetting);
     const activeNote = useStoreState((state: any) => state.activeNote);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
 
@@ -96,7 +99,11 @@ const Note = ({ note }: any) => {
                         <NoteInner>{decrypt(note.content)}</NoteInner>
                     </NoteContent>
                 ) : null}
-                <NoteTime>{formatDate(note.createdAt)}</NoteTime>
+                <NoteTime>
+                    {sortSetting === 'updatedAt'
+                        ? `Modified ${formatDate(note.createdAt)}`
+                        : formatDate(note.createdAt)}
+                </NoteTime>
             </ContentContainer>
             <NoteIcons>
                 {!note?.editEnabled && (

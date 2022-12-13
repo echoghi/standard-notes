@@ -7,6 +7,17 @@ export function sortNotes(notes: any, sortSetting: string) {
         if (!a.pinned && b.pinned) {
             return 1;
         }
+
+        if (sortSetting === 'title') {
+            if (a[sortSetting] < b[sortSetting]) {
+                return -1;
+            }
+            if (a[sortSetting] > b[sortSetting]) {
+                return 1;
+            }
+            return 0;
+        }
+
         return new Date(b[sortSetting]) - new Date(a[sortSetting]);
     });
 

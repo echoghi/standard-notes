@@ -4,6 +4,7 @@ import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
 import fetcher from '../lib/fetcher';
 import { update } from '../lib/mutations';
+import { Note } from '../types';
 
 const Container = styled.div`
     font-size: 0.875rem;
@@ -34,7 +35,7 @@ const Container = styled.div`
     }
 `;
 
-const EditModeBanner = ({ note }) => {
+const EditModeBanner = ({ note }: { note: Note }) => {
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
     const updateNote = useStoreActions((store: any) => store.updateNote);

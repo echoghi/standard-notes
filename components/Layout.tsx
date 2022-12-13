@@ -5,7 +5,7 @@ const Container = styled.div`
     height: 100vh;
 `;
 
-const Layout = ({ children }: { children: any }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
         <Container>
             <Seo

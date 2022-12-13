@@ -79,7 +79,7 @@ const Item = styled.button`
     padding: 0.375rem 0.75rem;
     color: var(--sn-stylekit-contrast-foreground-color);
     text-align: left;
-    background: white;
+    background: var(--sn-stylekit-background-color);
     border: 0;
 
     &:hover {
@@ -283,13 +283,13 @@ const NoteMenu = () => {
     }, [note]);
 
     return (
-        <Container ref={ref}>
+        <Container>
             <MenuButton onClick={handleClick}>
                 <SlOptions size="16px" color="var(--sn-stylekit-neutral-color)" />
             </MenuButton>
             {isMenuOpen && (
                 <Modal>
-                    <MenuContainer open={isMenuOpen && note}>
+                    <MenuContainer open={isMenuOpen && note} ref={ref}>
                         <Menu aria-label="Note Options Menu">
                             <MenuItem>
                                 <Item onClick={toggleEditMode}>

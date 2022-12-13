@@ -14,6 +14,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: var(--sn-stylekit-background-color);
 `;
 
 const TitleContainer = styled.div`

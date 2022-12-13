@@ -13,6 +13,13 @@ export const store = createStore({
     activeNote: null,
     loading: false,
     error: null,
+    setSort: action((state: any, payload) => {
+        state.sortSetting = payload;
+
+        state.notes = sortNotes([...state.notes], payload);
+        state.starred = sortNotes([...state.starred], payload);
+        state.deleted = sortNotes([...state.deleted], payload);
+    }),
     setView: action((state: any, payload) => {
         state.view = payload;
     }),

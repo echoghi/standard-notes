@@ -3,6 +3,7 @@ import { BsPin } from 'react-icons/bs';
 import { useStoreActions } from 'easy-peasy';
 import { useCallback } from 'react';
 import { update } from '../lib/mutations';
+import { Note } from '../types';
 
 const MenuButton = styled.button`
     height: 2rem;
@@ -26,13 +27,12 @@ const MenuButton = styled.button`
     }
 `;
 
-const PinNote = ({ note }) => {
+const PinNote = ({ note }: { note: Note }) => {
     const updateNote = useStoreActions((store: any) => store.updateNote);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
 
     const handlePinNote = useCallback(async () => {
-        // optimistic update
         updateNote({ ...note, pinned: !note.pinned });
 
         try {

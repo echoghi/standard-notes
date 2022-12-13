@@ -33,7 +33,7 @@ const NavItem = styled.button`
     padding: 8px 16px;
     font-size: 12px;
     background-color: ${(props: { active: boolean }) =>
-        props.active ? 'var(--navigation-item-selected-background-color);' : 'transparent'};
+        props.active ? 'var(--navigation-item-selected-background-color)' : 'transparent'};
 
     &:hover {
         background-color: var(--navigation-item-selected-background-color);
@@ -66,8 +66,10 @@ const Navigation = () => {
     const deleted = useStoreState((store: any) => store.deleted);
     const notes = useStoreState((store: any) => store.notes);
     const starredCount = useStoreState((store: any) => store.starredCount);
-    const deletedCount = useStoreState((store: any) => store.deletedCount);
     const noteCount = useStoreState((store: any) => store.notesCount);
+
+    const activeNoteColor = view === 'notes' ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)';
+    const activeTrashColor = view === 'deleted' ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)';
 
     const handleViewChange = (nextView: string) => {
         setView(nextView);
@@ -97,27 +99,31 @@ const Navigation = () => {
         }
     };
 
+    const handleNoteView = () => handleViewChange('notes');
+    const handleStarView = () => handleViewChange('starred');
+    const handleDeletedView = () => handleViewChange('deleted');
+
     return (
         <Container id="navigation">
             <section>
                 <Title>Views</Title>
-                <NavItem onClick={() => handleViewChange('notes')} active={view === 'notes'}>
+                <NavItem onClick={handleNoteView} active={view === 'notes'}>
                     <div>
-                        <CgNotes color="var(--sn-stylekit-info-color)" size="18px" />
+                        <CgNotes color={activeNoteColor} size="18px" />
                         <NavItemName>Notes</NavItemName>
                     </div>
                     <span>{noteCount}</span>
                 </NavItem>
-                <NavItem onClick={() => handleViewChange('starred')} active={view === 'starred'}>
+                <NavItem onClick={handleStarView} active={view === 'starred'}>
                     <div>
                         <AiFillStar title="starred" size="18px" color="var(--sn-stylekit-warning-color)" />
                         <NavItemName>Starred</NavItemName>
                     </div>
                     <span>{starredCount}</span>
                 </NavItem>
-                <NavItem onClick={() => handleViewChange('deleted')} active={view === 'deleted'}>
+                <NavItem onClick={handleDeletedView} active={view === 'deleted'}>
                     <div>
-                        <BiTrash title="trash" size="18px" color="var(--sn-stylekit-neutral-color)" />
+                        <BiTrash title="trash" size="18px" color={activeTrashColor} />
                         <NavItemName>Trash</NavItemName>
                     </div>
                 </NavItem>

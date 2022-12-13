@@ -5,9 +5,20 @@ import { TiArrowSync } from 'react-icons/ti';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import styled, { keyframes } from 'styled-components';
 
-const Container = styled.div`
+const Container = styled.button`
     cursor: pointer;
     position: relative;
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    padding: 0;
+
+    &:active,
+    &:focus {
+        box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
+    }
 `;
 
 const spin = keyframes`
@@ -29,12 +40,12 @@ const Bg = styled.div`
 `;
 
 const SyncBg = styled(Bg)`
-    background: var(--sn-stylekit-passive-color-5);
+    background: var(--sn-stylekit-contrast-background-color);
     animation: ${spin} 1s linear infinite;
 `;
 
 const DisabledBg = styled(Bg)`
-    background: var(--sn-stylekit-passive-color-5);
+    background: var(--sn-stylekit-contrast-background-color);
 `;
 
 const ErrorBg = styled(Bg)`
@@ -52,7 +63,7 @@ const Tooltip = styled.div`
     padding: 0.375rem 0.75rem;
     line-height: 1.25rem;
     background-color: var(--sn-stylekit-background-color);
-    color: ${(props: any) => (props.error ? 'var(--sn-stylekit-danger-color)' : 'var(--editor-title-input-color);')};
+    color: ${(props: any) => (props.error ? 'var(--sn-stylekit-danger-color)' : 'var(--editor-title-input-color)')};
     transform: translate(-8rem, 1.5rem);
     user-select: none;
     min-width: max-content;
@@ -95,7 +106,7 @@ const SaveStatus = () => {
         <Container onMouseEnter={onHoverStart} onMouseLeave={onHoverEnd} onClick={toggleStatus}>
             {loading && !error && !isDisabled && (
                 <SyncBg>
-                    <TiArrowSync size="15px" />
+                    <TiArrowSync size="15px" color="var(--sn-stylekit-sync-contrast-color)" />
                 </SyncBg>
             )}
             {!loading && !error && !isDisabled && (

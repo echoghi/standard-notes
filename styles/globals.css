@@ -92,6 +92,7 @@ html:root {
 
     --panel-resizer-background-color: var(--sn-stylekit-secondary-contrast-background-color);
     --link-element-color: var(--sn-stylekit-info-color);
+    --sn-stylekit-sync-contrast-color: var(--sn-stylekit-passive-color-1);
 
     --tw-border-spacing-x: 0;
     --tw-border-spacing-y: 0;

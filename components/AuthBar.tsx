@@ -7,7 +7,7 @@ import { IoMdClose } from 'react-icons/io';
 import { useRef, useState } from 'react';
 import { logOut } from '../lib/mutations';
 import { useRouter } from 'next/router';
-import { useUser } from '../lib/hooks';
+import { useTheme, useUser } from '../lib/hooks';
 import { formatDate } from '../lib/formatters';
 import Modal from './Modal';
 
@@ -59,6 +59,10 @@ const Button = styled.button`
 
     &:active {
         box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
+
+        svg {
+            fill: var(--sn-stylekit-info-color);
+        }
     }
 
     &:focus {
@@ -111,7 +115,7 @@ const Item = styled.button`
     padding: 0.375rem 0.75rem;
     color: var(--sn-stylekit-contrast-foreground-color);
     text-align: left;
-    background: white;
+    background: var(--sn-stylekit-background-color);
     border: 0;
 
     &:hover {
@@ -136,6 +140,8 @@ const MenuTitle = styled.div`
     align-items: center;
     padding: 0 0.75rem;
     margin: 0.25rem 0;
+    margin-bottom: 0.5rem;
+    color: var(--sn-stylekit-contrast-foreground-color);
 
     div {
         font-size: 1rem;
@@ -152,6 +158,7 @@ const MenuStatus = styled.div`
     padding: 0 0.75rem;
     font-size: 14px;
     margin-bottom: 0.75rem;
+    color: var(--sn-stylekit-contrast-foreground-color);
 `;
 
 const Email = styled.div`
@@ -199,11 +206,12 @@ const LastUpdated = styled.div`
     line-height: 1.25rem;
 `;
 
-const AuthBar = ({ id, email }: { id: String; email: string }) => {
+const AuthBar = ({ id, email }: { id: string; email: string }) => {
     const { user } = useUser();
     const router = useRouter();
     const ref = useRef();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { toggleTheme } = useTheme();
 
     useOnClickOutside(ref, () => setIsMenuOpen(false));
 
@@ -219,12 +227,12 @@ const AuthBar = ({ id, email }: { id: String; email: string }) => {
     };
 
     return (
-        <Container ref={ref}>
+        <Container>
             <Group>
                 <Button onClick={handleClick}>
-                    <RiAccountCircleFill size="20px" color="var(--sn-stylekit-neutral-color)" />
+                    <RiAccountCircleFill size="20px" color="var(--sn-stylekit-info-color)" />
                 </Button>
-                <Button>
+                <Button onClick={toggleTheme}>
                     <MdOutlinePalette size="20px" color="var(--sn-stylekit-neutral-color)" />
                 </Button>
             </Group>
@@ -234,7 +242,7 @@ const AuthBar = ({ id, email }: { id: String; email: string }) => {
 
             {isMenuOpen && (
                 <Modal>
-                    <MenuContainer open={isMenuOpen}>
+                    <MenuContainer open={isMenuOpen} ref={ref}>
                         <Menu>
                             <MenuTitle>
                                 <div>Account</div>

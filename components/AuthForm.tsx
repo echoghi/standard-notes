@@ -24,16 +24,16 @@ const SignInFormContainer = styled.div`
     width: fit-content;
     margin: 0 auto;
     padding: 3rem;
-    border: 1px solid var(--sn-stylekit-border-color);
+    border: 1px solid #dfe1e4;
     border-radius: 0.25rem;
     min-width: 450px;
-    background-color: var(--sn-stylekit-background-color);
+    background-color: #fff;
 
     input {
         font-size: 0.875rem;
         line-height: 1.25rem;
         padding: 0.625rem 0.75rem;
-        border: 1px solid var(--sn-stylekit-border-color);
+        border: 1px solid #dfe1e4;
         width: 100%;
         border-radius: 0.25rem;
         height: 100%;
@@ -42,7 +42,7 @@ const SignInFormContainer = styled.div`
         &:focus {
             border: none;
             outline: none;
-            box-shadow: 0 0 0 1px var(--sn-stylekit-info-color);
+            box-shadow: 0 0 0 1px #086dd6;
         }
     }
 `;
@@ -71,9 +71,9 @@ const Button = styled.button`
     font-weight: 700;
     font-size: 0.875rem;
     line-height: 1.25rem;
-    color: var(--sn-stylekit-info-contrast-color);
+    color: #fff;
     padding: 0.375rem 1rem;
-    background-color: var(--sn-stylekit-info-color);
+    background-color: #086dd6;
     border-radius: 0.25rem;
     cursor: pointer;
     min-width: 6rem;
@@ -93,19 +93,19 @@ const Button = styled.button`
 `;
 
 const Label = styled.label`
-    color: var(--sn-stylekit-neutral-color);
+    color: #72767e;
     display: none;
 `;
 
 const SubText = styled.div`
     font-size: 0.875rem;
     line-height: 1.25rem;
-    color: var(--sn-stylekit-passive-color-1);
+    color: #515357;
     font-weight: 500;
 
     a {
         cursor: pointer;
-        color: var(--sn-stylekit-info-color);
+        color: #086dd6;
     }
 `;
 
@@ -122,7 +122,7 @@ interface Values {
     confirmPassword?: string;
 }
 
-const AuthForm = ({ type }) => {
+const AuthForm = ({ type }: { type: string }) => {
     const isSignIn = type === 'signin';
     const buttonText = isSignIn ? 'Sign In' : 'Create account';
     const router = useRouter();
@@ -140,7 +140,7 @@ const AuthForm = ({ type }) => {
 
     const validationSchema = getValidationSchema(isSignIn);
 
-    const onSubmit = async (values: Values, { setSubmitting, resetForm, setStatus }: FormikHelpers<Values>) => {
+    const onSubmit = async (values: Values, { resetForm, setStatus }: FormikHelpers<Values>) => {
         const { email, password } = values;
 
         setStatus('');
