@@ -1,7 +1,6 @@
 import { AES, PBKDF2, enc, lib, HmacSHA256 } from 'crypto-js';
 import { getLocalStorage } from './storage';
 
-// write a function that encrypts text using bcrypt and the secret key
 export function encrypt(text: string) {
     const secretKey = getLocalStorage('pk');
 
@@ -14,7 +13,6 @@ export function encrypt(text: string) {
     return encryptedText;
 }
 
-// write a function that decrypts text using bcrypt and the secret key
 export function decrypt(text: string) {
     const secretKey = getLocalStorage('pk');
 

@@ -55,7 +55,7 @@ const MenuContainer = styled.div`
     flex-direction: column;
     z-index: var(--z-index-dropdown-menu);
     will-change: transform;
-    top: 90px;
+    top: ${(props: any) => (props.top ? `${props.top}px` : '0')};
     right: 14px;
 `;
 
@@ -136,7 +136,9 @@ const SmallText = styled.div`
 
 const NoteMenu = () => {
     const ref = useRef();
+    const buttonRef = useRef();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [position, setPosition] = useState({ left: 0, top: 0 });
 
     const view = useStoreState((store: any) => store.view);
     const note = useStoreState((store: any) => store.activeNote);
@@ -156,6 +158,22 @@ const NoteMenu = () => {
     useOnClickOutside(ref, () => setIsMenuOpen(false));
 
     const handleClick = () => {
+        // Get the bounding client rect of the button element
+        if (buttonRef.current) {
+            const buttonRect = buttonRef.current.getBoundingClientRect();
+
+            // Calculate the position of the dropdown menu
+            const top = buttonRect.top + buttonRect.height;
+            let left = buttonRect.left;
+
+            if (buttonRect.left + 200 > window.innerWidth) {
+                left = window.innerWidth - 380;
+            }
+
+            // Open the dropdown menu at the calculated position
+            setPosition({ top, left });
+        }
+
         setIsMenuOpen((prev) => !prev);
     };
 
@@ -284,12 +302,12 @@ const NoteMenu = () => {
 
     return (
         <Container>
-            <MenuButton onClick={handleClick}>
+            <MenuButton onClick={handleClick} ref={buttonRef}>
                 <SlOptions size="16px" color="var(--sn-stylekit-neutral-color)" />
             </MenuButton>
             {isMenuOpen && (
                 <Modal>
-                    <MenuContainer open={isMenuOpen && note} ref={ref}>
+                    <MenuContainer open={isMenuOpen && note} ref={ref} top={position.top} left={position.left}>
                         <Menu aria-label="Note Options Menu">
                             <MenuItem>
                                 <Item onClick={toggleEditMode}>

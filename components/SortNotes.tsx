@@ -16,7 +16,8 @@ const Button = styled.button`
     cursor: pointer;
     background-color: var(--sn-stylekit-background-color);
 
-    &:active {
+    &:active,
+    &:focus {
         box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
     }
 
@@ -48,8 +49,8 @@ const MenuContainer = styled.div`
     flex-direction: column;
     z-index: var(--z-index-dropdown-menu);
     will-change: transform;
-    top: 60px;
-    left: 530px;
+    top: ${(props: any) => (props.top ? `${props.top}px` : '0')};
+    left: ${(props: any) => (props.left ? `${props.left}px` : '0')};
 `;
 
 const MenuTitle = styled.div`
@@ -146,24 +147,42 @@ const RadioText = styled.div`
 
 const SortNotes = () => {
     const ref = useRef();
+    const buttonRef = useRef();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [position, setPosition] = useState({ left: 0, top: 0 });
     const sortSetting = useStoreState((store: any) => store.sortSetting);
     const setSort = useStoreActions((store: any) => store.setSort);
 
     useOnClickOutside(ref, () => setIsMenuOpen(false));
 
     const handleMenuOpen = () => {
+        // Get the bounding client rect of the button element
+        if (buttonRef.current) {
+            const buttonRect = buttonRef.current.getBoundingClientRect();
+
+            // Calculate the position of the dropdown menu
+            const top = buttonRect.top + buttonRect.height;
+            let left = buttonRect.left;
+
+            if (buttonRect.left + 200 > window.innerWidth) {
+                left = window.innerWidth - 380;
+            }
+
+            // Open the dropdown menu at the calculated position
+            setPosition({ top, left });
+        }
+
         setIsMenuOpen((state) => !state);
     };
 
     return (
         <>
-            <Button onClick={handleMenuOpen}>
+            <Button onClick={handleMenuOpen} ref={buttonRef} aria-label="Sort Notes">
                 <FaSortAmountDown size="18px" color="var(--sn-stylekit-neutral-color)" />
             </Button>
             {isMenuOpen && (
                 <Modal>
-                    <MenuContainer open={isMenuOpen} ref={ref}>
+                    <MenuContainer open={isMenuOpen} ref={ref} top={position.top} left={position.left}>
                         <MenuTitle>PREFERENCES FOR</MenuTitle>
                         <PrefStatus>
                             <div>Global</div>

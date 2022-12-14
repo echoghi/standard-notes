@@ -101,7 +101,7 @@ const Note = ({ note }: { note: NoteType }) => {
                 ) : null}
                 <NoteTime>
                     {sortSetting === 'updatedAt'
-                        ? `Modified ${formatDate(note.createdAt)}`
+                        ? `Modified ${formatDate(note.updatedAt)}`
                         : formatDate(note.createdAt)}
                 </NoteTime>
             </ContentContainer>

@@ -210,6 +210,7 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
     const { user } = useUser();
     const router = useRouter();
     const ref = useRef();
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { toggleTheme } = useTheme();
 

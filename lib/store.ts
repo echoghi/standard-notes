@@ -88,6 +88,7 @@ export const store = createStore({
         state.notes = sortNotes(updatedNotes, state.sortSetting);
     }),
     updateNote: action((state: any, payload) => {
+        payload.updatedAt = new Date().toISOString();
         state.activeNote = payload;
 
         let updatedNotes = [...state[`${state.view}`]];
@@ -103,6 +104,7 @@ export const store = createStore({
         state[`${state.view}`] = sortNotes(updatedNotes, state.sortSetting);
     }),
     updateStarred: action((state: any, payload) => {
+        payload.updatedAt = new Date().toISOString();
         let updatedStarred = [...state.starred];
         let updatedNotes = [...state.notes];
 
