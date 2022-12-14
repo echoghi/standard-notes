@@ -30,12 +30,16 @@ export default function Seo({
             additionalLinkTags={[
                 {
                     rel: 'icon',
-                    href: 'http://localhost:3000/favicon.ico'
+                    href: '/favicon.ico'
                 },
                 {
                     rel: 'apple-touch-icon',
-                    href: 'http://localhost:3000/apple-touch-icon.png',
+                    href: '/apple-touch-icon.png',
                     sizes: '180x180'
+                },
+                {
+                    rel: 'manifest',
+                    href: '/manifest.json'
                 }
             ]}
         />

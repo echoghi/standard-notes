@@ -13,6 +13,10 @@ export const store = createStore({
     activeNote: null,
     loading: false,
     error: null,
+    synced: true,
+    setSynced: action((state: any, payload) => {
+        state.synced = payload;
+    }),
     setSort: action((state: any, payload) => {
         state.sortSetting = payload;
 

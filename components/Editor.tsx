@@ -9,6 +9,7 @@ import PinNote from './PinNote';
 import EditModeBanner from './EditModeBanner';
 import { decrypt, encrypt, generateUuid } from '../lib/encryption';
 import { edit } from '../lib/mutations';
+import { storeEncryptedNotes } from '../lib/storage';
 
 const Container = styled.div`
     display: flex;
@@ -126,6 +127,7 @@ const Editor = () => {
                     setLoading(false);
                 } catch (err) {
                     setError(true);
+                    storeEncryptedNotes(newNote);
                 }
             };
 

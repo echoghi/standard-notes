@@ -9,6 +9,7 @@ import { logOut } from '../lib/mutations';
 import { useRouter } from 'next/router';
 import { useTheme, useUser } from '../lib/hooks';
 import { formatDate } from '../lib/formatters';
+import { useStoreState } from 'easy-peasy';
 import Modal from './Modal';
 
 const Container = styled.footer`
@@ -39,7 +40,7 @@ const Status = styled.div`
     font-weight: 700;
     font-size: 0.75rem;
     line-height: 1rem;
-    color: var(--sn-stylekit-contrast-foreground-color);
+    color: var(--sn-stylekit-foreground-color);
 `;
 
 const Button = styled.button`
@@ -207,6 +208,7 @@ const LastUpdated = styled.div`
 `;
 
 const AuthBar = ({ id, email }: { id: string; email: string }) => {
+    const synced = useStoreState((store: any) => store.synced);
     const { user } = useUser();
     const router = useRouter();
     const ref = useRef();
@@ -231,11 +233,17 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
         <Container>
             <Group>
                 <Button onClick={handleClick}>
-                    <RiAccountCircleFill size="20px" color="var(--sn-stylekit-info-color)" />
+                    <RiAccountCircleFill
+                        size="20px"
+                        color={!synced ? 'var(--sn-stylekit-danger-color)' : 'var(--sn-stylekit-info-color)'}
+                    />
                 </Button>
                 <Button onClick={toggleTheme}>
                     <MdOutlinePalette size="20px" color="var(--sn-stylekit-neutral-color)" />
                 </Button>
+            </Group>
+            <Group>
+                <Status>{synced ? '' : 'Unable to sync'}</Status>
             </Group>
             <Group>
                 <Status>{status}</Status>

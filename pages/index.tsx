@@ -9,6 +9,7 @@ import getNotes from '../prisma/getNotes';
 import AuthBar from '../components/AuthBar';
 import { GetServerSideProps } from 'next';
 import { Note } from '../types';
+import OfflineSync from '../components/OfflineSync';
 
 const Container = styled.div`
     display: grid;
@@ -64,6 +65,7 @@ export default function Home({ noteData, userId, email }: Props) {
 
     return (
         <Container id="app" editorOpen={activeNote}>
+            <OfflineSync />
             <Navigation />
             <Notes notes={notes} starred={starred} deleted={deleted} />
 

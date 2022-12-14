@@ -15,6 +15,7 @@ import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
 import { decrypt, generateUuid } from '../lib/encryption';
 import { clearTrash, remove, update, duplicate } from '../lib/mutations';
 import Modal from './Modal';
+import { storeEncryptedNotes } from '../lib/storage';
 
 const MenuButton = styled.button`
     height: 2rem;
@@ -190,6 +191,10 @@ const NoteMenu = () => {
 
                 setLoading(false);
             } catch (err) {
+                storeEncryptedNotes({
+                    ...note,
+                    ...data
+                });
                 setError(true);
             }
         },
@@ -222,6 +227,10 @@ const NoteMenu = () => {
 
             setLoading(false);
         } catch (err) {
+            storeEncryptedNotes({
+                ...note,
+                starred: !note.starred
+            });
             setError(true);
         }
     }, [note]);
@@ -238,6 +247,11 @@ const NoteMenu = () => {
 
             setLoading(false);
         } catch (err) {
+            storeEncryptedNotes({
+                ...note,
+                deleted: false,
+                deletedAt: null
+            });
             setError(true);
         }
     }, [note]);
@@ -254,6 +268,10 @@ const NoteMenu = () => {
 
             setLoading(false);
         } catch (err) {
+            storeEncryptedNotes({
+                ...note,
+                deleteFlag: view === 'deleted'
+            });
             setError(true);
         }
     }, [note]);
@@ -302,7 +320,7 @@ const NoteMenu = () => {
 
     return (
         <Container>
-            <MenuButton onClick={handleClick} ref={buttonRef}>
+            <MenuButton onClick={handleClick} ref={buttonRef} aria-label="Note Options">
                 <SlOptions size="16px" color="var(--sn-stylekit-neutral-color)" />
             </MenuButton>
             {isMenuOpen && (

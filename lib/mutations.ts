@@ -32,3 +32,7 @@ export const matchUser = (body: { email: string }) => {
 export const edit = (newNote: Note) => {
     return fetcher('/edit', newNote);
 };
+
+export const saveBulkNotes = (notes?: Note[]) => {
+    return fetcher('/items', notes);
+};

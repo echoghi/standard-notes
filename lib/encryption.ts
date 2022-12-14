@@ -2,6 +2,7 @@ import { AES, PBKDF2, enc, lib, HmacSHA256 } from 'crypto-js';
 import { getLocalStorage } from './storage';
 
 export function encrypt(text: string) {
+    if (!text) return text;
     const secretKey = getLocalStorage('pk');
 
     if (!secretKey) {
@@ -14,6 +15,7 @@ export function encrypt(text: string) {
 }
 
 export function decrypt(text: string) {
+    if (!text) return text;
     const secretKey = getLocalStorage('pk');
 
     if (!secretKey) {
