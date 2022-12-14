@@ -9,7 +9,6 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@echoghi/hooks": "^1.5.2",
         "@prisma/client": "^4.7.1",
         "@types/node": "18.11.10",
         "@types/react": "^18.0.26",
@@ -49,6 +48,7 @@
         "eslint-plugin-prettier": "^4.2.1",
         "eslint-plugin-react": "^7.31.11",
         "eslint-plugin-react-hooks": "^4.6.0",
+        "prettier": "^2.8.1",
         "prisma": "^4.7.1",
         "superjson": "^1.11.0",
         "ts-node": "^10.9.1"

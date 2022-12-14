@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { FaSortAmountDown } from 'react-icons/fa';
 import { useStoreActions, useStoreState } from 'easy-peasy';
-import { useOnClickOutside } from '@echoghi/hooks';
 import { useRef, useState } from 'react';
 import Modal from './Modal';
+import { useOnClickOutside } from '../lib/hooks';
 
 const Button = styled.button`
     height: 2rem;

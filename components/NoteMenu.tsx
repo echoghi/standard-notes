@@ -9,13 +9,13 @@ import { MdOutlineEditOff, MdSettingsBackupRestore, MdOutlineDownload } from 're
 import { AiOutlineStar } from 'react-icons/ai';
 import { VscPreview } from 'react-icons/vsc';
 import Switch from './Switch';
-import { useOnClickOutside } from '@echoghi/hooks';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
 import { decrypt, generateUuid } from '../lib/encryption';
 import { clearTrash, remove, update, duplicate } from '../lib/mutations';
 import Modal from './Modal';
 import { storeEncryptedNotes } from '../lib/storage';
+import { useOnClickOutside } from '../lib/hooks';
 
 const MenuButton = styled.button`
     height: 2rem;
