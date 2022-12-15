@@ -77,7 +77,7 @@ const NoteMenu = () => {
     const ref = useRef();
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [position, setPosition] = useState({ left: 0, top: 0 });
+    const [position, setPosition] = useState({ right: 0, top: 0 });
 
     const view = useStoreState((store: any) => store.view);
     const note = useStoreState((store: any) => store.activeNote);
@@ -100,18 +100,14 @@ const NoteMenu = () => {
         // Get the bounding client rect of the button element
         if (buttonRef.current) {
             const buttonRect = buttonRef.current.getBoundingClientRect();
-            const { top, height, left } = buttonRect;
+            const { top, height, right } = buttonRect;
 
             // Calculate the position of the dropdown menu
             const menuTop = top + height;
-            let menuLeft = left;
-
-            if (buttonRect.left + 200 > window.innerWidth) {
-                menuLeft = window.innerWidth - 380;
-            }
+            const menuRight = window.innerWidth - right - 10;
 
             // Open the dropdown menu at the calculated position
-            setPosition({ top: menuTop, left: menuLeft });
+            setPosition({ top: menuTop, right: menuRight });
         }
 
         setIsMenuOpen((prev) => !prev);
@@ -292,7 +288,7 @@ const NoteMenu = () => {
             </MenuButton>
             {isMenuOpen && (
                 <Modal>
-                    <MenuContainer open={isMenuOpen && note} ref={ref} top={position.top} right={14}>
+                    <MenuContainer open={isMenuOpen && note} ref={ref} top={position.top} right={position.right}>
                         <Menu aria-label="Note Options Menu">
                             <MenuItem>
                                 <Item onClick={toggleEditMode}>

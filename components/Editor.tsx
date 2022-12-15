@@ -34,10 +34,15 @@ const InputContainer = styled.div`
     flex-grow: 1;
 `;
 
-const ActionContainer = styled.div`
+const ActionContainer = styled.div<{ focusMode: boolean }>`
     display: flex;
+    opacity: ${({ focusMode }: { focusMode: boolean }) => (focusMode ? '0' : '1')};
     align-items: center;
     gap: 0.75rem;
+
+    &:hover {
+        opacity: 1;
+    }
 `;
 
 const Title = styled.input`
@@ -173,7 +178,7 @@ const Editor = () => {
                         disabled={!note?.editEnabled}
                     />
                 </InputContainer>
-                <ActionContainer>
+                <ActionContainer focusMode={focusMode}>
                     <SaveStatus />
                     <PinNote note={note} />
                     <NoteMenu />
