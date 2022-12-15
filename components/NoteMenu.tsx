@@ -128,14 +128,18 @@ const NoteMenu = () => {
 
             try {
                 setLoading(true);
+                setError(false);
                 const res = await update({
                     id: note.id,
                     data
                 });
 
-                setLoading(false);
-
-                if (!res.error) handleError();
+                if (res.error) {
+                    handleError();
+                } else {
+                    setLoading(false);
+                    setError(false);
+                }
             } catch (err) {
                 handleError();
             }
@@ -171,14 +175,18 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
+            setError(false);
             const res = await update({
                 id: note.id,
                 data: { starred: !note.starred }
             });
 
-            setLoading(false);
-
-            if (!res.error) handleError();
+            if (res.error) {
+                handleError();
+            } else {
+                setLoading(false);
+                setError(false);
+            }
         } catch (err) {
             handleError();
         }
@@ -199,14 +207,18 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
+            setError(false);
             const res = await update({
                 id: note.id,
                 data: { deleted: false, deletedAt: null }
             });
 
-            setLoading(false);
-
-            if (res.error) handleError();
+            if (res.error) {
+                handleError();
+            } else {
+                setLoading(false);
+                setError(false);
+            }
         } catch (err) {
             handleError();
         }
@@ -218,7 +230,8 @@ const NoteMenu = () => {
         const handleError = () => {
             storeEncryptedNotes({
                 ...note,
-                deleted: !note.deleted
+                deleted: !note.deleted,
+                deleteFlag: view === 'deleted' ? true : undefined
             });
             setError(true);
             setLoading(false);
@@ -226,14 +239,18 @@ const NoteMenu = () => {
 
         try {
             setLoading(true);
+            setError(false);
             const res = await remove({
                 id: note.id,
                 trashed: view === 'deleted'
             });
 
-            setLoading(false);
-
-            if (res.error) handleError();
+            if (res.error) {
+                handleError();
+            } else {
+                setLoading(false);
+                setError(false);
+            }
         } catch (err) {
             handleError();
         }

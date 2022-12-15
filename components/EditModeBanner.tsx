@@ -63,14 +63,18 @@ const EditModeBanner = ({ note }: { note: Note }) => {
 
         try {
             setLoading(true);
+            setError(false);
             const res = await update({
                 id: note.id,
                 data: { editEnabled: !note.editEnabled }
             });
 
-            setLoading(false);
-
-            if (res.error) handleError();
+            if (res.error) {
+                handleError();
+            } else {
+                setLoading(false);
+                setError(false);
+            }
         } catch (err) {
             handleError();
         }

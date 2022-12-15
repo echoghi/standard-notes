@@ -36,18 +36,28 @@ const PinNote = ({ note }: { note: Note }) => {
     const handlePinNote = useCallback(async () => {
         updateNote({ ...note, pinned: !note.pinned });
 
+        const handleError = () => {
+            storeEncryptedNotes({ ...note, pinned: !note.pinned });
+            setError(true);
+            setLoading(false);
+        };
+
         try {
             setLoading(true);
-
-            await update({
+            setError(false);
+            const res = await update({
                 id: note.id,
                 data: { pinned: !note.pinned }
             });
 
-            setLoading(false);
+            if (res.error) {
+                handleError();
+            } else {
+                setLoading(false);
+                setError(false);
+            }
         } catch (err) {
-            setError(true);
-            storeEncryptedNotes({ ...note, pinned: !note.pinned });
+            handleError();
         }
     }, [note, setLoading, setError, updateNote]);
 

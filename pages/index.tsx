@@ -13,10 +13,17 @@ import { Note } from '../types';
 import OfflineSync from '../components/OfflineSync';
 import { setGrid } from '../styles';
 
-const Container = styled.div<{ grid: string; focusMode: boolean }>`
+const Container = styled.div`
+    position: relative;
+    height: 100%;
+    background: var(--sn-stylekit-background-color);
+    display: flex;
+    flex-direction: column;
+`;
+
+const AppGrid = styled.div<{ grid: string; focusMode: boolean }>`
     display: grid;
     grid-template-columns: ${(props: any) => (props.grid ? props.grid : '220px 1fr')};
-    grid-template-rows: 1fr 2rem;
     height: 100%;
     overflow: hidden;
     position: relative;
@@ -75,12 +82,14 @@ const Home = ({ noteData, userId, email }: Props) => {
     const grid = setGrid({ editorOpen: activeNote, notesPanel, tagsPanel, focusMode });
 
     return (
-        <Container id="app" grid={grid} focusMode={focusMode}>
-            <OfflineSync />
-            {tagsPanel && <Navigation />}
-            {notesPanel && <Notes notes={notes} starred={starred} deleted={deleted} />}
+        <Container id="app">
+            <AppGrid grid={grid} focusMode={focusMode}>
+                <OfflineSync />
+                {tagsPanel && <Navigation />}
+                {notesPanel && <Notes notes={notes} starred={starred} deleted={deleted} />}
 
-            {activeNote && <Editor />}
+                {activeNote && <Editor />}
+            </AppGrid>
 
             <AuthBar id={userId} email={email} />
             <div id="modal-root" />

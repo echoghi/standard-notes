@@ -146,8 +146,10 @@ export const setGrid = ({
 
         return '1fr';
     } else {
-        if (focusMode) return '1fr';
-        if (notesPanel && tagsPanel) return '220px 1fr';
+        if (focusMode) return '0';
+        if (notesPanel && tagsPanel) {
+            return '220px 1fr';
+        }
         return '1fr';
     }
 };

@@ -42,5 +42,5 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
         }
     });
 
-    res.json(newNote);
+    res.json(newNote || { message: 'success' });
 });

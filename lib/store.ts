@@ -41,7 +41,6 @@ export const store = createStore({
     }),
     setError: action((state: any, payload) => {
         state.error = payload;
-        state.loading = false;
     }),
     deleteNote: action((state: any, payload) => {
         state.activeNote = null;
@@ -145,7 +144,6 @@ export const store = createStore({
     }),
     setLoading: action((state: any, payload) => {
         state.loading = payload;
-        state.error = null;
     }),
     setActiveNote: action((state: any, payload) => {
         state.activeNote = payload;
