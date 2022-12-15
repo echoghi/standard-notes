@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState, useStoreActions } from 'easy-peasy';
 import { RiAccountCircleFill } from 'react-icons/ri';
 import { MdOutlinePalette, MdLogout } from 'react-icons/md';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
@@ -10,7 +10,8 @@ import { logOut } from '../lib/mutations';
 import { useOnClickOutside, useTheme, useUser } from '../lib/hooks';
 import { formatDate } from '../lib/formatters';
 import Modal from './Modal';
-import { Divider, Menu, MenuContainer, MenuItem } from '../styles';
+import { Divider, Menu, MenuContainer, MenuItem, RadioButton, RadioFill, RadioText } from '../styles';
+import Switch from './Switch';
 
 const Container = styled.footer`
     position: relative;
@@ -29,9 +30,15 @@ const Container = styled.footer`
     z-index: var(--z-index-footer-bar);
 `;
 
-const Group = styled.div`
+const Group = styled.div<{ focusMode: boolean }>`
     display: flex;
     height: 100%;
+    opacity: ${({ focusMode }) => (focusMode ? 0.08 : 1)};
+    transition: ${({ focusMode }) => (focusMode ? 'opacity 0.25s ease-in-out' : 'none')};
+
+    &:hover {
+        opacity: 1;
+    }
 `;
 
 const Status = styled.div`
@@ -165,19 +172,34 @@ const LastUpdated = styled.div`
 
 const AuthBar = ({ id, email }: { id: string; email: string }) => {
     const synced = useStoreState((store: any) => store.synced);
+    const focusMode = useStoreState((store: any) => store.focusMode);
+    const tagsPanel = useStoreState((store: any) => store.tagsPanel);
+    const notesPanel = useStoreState((store: any) => store.notesPanel);
+
+    const setFocusMode = useStoreActions((store: any) => store.setFocusMode);
+    const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
+    const setNotesPanel = useStoreActions((store: any) => store.setNotesPanel);
+
     const { user } = useUser();
     const router = useRouter();
-    const ref = useRef();
+    const authRef = useRef();
+    const settingsRef = useRef();
 
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { toggleTheme } = useTheme();
+    const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false);
+    const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
+    const { toggleTheme, theme } = useTheme();
 
-    useOnClickOutside(ref, () => setIsMenuOpen(false));
+    useOnClickOutside(authRef, () => setIsAuthMenuOpen(false));
+    useOnClickOutside(settingsRef, () => setIsSettingsMenuOpen(false));
 
     const status = id ? '' : 'Offline';
 
-    const handleClick = () => {
-        setIsMenuOpen((prev) => !prev);
+    const handleAuthClick = () => {
+        setIsAuthMenuOpen((prev) => !prev);
+    };
+
+    const handleSettingsClick = () => {
+        setIsSettingsMenuOpen((prev) => !prev);
     };
 
     const handleSignOut = async () => {
@@ -187,31 +209,40 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
 
     return (
         <Container>
-            <Group>
-                <Button onClick={handleClick}>
+            <Group focusMode={focusMode}>
+                <Button onClick={handleAuthClick}>
                     <RiAccountCircleFill
                         size="20px"
                         color={!synced ? 'var(--sn-stylekit-danger-color)' : 'var(--sn-stylekit-info-color)'}
                     />
                 </Button>
-                <Button onClick={toggleTheme}>
-                    <MdOutlinePalette size="20px" color="var(--sn-stylekit-neutral-color)" />
+                <Button onClick={handleSettingsClick}>
+                    <MdOutlinePalette
+                        size="20px"
+                        color={
+                            isSettingsMenuOpen ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)'
+                        }
+                    />
                 </Button>
             </Group>
-            <Group>
+            <Group focusMode={focusMode}>
                 <Status>{synced ? '' : 'Unable to sync'}</Status>
             </Group>
-            <Group>
+            <Group focusMode={focusMode}>
                 <Status>{status}</Status>
             </Group>
 
-            {isMenuOpen && (
+            {isAuthMenuOpen && (
                 <Modal>
-                    <MenuContainer open={isMenuOpen} ref={ref} left={13} bottom={32}>
+                    <MenuContainer open={isAuthMenuOpen} ref={authRef} left={13} bottom={32}>
                         <Menu>
                             <MenuTitle>
                                 <div>Account</div>
-                                <IoMdClose size="18px" color="var(--sn-stylekit-neutral-color)" onClick={handleClick} />
+                                <IoMdClose
+                                    size="18px"
+                                    color="var(--sn-stylekit-neutral-color)"
+                                    onClick={handleAuthClick}
+                                />
                             </MenuTitle>
                             <MenuStatus>
                                 <div>You&apos;re signed in as:</div>
@@ -233,6 +264,59 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                                         <MdLogout size="22px" color="var(--sn-stylekit-neutral-color)" />
                                         <ItemText>Sign out workspace</ItemText>
                                     </ItemContent>
+                                </Item>
+                            </MenuItem>
+                        </Menu>
+                    </MenuContainer>
+                </Modal>
+            )}
+
+            {isSettingsMenuOpen && (
+                <Modal>
+                    <MenuContainer open={isSettingsMenuOpen} ref={settingsRef} left={45} bottom={32}>
+                        <Menu>
+                            <MenuTitle>APPEARANCE</MenuTitle>
+                            <MenuItem>
+                                <RadioButton role="menuitemradio" onClick={() => toggleTheme('light')}>
+                                    <RadioFill checked={theme === 'light'} />
+                                    <RadioText>Default</RadioText>
+                                </RadioButton>
+                            </MenuItem>
+                            <MenuItem>
+                                <RadioButton role="menuitemradio" onClick={() => toggleTheme('dark')}>
+                                    <RadioFill checked={theme === 'dark'} />
+                                    <RadioText>Dark</RadioText>
+                                </RadioButton>
+                            </MenuItem>
+                            <Divider />
+                            <MenuItem>
+                                <Item onClick={setFocusMode}>
+                                    <ItemContent>
+                                        <ItemText>Focus Mode</ItemText>
+                                    </ItemContent>
+                                    <div>
+                                        <Switch value={focusMode} />
+                                    </div>
+                                </Item>
+                            </MenuItem>
+                            <MenuItem>
+                                <Item onClick={setTagsPanel}>
+                                    <ItemContent>
+                                        <ItemText>Show Tags Panel</ItemText>
+                                    </ItemContent>
+                                    <div>
+                                        <Switch value={tagsPanel} />
+                                    </div>
+                                </Item>
+                            </MenuItem>
+                            <MenuItem>
+                                <Item onClick={setNotesPanel}>
+                                    <ItemContent>
+                                        <ItemText>Show Notes Panel</ItemText>
+                                    </ItemContent>
+                                    <div>
+                                        <Switch value={notesPanel} />
+                                    </div>
                                 </Item>
                             </MenuItem>
                         </Menu>

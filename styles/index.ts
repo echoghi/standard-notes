@@ -76,3 +76,78 @@ export const Divider = styled.hr`
     background-color: var(--sn-stylekit-border-color);
     border-style: none;
 `;
+
+export const RadioButton = styled.button`
+    font-size: 0.813rem;
+    padding: 0.375rem 0.75rem;
+    color: var(--sn-stylekit-contrast-foreground-color);
+    text-align: left;
+    background-color: transparent;
+    border: none;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+`;
+
+export const RadioFill = styled.div<{ checked: boolean }>`
+    border: 2px solid
+        ${(props) => (props.checked ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-passive-color-1)')};
+    border-radius: 9999px;
+    width: 1rem;
+    height: 1rem;
+    position: relative;
+
+    &:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 9999px;
+        background-color: var(--sn-stylekit-info-color);
+        opacity: ${(props) => (props.checked ? 1 : 0)};
+    }
+`;
+
+export const RadioText = styled.div`
+    flex-grow: 1;
+    display: flex;
+    margin-left: 0.5rem;
+    align-items: center;
+`;
+
+export const setGrid = ({
+    editorOpen,
+    notesPanel,
+    tagsPanel,
+    focusMode
+}: {
+    editorOpen: boolean;
+    notesPanel: boolean;
+    tagsPanel: boolean;
+    focusMode: boolean;
+}) => {
+    if (editorOpen) {
+        if (notesPanel && tagsPanel) {
+            if (focusMode) return '0 0 1fr';
+            return '220px 400px 2fr';
+        }
+        if (notesPanel) {
+            if (focusMode) return '0 1fr';
+            return '400px 2fr';
+        }
+        if (tagsPanel) {
+            if (focusMode) return '0 1fr';
+            return '220px 2fr';
+        }
+
+        return '1fr';
+    } else {
+        if (focusMode) return '1fr';
+        if (notesPanel && tagsPanel) return '220px 1fr';
+        return '1fr';
+    }
+};

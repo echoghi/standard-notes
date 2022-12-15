@@ -4,7 +4,7 @@ import { useStoreActions, useStoreState } from 'easy-peasy';
 import { useRef, useState } from 'react';
 import Modal from './Modal';
 import { useOnClickOutside } from '../lib/hooks';
-import { Divider, Menu, MenuButton, MenuContainer, MenuItem } from '../styles';
+import { Divider, Menu, MenuButton, MenuContainer, MenuItem, RadioButton, RadioFill, RadioText } from '../styles';
 
 const MenuTitle = styled.div`
     display: flex;
@@ -17,6 +17,7 @@ const MenuTitle = styled.div`
     font-size: 12px;
     line-height: 1.5rem;
     font-weight: 700;
+    text-transform: uppercase;
 `;
 
 const PrefStatus = styled.div`
@@ -34,48 +35,6 @@ const PrefStatus = styled.div`
         cursor: pointer;
         padding: 0.15rem 0.5rem;
     }
-`;
-
-const RadioButton = styled.button`
-    font-size: 0.813rem;
-    padding: 0.375rem 0.75rem;
-    color: var(--sn-stylekit-contrast-foreground-color);
-    text-align: left;
-    background-color: transparent;
-    border: none;
-    align-items: center;
-    cursor: pointer;
-    width: 100%;
-    display: flex;
-`;
-
-const RadioFill = styled.div<{ checked: boolean }>`
-    border: 2px solid
-        ${(props) => (props.checked ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-passive-color-1)')};
-    border-radius: 9999px;
-    width: 1rem;
-    height: 1rem;
-    position: relative;
-
-    &:after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 0.5rem;
-        height: 0.5rem;
-        border-radius: 9999px;
-        background-color: var(--sn-stylekit-info-color);
-        opacity: ${(props) => (props.checked ? 1 : 0)};
-    }
-`;
-
-const RadioText = styled.div`
-    flex-grow: 1;
-    display: flex;
-    margin-left: 0.5rem;
-    align-items: center;
 `;
 
 const SortNotes = () => {

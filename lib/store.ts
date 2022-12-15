@@ -14,6 +14,18 @@ export const store = createStore({
     loading: false,
     error: null,
     synced: true,
+    focusMode: false,
+    tagsPanel: true,
+    notesPanel: true,
+    setFocusMode: action((state: any) => {
+        state.focusMode = !state.focusMode;
+    }),
+    setTagsPanel: action((state: any) => {
+        state.tagsPanel = !state.tagsPanel;
+    }),
+    setNotesPanel: action((state: any) => {
+        state.notesPanel = !state.notesPanel;
+    }),
     setSynced: action((state: any, payload) => {
         state.synced = payload;
     }),

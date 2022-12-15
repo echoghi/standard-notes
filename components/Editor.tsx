@@ -10,11 +10,13 @@ import EditModeBanner from './EditModeBanner';
 import { decrypt, encrypt, generateUuid, storeEncryptedNotes } from '../lib/encryption';
 import { edit } from '../lib/mutations';
 
-const Container = styled.div`
+const Container = styled.div<{ focusMode: boolean }>`
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--sn-stylekit-background-color);
+    background: ${({ focusMode }) =>
+        focusMode ? 'var(--sn-stylekit-contrast-background-color)' : 'var(--sn-stylekit-background-color)'};
+    padding: ${({ focusMode }) => (focusMode ? '25px 20% 0px 20%' : '0')};
 `;
 
 const TitleContainer = styled.div`
@@ -23,6 +25,7 @@ const TitleContainer = styled.div`
     padding-bottom: 10px;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--sn-stylekit-background-color);
     border-bottom: 1px solid var(--sn-stylekit-border-color);
     width: 100%;
 `;
@@ -64,6 +67,7 @@ const EditPanel = styled.textarea`
 
 const Editor = () => {
     const note = useStoreState((state: any) => state.activeNote);
+    const focusMode = useStoreState((state: any) => state.focusMode);
 
     const createNote = useStoreActions((store: any) => store.createNote);
     const updateNote = useStoreActions((store: any) => store.updateNote);
@@ -158,7 +162,7 @@ const Editor = () => {
     };
 
     return (
-        <Container>
+        <Container focusMode={focusMode}>
             {!note?.editEnabled && <EditModeBanner note={note} />}
             <TitleContainer>
                 <InputContainer>

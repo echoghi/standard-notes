@@ -11,16 +11,18 @@ import getNotes from '../prisma/getNotes';
 import AuthBar from '../components/AuthBar';
 import { Note } from '../types';
 import OfflineSync from '../components/OfflineSync';
+import { setGrid } from '../styles';
 
-const Container = styled.div<{ editorOpen: boolean }>`
+const Container = styled.div<{ grid: string; focusMode: boolean }>`
     display: grid;
-    grid-template-columns: ${(props: any) => (props.editorOpen ? '220px 400px 2fr' : '220px 1fr')};
+    grid-template-columns: ${(props: any) => (props.grid ? props.grid : '220px 1fr')};
     grid-template-rows: 1fr 2rem;
     height: 100%;
     overflow: hidden;
     position: relative;
     vertical-align: top;
     width: 100%;
+    transition: ${(props: any) => (props.focusMode ? 'grid-template-columns .25s' : 'none')};
 `;
 
 interface NoteData {
@@ -59,6 +61,9 @@ const Home = ({ noteData, userId, email }: Props) => {
     const deleted = useStoreState((store: any) => store.deleted);
     const notes = useStoreState((store: any) => store.notes);
     const activeNote = useStoreState((state: any) => state.activeNote);
+    const notesPanel = useStoreState((state: any) => state.notesPanel);
+    const tagsPanel = useStoreState((state: any) => state.tagsPanel);
+    const focusMode = useStoreState((state: any) => state.focusMode);
 
     const setNotes = useStoreActions((store: any) => store.setNotes);
 
@@ -67,11 +72,13 @@ const Home = ({ noteData, userId, email }: Props) => {
         setNotes({ ...noteData });
     }, [noteData]);
 
+    const grid = setGrid({ editorOpen: activeNote, notesPanel, tagsPanel, focusMode });
+
     return (
-        <Container id="app" editorOpen={activeNote}>
+        <Container id="app" grid={grid} focusMode={focusMode}>
             <OfflineSync />
-            <Navigation />
-            <Notes notes={notes} starred={starred} deleted={deleted} />
+            {tagsPanel && <Navigation />}
+            {notesPanel && <Notes notes={notes} starred={starred} deleted={deleted} />}
 
             {activeNote && <Editor />}
 
