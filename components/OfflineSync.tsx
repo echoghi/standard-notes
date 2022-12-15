@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useStoreActions } from 'easy-peasy';
 import { decrypt } from '../lib/encryption';
 import { saveBulkNotes } from '../lib/mutations';
 import { getLocalStorage, setLocalStorage } from '../lib/storage';
-import { useStoreActions } from 'easy-peasy';
 
 const OfflineSync = () => {
     const [isOnline, setIsOnline] = useState(true);
@@ -43,7 +43,7 @@ const OfflineSync = () => {
                 console.log('bulk save failed', err);
             }
         }
-    }, [isOnline]);
+    }, [isOnline, setSynced]);
 
     return null;
 };

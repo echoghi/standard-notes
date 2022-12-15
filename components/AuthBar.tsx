@@ -1,14 +1,14 @@
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
+import { useStoreState } from 'easy-peasy';
 import { RiAccountCircleFill } from 'react-icons/ri';
 import { MdOutlinePalette, MdLogout } from 'react-icons/md';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoMdClose } from 'react-icons/io';
 import { useRef, useState } from 'react';
 import { logOut } from '../lib/mutations';
-import { useRouter } from 'next/router';
 import { useOnClickOutside, useTheme, useUser } from '../lib/hooks';
 import { formatDate } from '../lib/formatters';
-import { useStoreState } from 'easy-peasy';
 import Modal from './Modal';
 
 const Container = styled.footer`
@@ -70,7 +70,7 @@ const Button = styled.button`
     }
 `;
 
-const MenuContainer = styled.div`
+const MenuContainer = styled.div<{ open: boolean; ref: any }>`
     position: absolute;
     user-select: none;
     padding-top: 0.5rem;
@@ -257,7 +257,7 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                                 <IoMdClose size="18px" color="var(--sn-stylekit-neutral-color)" onClick={handleClick} />
                             </MenuTitle>
                             <MenuStatus>
-                                <div>You're signed in as:</div>
+                                <div>You&apos;re signed in as:</div>
                                 <Email>{email}</Email>
                             </MenuStatus>
                             <SyncContainer>

@@ -1,12 +1,13 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 import prisma from '../../lib/prisma';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { User } from '../../types';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { email, proof } = req.body;
 
-    const user = await prisma.user.findUnique({
+    const user = <User | null>await prisma.user.findUnique({
         where: { email }
     });
 
@@ -26,14 +27,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 httpOnly: true,
                 maxAge: 7 * 24 * 60 * 60 * 1000,
                 path: '/',
-                sameSite: 'Strict',
+                sameSite: 'strict',
                 secure: process.env.NODE_ENV === 'production'
             }),
             cookie.serialize('proof', proof, {
                 httpOnly: true,
                 maxAge: 7 * 24 * 60 * 60 * 1000,
                 path: '/',
-                sameSite: 'Strict',
+                sameSite: 'strict',
                 secure: process.env.NODE_ENV === 'production'
             })
         ]);

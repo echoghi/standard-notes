@@ -14,14 +14,15 @@ export const useUser = () => {
     };
 };
 
+// prettier-ignore
 export const useTheme = () => {
     const [theme, setTheme] = useState(() => {
         // Read the initial value of the "--sn-stylekit-theme-type" CSS variable
         if (typeof window !== 'undefined') {
             return window.getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-theme-type');
-        } else {
-            return 'light';
         }
+
+        return 'light';
     });
 
     useEffect(() => {
@@ -61,13 +62,15 @@ export const useTheme = () => {
         }
     }, [theme]);
 
-    const toggleTheme = () => setTheme((theme) => (theme === 'dark' ? 'light' : 'dark'));
+    const toggleTheme = () => setTheme((state) => (state === 'dark' ? 'light' : 'dark'));
 
     return { toggleTheme, theme };
 };
 
+// eslint-disable-next-line
 export function useOnClickOutside(ref: React.MutableRefObject<any>, handler: (event: Event) => void) {
     useEffect(() => {
+        // eslint-disable-next-line
         const listener = (event: Event) => {
             // Do nothing if clicking ref's element or descendent elements
             if (!ref.current || ref.current.contains(event.target)) {
@@ -86,3 +89,4 @@ export function useOnClickOutside(ref: React.MutableRefObject<any>, handler: (ev
         };
     }, [ref, handler]);
 }
+/* prettier-enable */

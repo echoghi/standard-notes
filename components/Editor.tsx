@@ -7,9 +7,8 @@ import SaveStatus from './SaveStatus';
 import NoteMenu from './NoteMenu';
 import PinNote from './PinNote';
 import EditModeBanner from './EditModeBanner';
-import { decrypt, encrypt, generateUuid } from '../lib/encryption';
+import { decrypt, encrypt, generateUuid, storeEncryptedNotes } from '../lib/encryption';
 import { edit } from '../lib/mutations';
-import { storeEncryptedNotes } from '../lib/storage';
 
 const Container = styled.div`
     display: flex;
@@ -103,8 +102,8 @@ const Editor = () => {
 
             const newNote = {
                 ...note,
-                content: editorContent ? editorContent : note?.content,
-                title: editorTitle ? editorTitle : note?.title
+                content: editorContent || note?.content,
+                title: editorTitle || note?.title
             };
 
             // encrypt note

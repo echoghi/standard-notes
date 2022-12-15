@@ -1,14 +1,14 @@
 import styled from 'styled-components';
+import { useStoreActions, useStoreState } from 'easy-peasy';
 import { MdOutlineNotes, MdOutlineEditOff } from 'react-icons/md';
-import { formatDate } from '../lib/formatters';
 import { BsPinFill } from 'react-icons/bs';
 import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
-import { useStoreActions, useStoreState } from 'easy-peasy';
+import { formatDate } from '../lib/formatters';
 import { decrypt } from '../lib/encryption';
 import { Note as NoteType } from '../types';
 
-const NoteContainer = styled.div`
+const NoteContainer = styled.div<{ isActive: boolean }>`
     display: flex;
     align-items: stretch;
     width: 100%;

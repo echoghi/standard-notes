@@ -1,23 +1,24 @@
 import cookie from 'cookie';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { validateRoute } from '../../lib/auth';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default validateRoute(async (req: NextApiRequest, res: NextApiResponse) => {
     res.setHeader('Set-Cookie', [
         cookie.serialize('_sn_session', '', {
             httpOnly: true,
             expires: new Date(0),
             path: '/',
-            sameSite: 'Strict',
+            sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production'
         }),
         cookie.serialize('proof', '', {
             httpOnly: true,
             expires: new Date(0),
             path: '/',
-            sameSite: 'Strict',
+            sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production'
         })
     ]);
 
     res.status(307).json({ message: 'Logged out' });
-};
+});

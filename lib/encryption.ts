@@ -1,8 +1,9 @@
 import { AES, PBKDF2, enc, lib, HmacSHA256 } from 'crypto-js';
-import { getLocalStorage } from './storage';
+import { Note } from '../types';
+import { getLocalStorage, setLocalStorage } from './storage';
 
-export function encrypt(text: string) {
-    if (!text) return text;
+export function encrypt(text: string | null) {
+    if (!text) return '';
     const secretKey = getLocalStorage('pk');
 
     if (!secretKey) {
@@ -14,8 +15,8 @@ export function encrypt(text: string) {
     return encryptedText;
 }
 
-export function decrypt(text: string) {
-    if (!text) return text;
+export function decrypt(text: string | null) {
+    if (!text) return '';
     const secretKey = getLocalStorage('pk');
 
     if (!secretKey) {
@@ -42,6 +43,12 @@ export function generateUuid() {
     return crypto.randomUUID();
 }
 
+export function generateProof(secretKey: string) {
+    const signedProof = HmacSHA256('proof', secretKey).toString();
+
+    return signedProof;
+}
+
 export function encryptPassword(password: string, existingSalt?: string) {
     const salt = existingSalt || generateSalt(); // The salt should be a random string of at least 16 characters
 
@@ -58,8 +65,22 @@ export function encryptPassword(password: string, existingSalt?: string) {
     return { proof, salt, password: key };
 }
 
-export function generateProof(secretKey: string) {
-    const signedProof = HmacSHA256('proof', secretKey).toString();
+export function storeEncryptedNotes(note: Note): void {
+    const storedNotes = JSON.parse(decrypt(getLocalStorage('enc_notes')));
 
-    return signedProof;
+    if (!storedNotes) {
+        setLocalStorage('enc_notes', encrypt(JSON.stringify([note])));
+        return;
+    }
+
+    // remove the note if it already exists in the array
+    const filtered = storedNotes.filter((n: Note) => n.id !== note.id);
+
+    // replace with most recent change
+    filtered.push(note);
+
+    // Encrypt the notes
+    const encryptedNotes = encrypt(JSON.stringify(filtered));
+    // Store the encrypted notes
+    setLocalStorage('enc_notes', encryptedNotes);
 }

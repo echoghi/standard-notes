@@ -6,7 +6,7 @@ import { StoreProvider } from 'easy-peasy';
 import Layout from '../components/Layout';
 import { store } from '../lib/store';
 
-export default function App({ Component, pageProps }: AppProps) {
+const App = ({ Component, pageProps }: AppProps) => {
     return (
         <StoreProvider store={store}>
             <Layout>
@@ -14,4 +14,6 @@ export default function App({ Component, pageProps }: AppProps) {
             </Layout>
         </StoreProvider>
     );
-}
+};
+
+export default App;

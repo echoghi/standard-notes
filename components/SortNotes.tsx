@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 import Modal from './Modal';
 import { useOnClickOutside } from '../lib/hooks';
 
-const Button = styled.button`
+const Button = styled.button<{ ref: any }>`
     height: 2rem;
     width: 2rem;
     border: 1px solid var(--sn-stylekit-border-color);
@@ -30,7 +30,7 @@ const Button = styled.button`
     }
 `;
 
-const MenuContainer = styled.div`
+const MenuContainer = styled.div<{ open: boolean; top: number; left: number; ref: any }>`
     position: absolute;
     user-select: none;
     padding-top: 0.5rem;
@@ -116,7 +116,7 @@ const RadioButton = styled.button`
     display: flex;
 `;
 
-const RadioFill = styled.div`
+const RadioFill = styled.div<{ checked: boolean }>`
     border: 2px solid
         ${(props) => (props.checked ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-passive-color-1)')};
     border-radius: 9999px;
@@ -146,8 +146,8 @@ const RadioText = styled.div`
 `;
 
 const SortNotes = () => {
-    const ref = useRef();
-    const buttonRef = useRef();
+    const ref = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [position, setPosition] = useState({ left: 0, top: 0 });
     const sortSetting = useStoreState((store: any) => store.sortSetting);
@@ -157,11 +157,12 @@ const SortNotes = () => {
 
     const handleMenuOpen = () => {
         // Get the bounding client rect of the button element
-        if (buttonRef.current) {
-            const buttonRect = buttonRef.current.getBoundingClientRect();
-
+        if (buttonRef?.current) {
+            const buttonRect = buttonRef?.current?.getBoundingClientRect();
             // Calculate the position of the dropdown menu
+            // eslint-disable-next-line
             const top = buttonRect.top + buttonRect.height;
+            // eslint-disable-next-line
             let left = buttonRect.left;
 
             if (buttonRect.left + 200 > window.innerWidth) {

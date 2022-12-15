@@ -1,17 +1,18 @@
-import Notes from '../components/Notes';
+import { GetServerSideProps } from 'next';
+import { useEffect } from 'react';
 import jwt from 'jsonwebtoken';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
+
 import Editor from '../components/Editor';
-import { useEffect } from 'react';
+import Notes from '../components/Notes';
 import Navigation from '../components/Navigation';
 import getNotes from '../prisma/getNotes';
 import AuthBar from '../components/AuthBar';
-import { GetServerSideProps } from 'next';
 import { Note } from '../types';
 import OfflineSync from '../components/OfflineSync';
 
-const Container = styled.div`
+const Container = styled.div<{ editorOpen: boolean }>`
     display: grid;
     grid-template-columns: ${(props: any) => (props.editorOpen ? '220px 400px 2fr' : '220px 1fr')};
     grid-template-rows: 1fr 2rem;
@@ -40,7 +41,10 @@ interface Props {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { proof, _sn_session } = context.req.cookies;
+    // eslint-disable-next-line
+    if (!proof || !_sn_session) context.res.writeHead(302, { Location: '/signin' }).end();
 
+    // @ts-ignore
     const { id, email } = jwt.verify(_sn_session, proof);
 
     const response = await getNotes(id);
@@ -50,7 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
 };
 
-export default function Home({ noteData, userId, email }: Props) {
+const Home = ({ noteData, userId, email }: Props) => {
     const starred = useStoreState((store: any) => store.starred);
     const deleted = useStoreState((store: any) => store.deleted);
     const notes = useStoreState((store: any) => store.notes);
@@ -75,4 +79,6 @@ export default function Home({ noteData, userId, email }: Props) {
             <div id="modal-root" />
         </Container>
     );
-}
+};
+
+export default Home;

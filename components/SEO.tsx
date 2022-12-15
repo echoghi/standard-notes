@@ -1,6 +1,6 @@
 import { NextSeo } from 'next-seo';
 
-export default function Seo({
+const Seo = ({
     pageTitle,
     description,
     currentURL
@@ -8,7 +8,7 @@ export default function Seo({
     pageTitle: string;
     description: string;
     currentURL: string;
-}) {
+}) => {
     return (
         <NextSeo
             title={pageTitle}
@@ -44,4 +44,6 @@ export default function Seo({
             ]}
         />
     );
-}
+};
+
+export default Seo;

@@ -18,7 +18,7 @@ export function sortNotes(notes: any, sortSetting: string) {
             return 0;
         }
 
-        return new Date(b[sortSetting]) - new Date(a[sortSetting]);
+        return new Date(b[sortSetting]).getTime() - new Date(a[sortSetting]).getTime();
     });
 
     return notes;

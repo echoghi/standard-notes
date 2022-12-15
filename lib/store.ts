@@ -55,7 +55,7 @@ export const store = createStore({
             state.deleted = sortNotes(updatedDeleted, state.sortSetting);
         }
     }),
-    emptyTrash: action((state: any, payload) => {
+    emptyTrash: action((state: any) => {
         state.deleted = [];
 
         state.deletedCount = 0;

@@ -1,23 +1,24 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
 import prisma from '../../lib/prisma';
+import { validateRoute } from '../../lib/auth';
+import { Note, User } from '../../types';
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { data } = req.body;
-    const { proof, _sn_session } = req.cookies;
-
-    const { id: userId } = jwt.verify(_sn_session, proof);
+export default validateRoute(async function handle(req: NextApiRequest, res: NextApiResponse, user: User) {
+    const { data } = <{ data: Note[] }>req.body;
+    const userId = user.id;
 
     if (data) {
         // loop through data and update each field and push promise to an array then finish with promise.all
         const promises = [];
-        for (const updatedNote of Object.entries(data)) {
+        for (const updatedNote of data) {
             const { id } = updatedNote;
 
             if (updatedNote.deleteFlag) {
                 promises.push(
                     prisma.note.delete({
+                        // @ts-ignore
                         where: { id },
+                        // @ts-ignore
                         user: {
                             connect: {
                                 id: userId
@@ -25,14 +26,16 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
                         }
                     })
                 );
-                continue;
             } else {
                 promises.push(
                     prisma.note.update({
+                        // @ts-ignore
                         where: { id },
+                        // @ts-ignore
                         data: {
                             ...updatedNote
                         },
+                        // @ts-ignore
                         user: {
                             connect: {
                                 id: userId
@@ -48,4 +51,4 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     } else {
         res.status(200).json({ message: 'success' });
     }
-}
+});

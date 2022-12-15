@@ -7,9 +7,12 @@ export function getCookie(name: string): string | null {
 
         // Split the string into individual cookies
         cookieArray = allCookies.split(';');
-    } catch (error) {}
+    } catch (error) {
+        console.error(error);
+    }
 
     // Loop through the array of cookies
+    // eslint-disable-next-line
     for (const cookie of cookieArray) {
         // Check if the cookie starts with the name we're looking for, followed by an equals sign
         if (cookie.startsWith(`${name}=`)) {

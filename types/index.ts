@@ -9,9 +9,10 @@ export interface Note {
     spellCheck: boolean;
     preview: boolean;
     editEnabled: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt?: Date;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt?: string;
+    deleteFlag?: boolean;
 }
 
 export interface User {

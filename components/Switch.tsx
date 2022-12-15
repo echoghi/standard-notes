@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const SwitchContainer = styled.label`
@@ -8,7 +8,7 @@ const SwitchContainer = styled.label`
     justify-content: space-between;
 `;
 
-const SwitchContent = styled.span`
+const SwitchContent = styled.span<{ checked: boolean }>`
     background-color: ${(props: any) =>
         props.checked ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)'};
     border-color: rgba(0, 0, 0, 0);
@@ -39,7 +39,7 @@ const SwitchInput = styled.input`
     position: absolute;
 `;
 
-const SwitchSlider = styled.span`
+const SwitchSlider = styled.span<{ checked: boolean }>`
     transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
     transition-duration: 150ms;
     transition-property: transform;
@@ -65,10 +65,11 @@ const Switch = (props: any) => {
         setIsChecked(value);
     }, [value]);
 
+    // prettier-ignore
     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { checked } = event.target;
         setIsChecked(checked);
-        onChange && onChange(checked);
+        onChange(checked);
     };
 
     return (

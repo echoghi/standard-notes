@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { update } from '../lib/mutations';
 import { Note } from '../types';
 
-const MenuButton = styled.button`
+const MenuButton = styled.button<{ pinned: boolean }>`
     height: 2rem;
     width: 2rem;
     border: ${(props: any) =>
@@ -47,7 +47,7 @@ const PinNote = ({ note }: { note: Note }) => {
         } catch (err) {
             setError(true);
         }
-    }, [note]);
+    }, [note, setLoading, setError, updateNote]);
 
     return (
         <MenuButton onClick={handlePinNote} pinned={note?.pinned} aria-label="Pin note">

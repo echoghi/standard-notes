@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
 import prisma from '../../lib/prisma';
+import { validateRoute } from '../../lib/auth';
+import { User } from '../../types';
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default validateRoute(async function handle(req: NextApiRequest, res: NextApiResponse, user: User) {
     const { id, trashed } = req.body;
-    const { proof, _sn_session } = req.cookies;
-
-    const { id: userId } = jwt.verify(_sn_session, proof);
+    const userId = user.id;
 
     let newNote = null;
 
@@ -20,10 +19,12 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
         newNote = await prisma.note.update({
             where: { id },
             data: {
+                // @ts-ignore
                 deleted: true,
                 deletedAt: new Date(),
                 user: {
                     connect: {
+                        // @ts-ignore
                         id: userId
                     }
                 }
@@ -33,11 +34,13 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
     // upadte the lastUpdated field on the user
     await prisma.user.update({
+        // @ts-ignore
         where: { id: userId },
         data: {
+            // @ts-ignore
             updatedAt: new Date()
         }
     });
 
     res.json(newNote);
-}
+});

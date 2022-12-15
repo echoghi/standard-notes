@@ -1,10 +1,9 @@
 import { CgNotes } from 'react-icons/cg';
-import { AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlinePlus, AiFillStar } from 'react-icons/ai';
+import { BiTrash } from 'react-icons/bi';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import styled from 'styled-components';
 import Note from './Note';
-import { BiTrash } from 'react-icons/bi';
-import { AiFillStar } from 'react-icons/ai';
 import { formatTitleDate } from '../lib/formatters';
 import { encrypt } from '../lib/encryption';
 import { Note as NoteType } from '../types';

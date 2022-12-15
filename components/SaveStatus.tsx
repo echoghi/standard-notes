@@ -52,7 +52,7 @@ const ErrorBg = styled(Bg)`
     background: var(--sn-stylekit-danger-color);
 `;
 
-const Tooltip = styled.div`
+const Tooltip = styled.div<{ active: boolean; error: boolean }>`
     display: ${(props: any) => (props.active ? 'block' : 'none')};
     position: absolute;
     top: 0;
@@ -80,12 +80,15 @@ const TooltipBody = styled.div`
     font-size: 13px;
 `;
 
+// prettier-ignore
 const SaveStatus = () => {
     const loading = useStoreState((state: any) => state.loading);
     const error = useStoreState((state: any) => state.error);
     const [tooltipActive, setTooltipActive] = useState(false);
     const [isDisabled, setIsDisabled] = useState(false);
+    // eslint-disable-next-line
     const tooltipText = loading ? 'Saving...' : error ? 'Sync Unreachable' : 'All Changes Saved';
+    // eslint-disable-next-line
     const tooltipBodyText = loading ? '' : error ? 'changes saved offline' : '';
     const disabledText = 'Note Status updates are disabled';
     const disabledBodyText = 'click to enable';

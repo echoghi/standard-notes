@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 function Modal({ children }: { children: React.ReactNode }) {
     // This is the DOM element we want to render the portal into
-    const modalRoot = document.getElementById('modal-root');
+    const modalRoot = document.getElementById('modal-root') as HTMLElement;
 
     useEffect(() => {
         // Create a DOM element to render the portal into

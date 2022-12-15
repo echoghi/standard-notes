@@ -1,7 +1,7 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 import prisma from '../../lib/prisma';
-import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const { email, proof, salt, id } = req.body;
@@ -12,6 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         user = await prisma.user.create({
             data: {
                 email,
+                // @ts-ignore
                 proof,
                 salt,
                 id
@@ -19,8 +20,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
     } catch (e) {
         console.log(e);
-        res.status(401);
-        res.json({ error: 'User already exists' });
+        res.status(401).json({ error: 'User already exists' });
         return;
     }
 
@@ -40,7 +40,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
             path: '/',
-            sameSite: 'Strict',
+            sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production'
         })
     );
@@ -51,7 +51,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
             path: '/',
-            sameSite: 'Strict',
+            sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production'
         })
     );

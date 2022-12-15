@@ -1,4 +1,4 @@
-export const formatDate = (date = new Date()) => {
+export const formatDate = (date: Date | string = new Date()) => {
     // check if date is a valid date object
     if (Object.prototype.toString.call(date) !== '[object Date]') {
         date = new Date(date);
@@ -53,10 +53,10 @@ export const getReadTime = (text: string) => {
     if (roundedReadTime < 1) {
         // Output "< 1 minute" if the read time is less than one minute
         return '< 1 minute';
-    } else {
-        // Output the rounded read time otherwise
-        return `${roundedReadTime} minutes`;
     }
+
+    // Output the rounded read time otherwise
+    return `${roundedReadTime} minutes`;
 };
 
 export const getNoteStats = (text: string) => {

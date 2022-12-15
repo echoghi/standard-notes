@@ -1,12 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
 import prisma from '../../lib/prisma';
+import { validateRoute } from '../../lib/auth';
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+export default validateRoute(async function handle(req: NextApiRequest, res: NextApiResponse, user: any) {
     const { id, data } = req.body;
-    const { proof, _sn_session } = req.cookies;
-
-    const { id: userId } = jwt.verify(_sn_session, proof);
+    const userId = user.id;
 
     const newNote = await prisma.note.update({
         where: { id },
@@ -23,9 +21,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     await prisma.user.update({
         where: { id: userId },
         data: {
+            // @ts-ignore
             updatedAt: new Date()
         }
     });
 
     res.json(newNote);
-}
+});

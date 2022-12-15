@@ -1,7 +1,7 @@
 import { Note } from '../types';
 import fetcher from './fetcher';
 
-export const auth = (mode: 'signin' | 'signup', body: { email: string; password: string }) => {
+export const auth = (mode: 'signin' | 'signup', body: { id: string; email: string; proof: string; salt: string }) => {
     return fetcher(`/${mode}`, body);
 };
 

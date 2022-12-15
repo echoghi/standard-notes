@@ -1,15 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
 import prisma from '../../lib/prisma';
+import { validateRoute } from '../../lib/auth';
+import { User } from '../../types';
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
-    const { proof, _sn_session } = req.cookies;
+export default validateRoute(async function handle(req: NextApiRequest, res: NextApiResponse, user: User) {
+    const userId = user.id;
 
-    const { id: userId } = jwt.verify(_sn_session, proof);
-
-    const user = await prisma.user.findUnique({
+    const activeUser = await prisma.user.findUnique({
+        // @ts-ignore
         where: { id: userId }
     });
 
-    res.json(user);
-}
+    res.json(activeUser);
+});

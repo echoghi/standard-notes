@@ -1,12 +1,11 @@
 import { useCallback, useState } from 'react';
 import { MdOutlineEditOff, MdOutlineEdit } from 'react-icons/md';
-import { useStoreActions, useStoreState } from 'easy-peasy';
+import { useStoreActions } from 'easy-peasy';
 import styled from 'styled-components';
-import fetcher from '../lib/fetcher';
 import { update } from '../lib/mutations';
 import { Note } from '../types';
 
-const Container = styled.div`
+const Container = styled.div<{ active: boolean }>`
     font-size: 0.875rem;
     width: 100%;
     line-height: 1.25rem;

@@ -8,16 +8,15 @@ import { IoMdClose, IoMdCopy } from 'react-icons/io';
 import { MdOutlineEditOff, MdSettingsBackupRestore, MdOutlineDownload } from 'react-icons/md';
 import { AiOutlineStar } from 'react-icons/ai';
 import { VscPreview } from 'react-icons/vsc';
-import Switch from './Switch';
 import { useStoreActions, useStoreState } from 'easy-peasy';
+import Switch from './Switch';
 import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
-import { decrypt, generateUuid } from '../lib/encryption';
+import { decrypt, generateUuid, storeEncryptedNotes } from '../lib/encryption';
 import { clearTrash, remove, update, duplicate } from '../lib/mutations';
 import Modal from './Modal';
-import { storeEncryptedNotes } from '../lib/storage';
 import { useOnClickOutside } from '../lib/hooks';
 
-const MenuButton = styled.button`
+const MenuButton = styled.button<{ ref: any }>`
     height: 2rem;
     width: 2rem;
     border: 1px solid var(--sn-stylekit-border-color);
@@ -37,7 +36,7 @@ const MenuButton = styled.button`
     }
 `;
 
-const MenuContainer = styled.div`
+const MenuContainer = styled.div<{ open: boolean; top: number; left: number; ref: any }>`
     position: absolute;
     user-select: none;
     padding-top: 0.5rem;
@@ -88,13 +87,13 @@ const Item = styled.button`
     }
 `;
 
-const ItemContent = styled.div`
+const ItemContent = styled.div<{ alignAlt?: boolean }>`
     display: flex;
     align-items: ${(props: any) => (props.alignAlt ? 'flex-start' : 'center')};
     flex-grow: 1;
 `;
 
-const ItemText = styled.div`
+const ItemText = styled.div<{ color?: string }>`
     margin-left: 0.5rem;
     color: ${(props: any) => props.color || 'inherit'};
 `;
@@ -137,7 +136,7 @@ const SmallText = styled.div`
 
 const NoteMenu = () => {
     const ref = useRef();
-    const buttonRef = useRef();
+    const buttonRef = useRef<HTMLButtonElement>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [position, setPosition] = useState({ left: 0, top: 0 });
 
@@ -162,17 +161,18 @@ const NoteMenu = () => {
         // Get the bounding client rect of the button element
         if (buttonRef.current) {
             const buttonRect = buttonRef.current.getBoundingClientRect();
+            const { top, height, left } = buttonRect;
 
             // Calculate the position of the dropdown menu
-            const top = buttonRect.top + buttonRect.height;
-            let left = buttonRect.left;
+            const menuTop = top + height;
+            let menuLeft = left;
 
             if (buttonRect.left + 200 > window.innerWidth) {
-                left = window.innerWidth - 380;
+                menuLeft = window.innerWidth - 380;
             }
 
             // Open the dropdown menu at the calculated position
-            setPosition({ top, left });
+            setPosition({ top: menuTop, left: menuLeft });
         }
 
         setIsMenuOpen((prev) => !prev);
@@ -290,7 +290,7 @@ const NoteMenu = () => {
     const handleExportNote = useCallback(async () => {
         try {
             const element = document.createElement('a');
-            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(decrypt(note.content)));
+            element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(decrypt(note.content))}`);
             element.setAttribute('download', `${decrypt(note.title)}.txt`);
             element.style.display = 'none';
             document.body.appendChild(element);
@@ -426,7 +426,7 @@ const NoteMenu = () => {
                                     </MenuItem>
                                     <MenuItem>
                                         <Item onClick={handleEmptyTrash}>
-                                            <ItemContent alignAlt={true}>
+                                            <ItemContent alignAlt>
                                                 <CgTrashEmpty size="22px" color="var(--sn-stylekit-danger-color)" />
                                                 <FlexText>
                                                     <ItemText color="var(--sn-stylekit-danger-color)">
