@@ -27,12 +27,17 @@ const MenuButton = styled.button<{ ref: any }>`
     cursor: pointer;
     background-color: var(--sn-stylekit-background-color);
 
-    &:active {
+    &:active,
+    &:focus {
         box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
     }
 
     &:hover {
         background: var(--sn-stylekit-contrast-background-color);
+
+        svg {
+            fill: var(--sn-stylekit-contrast-foreground-color);
+        }
     }
 `;
 
@@ -182,20 +187,27 @@ const NoteMenu = () => {
         async (data: any) => {
             updateNote({ ...note, ...data });
 
-            try {
-                setLoading(true);
-                await update({
-                    id: note.id,
-                    data
-                });
-
-                setLoading(false);
-            } catch (err) {
+            const handleError = () => {
                 storeEncryptedNotes({
                     ...note,
                     ...data
                 });
                 setError(true);
+                setLoading(false);
+            };
+
+            try {
+                setLoading(true);
+                const res = await update({
+                    id: note.id,
+                    data
+                });
+
+                setLoading(false);
+
+                if (!res.error) handleError();
+            } catch (err) {
+                handleError();
             }
         },
         [note]
@@ -218,61 +230,82 @@ const NoteMenu = () => {
             updateStarred(tempNote);
         }
 
-        try {
-            setLoading(true);
-            await update({
-                id: note.id,
-                data: { starred: !note.starred }
-            });
-
-            setLoading(false);
-        } catch (err) {
+        const handleError = () => {
             storeEncryptedNotes({
                 ...note,
                 starred: !note.starred
             });
             setError(true);
+            setLoading(false);
+        };
+
+        try {
+            setLoading(true);
+            const res = await update({
+                id: note.id,
+                data: { starred: !note.starred }
+            });
+
+            setLoading(false);
+
+            if (!res.error) handleError();
+        } catch (err) {
+            handleError();
         }
     }, [note]);
 
     const handleRestoreNote = useCallback(async () => {
         restoreNote({ ...note, deleted: false, deletedAt: null });
 
-        try {
-            setLoading(true);
-            await update({
-                id: note.id,
-                data: { deleted: false, deletedAt: null }
-            });
-
-            setLoading(false);
-        } catch (err) {
+        const handleError = () => {
             storeEncryptedNotes({
                 ...note,
                 deleted: false,
                 deletedAt: null
             });
             setError(true);
+            setLoading(false);
+        };
+
+        try {
+            setLoading(true);
+            const res = await update({
+                id: note.id,
+                data: { deleted: false, deletedAt: null }
+            });
+
+            setLoading(false);
+
+            if (res.error) handleError();
+        } catch (err) {
+            handleError();
         }
     }, [note]);
 
     const handleDeleteNote = useCallback(async () => {
         deleteNote({ ...note, deleted: !note.deleted });
 
+        const handleError = () => {
+            storeEncryptedNotes({
+                ...note,
+                deleted: !note.deleted
+            });
+            setError(true);
+            setLoading(false);
+        };
+
         try {
             setLoading(true);
-            await remove({
+            const res = await remove({
                 id: note.id,
                 trashed: view === 'deleted'
             });
 
             setLoading(false);
+
+            if (res.error) handleError();
         } catch (err) {
-            storeEncryptedNotes({
-                ...note,
-                deleteFlag: view === 'deleted'
-            });
-            setError(true);
+            handleError();
         }
     }, [note]);
 

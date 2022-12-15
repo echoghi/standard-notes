@@ -4,6 +4,7 @@ import { useStoreActions } from 'easy-peasy';
 import { useCallback } from 'react';
 import { update } from '../lib/mutations';
 import { Note } from '../types';
+import { storeEncryptedNotes } from '../lib/encryption';
 
 const MenuButton = styled.button<{ pinned: boolean }>`
     height: 2rem;
@@ -46,6 +47,7 @@ const PinNote = ({ note }: { note: Note }) => {
             setLoading(false);
         } catch (err) {
             setError(true);
+            storeEncryptedNotes({ ...note, pinned: !note.pinned });
         }
     }, [note, setLoading, setError, updateNote]);
 

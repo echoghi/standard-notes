@@ -66,9 +66,9 @@ export function encryptPassword(password: string, existingSalt?: string) {
 }
 
 export function storeEncryptedNotes(note: Note): void {
-    const storedNotes = JSON.parse(decrypt(getLocalStorage('enc_notes')));
+    const storedNotes = JSON.parse(decrypt(getLocalStorage('enc_notes')) || '[]');
 
-    if (!storedNotes) {
+    if (!storedNotes || !storedNotes.length) {
         setLocalStorage('enc_notes', encrypt(JSON.stringify([note])));
         return;
     }
@@ -83,4 +83,18 @@ export function storeEncryptedNotes(note: Note): void {
     const encryptedNotes = encrypt(JSON.stringify(filtered));
     // Store the encrypted notes
     setLocalStorage('enc_notes', encryptedNotes);
+}
+
+export function getEncryptedNotes(): Note[] | boolean {
+    const storedNotes = JSON.parse(decrypt(getLocalStorage('enc_notes')) || '[]');
+
+    if (!storedNotes || !storedNotes.length) {
+        return false;
+    }
+
+    return storedNotes;
+}
+
+export function clearStoredNotes(): void {
+    setLocalStorage('enc_notes', '');
 }

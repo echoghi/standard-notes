@@ -119,14 +119,21 @@ const Editor = () => {
                 createNote(newNote);
             }
 
+            const handleError = () => {
+                setError(true);
+                setLoading(false);
+                storeEncryptedNotes(newNote);
+            };
+
             const saveNote = async () => {
                 try {
-                    await edit(newNote);
+                    const res = await edit(newNote);
 
                     setLoading(false);
+
+                    if (res.error) handleError();
                 } catch (err) {
-                    setError(true);
-                    storeEncryptedNotes(newNote);
+                    handleError();
                 }
             };
 

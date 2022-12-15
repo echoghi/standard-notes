@@ -1,49 +1,36 @@
 import { useEffect, useState } from 'react';
 import { useStoreActions } from 'easy-peasy';
-import { decrypt } from '../lib/encryption';
+import { clearStoredNotes, getEncryptedNotes } from '../lib/encryption';
 import { saveBulkNotes } from '../lib/mutations';
-import { getLocalStorage, setLocalStorage } from '../lib/storage';
 
 const OfflineSync = () => {
-    const [isOnline, setIsOnline] = useState(true);
     const setSynced = useStoreActions((store: any) => store.setSynced);
 
     useEffect(() => {
         const checkIfOnline = setInterval(async () => {
             try {
                 const statusRes = await saveBulkNotes();
+                if (statusRes?.message === 'success') {
+                    const storedNotes = getEncryptedNotes();
+                    if (storedNotes) {
+                        // @ts-ignore
+                        const res = await saveBulkNotes({ data: storedNotes });
 
-                setIsOnline(statusRes.message === 'success');
+                        if (res?.message === 'Changes saved') {
+                            setSynced(true);
+                            clearStoredNotes();
+                        }
+                    }
+                } else {
+                    setSynced(false);
+                }
             } catch (err) {
-                setIsOnline(false);
-                console.log(err);
+                setSynced(false);
             }
-        }, 30000); // check connection every 30 seconds
+        }, 30000);
 
         return () => clearInterval(checkIfOnline);
     }, []);
-
-    useEffect(() => {
-        if (!isOnline) {
-            setSynced(false);
-            const data = JSON.parse(decrypt(getLocalStorage('enc_notes')));
-
-            try {
-                const saveNotes = async () => {
-                    const res = await saveBulkNotes(data);
-
-                    if (res.status === 200) {
-                        setSynced(true);
-                        setLocalStorage('enc_notes', '');
-                    }
-                };
-
-                saveNotes();
-            } catch (err) {
-                console.log('bulk save failed', err);
-            }
-        }
-    }, [isOnline, setSynced]);
 
     return null;
 };

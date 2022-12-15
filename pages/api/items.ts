@@ -11,19 +11,13 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
         // loop through data and update each field and push promise to an array then finish with promise.all
         const promises = [];
         for (const updatedNote of data) {
-            const { id } = updatedNote;
+            const { id, userId: noteUser, ...note } = updatedNote;
 
             if (updatedNote.deleteFlag) {
                 promises.push(
                     prisma.note.delete({
                         // @ts-ignore
-                        where: { id },
-                        // @ts-ignore
-                        user: {
-                            connect: {
-                                id: userId
-                            }
-                        }
+                        where: { id }
                     })
                 );
             } else {
@@ -33,12 +27,12 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
                         where: { id },
                         // @ts-ignore
                         data: {
-                            ...updatedNote
-                        },
-                        // @ts-ignore
-                        user: {
-                            connect: {
-                                id: userId
+                            ...note,
+                            user: {
+                                connect: {
+                                    // @ts-ignore
+                                    id: userId
+                                }
                             }
                         }
                     })

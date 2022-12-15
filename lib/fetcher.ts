@@ -7,9 +7,6 @@ export default function fetcher(url: string, data?: any) {
         },
         body: data ? JSON.stringify(data) : undefined
     }).then((res) => {
-        if (res.status > 399 || res.status < 200) {
-            throw new Error();
-        }
         return res.json();
     });
 }

@@ -4,6 +4,7 @@ import { useStoreActions } from 'easy-peasy';
 import styled from 'styled-components';
 import { update } from '../lib/mutations';
 import { Note } from '../types';
+import { storeEncryptedNotes } from '../lib/encryption';
 
 const Container = styled.div<{ active: boolean }>`
     font-size: 0.875rem;
@@ -54,16 +55,24 @@ const EditModeBanner = ({ note }: { note: Note }) => {
         // optimistic update
         updateNote({ ...note, editEnabled: !note.editEnabled });
 
+        const handleError = () => {
+            setError(true);
+            setLoading(false);
+            storeEncryptedNotes({ ...note, editEnabled: !note.editEnabled });
+        };
+
         try {
             setLoading(true);
-            await update({
+            const res = await update({
                 id: note.id,
                 data: { editEnabled: !note.editEnabled }
             });
 
             setLoading(false);
+
+            if (res.error) handleError();
         } catch (err) {
-            setError(true);
+            handleError();
         }
     }, [note]);
 
