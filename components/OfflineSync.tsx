@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useStoreActions } from 'easy-peasy';
 import { clearStoredNotes, getEncryptedNotes } from '../lib/encryption';
 import { saveBulkNotes } from '../lib/mutations';
