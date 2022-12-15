@@ -54,8 +54,5 @@
         "prisma": "^4.7.1",
         "superjson": "^1.11.0",
         "ts-node": "^10.9.1"
-    },
-    "prisma": {
-        "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
     }
 }

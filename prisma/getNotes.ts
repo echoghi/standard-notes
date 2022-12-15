@@ -1,4 +1,5 @@
 import prisma from '../lib/prisma';
+import { sortNotes } from '../lib/sort';
 
 const getNotes = async (userId: string) => {
     if (!userId) throw new Error('No user id provided');
@@ -8,14 +9,17 @@ const getNotes = async (userId: string) => {
         where: {
             AND: [
                 {
+                    // @ts-ignore
                     userId
                 },
                 {
+                    // @ts-ignore
                     deleted: false
                 }
             ]
         },
         orderBy: {
+            // @ts-ignore
             pinned: 'desc'
         }
     });
@@ -25,12 +29,15 @@ const getNotes = async (userId: string) => {
         where: {
             AND: [
                 {
+                    // @ts-ignore
                     userId
                 },
                 {
+                    // @ts-ignore
                     starred: true
                 },
                 {
+                    // @ts-ignore
                     deleted: false
                 }
             ]
@@ -42,62 +49,24 @@ const getNotes = async (userId: string) => {
         where: {
             AND: [
                 {
+                    // @ts-ignore
                     userId
                 },
                 {
+                    // @ts-ignore
                     deleted: true
                 }
             ]
         }
     });
 
-    // sort notes
-    notes.sort((a: any, b: any) => {
-        if (a.pinned && !b.pinned) {
-            return -1;
-        }
-        if (!a.pinned && b.pinned) {
-            return 1;
-        }
-        return b.createdAt - a.createdAt;
-    });
-
-    starred.sort((a: any, b: any) => {
-        if (a.pinned && !b.pinned) {
-            return -1;
-        }
-        if (!a.pinned && b.pinned) {
-            return 1;
-        }
-        return b.createdAt - a.createdAt;
-    });
-
-    deleted.sort((a: any, b: any) => {
-        if (a.pinned && !b.pinned) {
-            return -1;
-        }
-        if (!a.pinned && b.pinned) {
-            return 1;
-        }
-        return b.createdAt - a.createdAt;
-    });
-
-    // get Number of deleted notes
-    const deletedCount = deleted.length;
-
-    // get Number of  notes
-    const notesCount = notes.length;
-
-    // get number of starred notes
-    const starredCount = starred.length;
-
     return {
-        notes,
-        starred,
-        deleted,
-        starredCount,
-        deletedCount,
-        notesCount
+        notes: sortNotes(notes, 'createdAt'),
+        starred: sortNotes(starred, 'createdAt'),
+        deleted: sortNotes(deleted, 'createdAt'),
+        starredCount: starred.length,
+        deletedCount: deleted.length,
+        notesCount: notes.length
     };
 };
 

@@ -10,6 +10,7 @@ import { logOut } from '../lib/mutations';
 import { useOnClickOutside, useTheme, useUser } from '../lib/hooks';
 import { formatDate } from '../lib/formatters';
 import Modal from './Modal';
+import { Divider, Menu, MenuContainer, MenuItem } from '../styles';
 
 const Container = styled.footer`
     position: relative;
@@ -67,42 +68,6 @@ const Button = styled.button`
 
     &:focus {
         background-color: var(--sn-stylekit-border-color);
-    }
-`;
-
-const MenuContainer = styled.div<{ open: boolean; ref: any }>`
-    position: absolute;
-    user-select: none;
-    padding-top: 0.5rem;
-    display: ${(props: any) => (props.open ? 'block' : 'none')};
-    visibility: ${(props: any) => (props.open ? 'visible' : 'hidden')};
-    background-color: var(--sn-stylekit-background-color);
-    --tw-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12), 0px 2px 8px rgba(0, 0, 0, 0.04);
-    --tw-shadow-colored: 0px 4px 8px var(--tw-shadow-color), 0px 2px 8px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 rgba(0, 0, 0, 0)), var(--tw-ring-shadow, 0 0 rgba(0, 0, 0, 0)),
-        var(--tw-shadow);
-    max-width: 20rem;
-    height: auto;
-    border-radius: 0.25rem;
-    width: 20rem;
-    display: flex;
-    flex-direction: column;
-    z-index: var(--z-index-dropdown-menu);
-    will-change: transform;
-    transform: translate(10px, 18px);
-    left: 0;
-    bottom: 50px;
-    padding: 0.5rem 0;
-`;
-
-const Menu = styled.menu`
-    list-style: none;
-    outline: none;
-`;
-
-const MenuItem = styled.li`
-    &:hover {
-        background: var(--sn-stylekit-contrast-background-color);
     }
 `;
 
@@ -166,14 +131,6 @@ const Email = styled.div`
     margin: 0.125rem 0;
     word-wrap: break-word;
     word-break: break-all;
-`;
-
-const Divider = styled.hr`
-    width: 100%;
-    height: 1px;
-    margin: 0.5rem 0;
-    background-color: var(--sn-stylekit-border-color);
-    border-style: none;
 `;
 
 const SyncContainer = styled.div`
@@ -250,7 +207,7 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
 
             {isMenuOpen && (
                 <Modal>
-                    <MenuContainer open={isMenuOpen} ref={ref}>
+                    <MenuContainer open={isMenuOpen} ref={ref} left={13} bottom={32}>
                         <Menu>
                             <MenuTitle>
                                 <div>Account</div>

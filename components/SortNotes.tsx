@@ -4,54 +4,7 @@ import { useStoreActions, useStoreState } from 'easy-peasy';
 import { useRef, useState } from 'react';
 import Modal from './Modal';
 import { useOnClickOutside } from '../lib/hooks';
-
-const Button = styled.button<{ ref: any }>`
-    height: 2rem;
-    width: 2rem;
-    border: 1px solid var(--sn-stylekit-border-color);
-    border-radius: 9999px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    background-color: var(--sn-stylekit-background-color);
-
-    &:active,
-    &:focus {
-        box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
-    }
-
-    &:hover {
-        background: var(--sn-stylekit-contrast-background-color);
-
-        svg {
-            fill: var(--sn-stylekit-contrast-foreground-color);
-        }
-    }
-`;
-
-const MenuContainer = styled.div<{ open: boolean; top: number; left: number; ref: any }>`
-    position: absolute;
-    user-select: none;
-    padding-top: 0.5rem;
-    display: ${(props: any) => (props.open ? 'block' : 'none')};
-    visibility: ${(props: any) => (props.open ? 'visible' : 'hidden')};
-    background-color: var(--sn-stylekit-background-color);
-    --tw-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12), 0px 2px 8px rgba(0, 0, 0, 0.04);
-    --tw-shadow-colored: 0px 4px 8px var(--tw-shadow-color), 0px 2px 8px var(--tw-shadow-color);
-    box-shadow: var(--tw-ring-offset-shadow, 0 0 rgba(0, 0, 0, 0)), var(--tw-ring-shadow, 0 0 rgba(0, 0, 0, 0)),
-        var(--tw-shadow);
-    max-width: 20rem;
-    height: auto;
-    border-radius: 0.25rem;
-    width: 20rem;
-    display: flex;
-    flex-direction: column;
-    z-index: var(--z-index-dropdown-menu);
-    will-change: transform;
-    top: ${(props: any) => (props.top ? `${props.top}px` : '0')};
-    left: ${(props: any) => (props.left ? `${props.left}px` : '0')};
-`;
+import { Divider, Menu, MenuButton, MenuContainer, MenuItem } from '../styles';
 
 const MenuTitle = styled.div`
     display: flex;
@@ -81,26 +34,6 @@ const PrefStatus = styled.div`
         cursor: pointer;
         padding: 0.15rem 0.5rem;
     }
-`;
-
-const Menu = styled.menu`
-    list-style: none;
-    outline: none;
-    padding-bottom: 0.5rem;
-`;
-
-const MenuItem = styled.li`
-    &:hover {
-        background: var(--sn-stylekit-contrast-background-color);
-    }
-`;
-
-const Divider = styled.hr`
-    width: 100%;
-    height: 1px;
-    margin: 0.5rem 0;
-    background-color: var(--sn-stylekit-border-color);
-    border-style: none;
 `;
 
 const RadioButton = styled.button`
@@ -178,9 +111,9 @@ const SortNotes = () => {
 
     return (
         <>
-            <Button onClick={handleMenuOpen} ref={buttonRef} aria-label="Sort Notes">
+            <MenuButton onClick={handleMenuOpen} ref={buttonRef} aria-label="Sort Notes">
                 <FaSortAmountDown size="18px" color="var(--sn-stylekit-neutral-color)" />
-            </Button>
+            </MenuButton>
             {isMenuOpen && (
                 <Modal>
                     <MenuContainer open={isMenuOpen} ref={ref} top={position.top} left={position.left}>
