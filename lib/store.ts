@@ -5,6 +5,7 @@ export const store = createStore({
     notes: [],
     starred: [],
     deleted: [],
+    archived: [],
     starredCount: 0,
     deletedCount: 0,
     notesCount: 0,
@@ -35,12 +36,16 @@ export const store = createStore({
         state.notes = sortNotes([...state.notes], payload);
         state.starred = sortNotes([...state.starred], payload);
         state.deleted = sortNotes([...state.deleted], payload);
+        state.archived = sortNotes([...state.archived], payload);
     }),
     setView: action((state: any, payload) => {
         state.view = payload;
     }),
     setError: action((state: any, payload) => {
         state.error = payload;
+    }),
+    setLoading: action((state: any, payload) => {
+        state.loading = payload;
     }),
     deleteNote: action((state: any, payload) => {
         state.activeNote = null;
@@ -142,9 +147,33 @@ export const store = createStore({
         state.starred = sortNotes(updatedStarred, state.sortSetting);
         state.starredCount = updatedStarred.length;
     }),
-    setLoading: action((state: any, payload) => {
-        state.loading = payload;
+    updateArchived: action((state: any, payload) => {
+        payload.updatedAt = new Date().toISOString();
+        let updatedArchived = [...state.archived];
+        let updatedNotes = [...state.notes];
+        let updatedStarred = [...state.starred];
+
+        if (payload.archived) {
+            updatedArchived = [...state.archived, payload];
+            updatedNotes = updatedNotes.filter((note: any) => note.id !== payload.id);
+            updatedStarred = updatedStarred.filter((note: any) => note.id !== payload.id);
+        } else {
+            updatedArchived = [...state.archived].filter((note: any) => note.id !== payload.id);
+
+            if (payload.starred) {
+                updatedStarred = [...state.starred, payload];
+            }
+
+            updatedNotes = [...state.notes, payload];
+        }
+
+        state.notes = sortNotes(updatedNotes, state.sortSetting);
+        state.starred = sortNotes(updatedStarred, state.sortSetting);
+        state.archived = sortNotes(updatedArchived, state.sortSetting);
+        state.notesCount = updatedNotes.length;
+        state.starredCount = updatedStarred.length;
     }),
+
     setActiveNote: action((state: any, payload) => {
         state.activeNote = payload;
     }),
@@ -152,6 +181,7 @@ export const store = createStore({
         state.loading = false;
         state.deleted = payload?.deleted;
         state.starred = payload?.starred;
+        state.archived = payload?.archived;
         state.notes = payload?.notes;
         state.deletedCount = payload?.deletedCount;
         state.starredCount = payload?.starredCount;

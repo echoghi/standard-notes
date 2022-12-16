@@ -14,6 +14,10 @@ const getNotes = async (userId: string) => {
                 },
                 {
                     // @ts-ignore
+                    archived: false
+                },
+                {
+                    // @ts-ignore
                     deleted: false
                 }
             ]
@@ -35,6 +39,10 @@ const getNotes = async (userId: string) => {
                 {
                     // @ts-ignore
                     starred: true
+                },
+                {
+                    // @ts-ignore
+                    archived: false
                 },
                 {
                     // @ts-ignore
@@ -60,10 +68,31 @@ const getNotes = async (userId: string) => {
         }
     });
 
+    // get all user archived notes
+    const archived = await prisma.note.findMany({
+        where: {
+            AND: [
+                {
+                    // @ts-ignore
+                    userId
+                },
+                {
+                    // @ts-ignore
+                    archived: true
+                },
+                {
+                    // @ts-ignore
+                    deleted: false
+                }
+            ]
+        }
+    });
+
     return {
         notes: sortNotes(notes, 'createdAt'),
         starred: sortNotes(starred, 'createdAt'),
         deleted: sortNotes(deleted, 'createdAt'),
+        archived: sortNotes(archived, 'createdAt'),
         starredCount: starred.length,
         deletedCount: deleted.length,
         notesCount: notes.length

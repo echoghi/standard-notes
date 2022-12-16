@@ -36,6 +36,7 @@ interface NoteData {
     notes: Note[];
     deleted: Note[];
     starred: Note[];
+    archived: Note[];
     newNote: Note;
     starredCount: number;
     deletedCount: number;
@@ -66,6 +67,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const Home = ({ noteData, userId, email }: Props) => {
     const starred = useStoreState((store: any) => store.starred);
     const deleted = useStoreState((store: any) => store.deleted);
+    const archived = useStoreState((store: any) => store.archived);
     const notes = useStoreState((store: any) => store.notes);
     const activeNote = useStoreState((state: any) => state.activeNote);
     const notesPanel = useStoreState((state: any) => state.notesPanel);
@@ -86,7 +88,7 @@ const Home = ({ noteData, userId, email }: Props) => {
             <AppGrid grid={grid} focusMode={focusMode}>
                 <OfflineSync />
                 {tagsPanel && <Navigation />}
-                {notesPanel && <Notes notes={notes} starred={starred} deleted={deleted} />}
+                {notesPanel && <Notes notes={notes} starred={starred} deleted={deleted} archived={archived} />}
 
                 {activeNote && <Editor />}
             </AppGrid>

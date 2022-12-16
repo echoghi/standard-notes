@@ -29,6 +29,7 @@ model Note {
   deleted     Boolean   @default(false)
   pinned      Boolean   @default(false)
   starred     Boolean   @default(false)
+  archived    Boolean   @default(false)
   spellCheck  Boolean   @default(true)
   preview     Boolean   @default(true)
   editEnabled Boolean   @default(true)

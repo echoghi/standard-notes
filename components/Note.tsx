@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useStoreActions, useStoreState } from 'easy-peasy';
-import { MdOutlineNotes, MdOutlineEditOff } from 'react-icons/md';
+import { MdOutlineNotes, MdOutlineEditOff, MdMoveToInbox } from 'react-icons/md';
 import { BsPinFill } from 'react-icons/bs';
 import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
@@ -24,12 +24,13 @@ const NoteContainer = styled.div<{ isActive: boolean }>`
     }
 `;
 
-const ContentContainer = styled.div`
+const ContentContainer = styled.div<{ archived: boolean }>`
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     padding: 1rem 0;
     overflow: hidden;
+    opacity: ${(props: any) => (props.archived ? '0.5' : '1')};
 `;
 
 const NoteTitle = styled.div`
@@ -92,7 +93,7 @@ const Note = ({ note }: { note: NoteType }) => {
             <IconWrapper>
                 <MdOutlineNotes title="note" size="20px" color="var(--sn-stylekit-accessory-tint-color-1)" />
             </IconWrapper>
-            <ContentContainer>
+            <ContentContainer archived={note?.archived}>
                 <NoteTitle>{decrypt(note.title)}</NoteTitle>
                 {note?.preview ? (
                     <NoteContent>
@@ -106,6 +107,16 @@ const Note = ({ note }: { note: NoteType }) => {
                 </NoteTime>
             </ContentContainer>
             <NoteIcons>
+                {note?.archived && (
+                    <span>
+                        <MdMoveToInbox
+                            size="14px"
+                            color="var(--sn-stylekit-accessory-tint-color-3)"
+                            aria-label="Archived"
+                            title="Archived"
+                        />
+                    </span>
+                )}
                 {!note?.editEnabled && (
                     <span>
                         <MdOutlineEditOff

@@ -5,7 +5,7 @@ import { BiTrash } from 'react-icons/bi';
 import { BsPin } from 'react-icons/bs';
 import { CgNotes, CgTrashEmpty } from 'react-icons/cg';
 import { IoMdClose, IoMdCopy } from 'react-icons/io';
-import { MdOutlineEditOff, MdSettingsBackupRestore, MdOutlineDownload } from 'react-icons/md';
+import { MdOutlineEditOff, MdSettingsBackupRestore, MdOutlineDownload, MdMoveToInbox } from 'react-icons/md';
 import { AiOutlineStar } from 'react-icons/ai';
 import { VscPreview } from 'react-icons/vsc';
 import { useStoreActions, useStoreState } from 'easy-peasy';
@@ -91,8 +91,10 @@ const NoteMenu = () => {
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
     const createNote = useStoreActions((store: any) => store.createNote);
+    const updateArchived = useStoreActions((store: any) => store.updateArchived);
 
     const isTrash = view === 'deleted';
+    const isArchived = view === 'archived';
 
     useOnClickOutside(ref, () => setIsMenuOpen(false));
 
@@ -158,7 +160,7 @@ const NoteMenu = () => {
     const handleStarNote = useCallback(async () => {
         const tempNote = { ...note, starred: !note.starred };
 
-        if (isTrash) {
+        if (isTrash || isArchived) {
             updateNote(tempNote);
         } else {
             updateStarred(tempNote);
@@ -179,6 +181,43 @@ const NoteMenu = () => {
             const res = await update({
                 id: note.id,
                 data: { starred: !note.starred }
+            });
+
+            if (res.error) {
+                handleError();
+            } else {
+                setLoading(false);
+                setError(false);
+            }
+        } catch (err) {
+            handleError();
+        }
+    }, [note]);
+
+    const handleArchivedNote = useCallback(async () => {
+        const tempNote = { ...note, archived: !note.archived };
+
+        if (isTrash) {
+            updateNote(tempNote);
+        } else {
+            updateArchived(tempNote);
+        }
+
+        const handleError = () => {
+            storeEncryptedNotes({
+                ...note,
+                archived: !note.archived
+            });
+            setError(true);
+            setLoading(false);
+        };
+
+        try {
+            setLoading(true);
+            setError(false);
+            const res = await update({
+                id: note.id,
+                data: { archived: !note.archived }
             });
 
             if (res.error) {
@@ -368,6 +407,16 @@ const NoteMenu = () => {
                                     <ItemContent>
                                         <IoMdCopy size="22px" color="var(--sn-stylekit-neutral-color)" />
                                         <ItemText>Duplicate</ItemText>
+                                    </ItemContent>
+                                </Item>
+                            </MenuItem>
+                            <MenuItem>
+                                <Item onClick={handleArchivedNote}>
+                                    <ItemContent>
+                                        <MdMoveToInbox size="22px" color="var(--sn-stylekit-accessory-tint-color-3)" />
+                                        <ItemText color="var(--sn-stylekit-accessory-tint-color-3)">
+                                            {note?.archived ? 'Unarchive' : 'Archive'}
+                                        </ItemText>
                                     </ItemContent>
                                 </Item>
                             </MenuItem>

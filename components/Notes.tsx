@@ -1,6 +1,7 @@
 import { CgNotes } from 'react-icons/cg';
 import { AiOutlinePlus, AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
+import { MdMoveToInbox } from 'react-icons/md';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import styled from 'styled-components';
 import Note from './Note';
@@ -83,9 +84,10 @@ interface Props {
     notes: NoteType[];
     starred: NoteType[];
     deleted: NoteType[];
+    archived: NoteType[];
 }
 
-const Notes = ({ notes, deleted, starred }: Props) => {
+const Notes = ({ notes, deleted, starred, archived }: Props) => {
     const view = useStoreState((store: any) => store.view);
     const setView = useStoreActions((store: any) => store.setView);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
@@ -93,9 +95,13 @@ const Notes = ({ notes, deleted, starred }: Props) => {
     const isTrashed = view === 'deleted';
     const isStarred = view === 'starred';
     const isNotes = view === 'notes';
+    const isArchived = view === 'archived';
 
     const isEmpty =
-        (isTrashed && deleted.length === 0) || (isStarred && starred.length === 0) || (isNotes && notes.length === 0);
+        (isTrashed && deleted.length === 0) ||
+        (isStarred && starred.length === 0) ||
+        (isNotes && notes.length === 0) ||
+        (isArchived && archived.length === 0);
 
     const createNote = async () => {
         setActiveNote({
@@ -117,22 +123,29 @@ const Notes = ({ notes, deleted, starred }: Props) => {
             <TitleContainer className="flex justify-between items-center ml-3">
                 {isNotes && (
                     <FlexCenter>
-                        <CgNotes color="gray" size="20px" />
+                        <CgNotes color="var(--sn-stylekit-neutral-color)" size="20px" />
                         <Title>Notes</Title>
                     </FlexCenter>
                 )}
 
                 {isTrashed && (
                     <FlexCenter>
-                        <BiTrash color="gray" size="20px" />
+                        <BiTrash color="var(--sn-stylekit-neutral-color)" size="20px" />
                         <Title>Trash</Title>
                     </FlexCenter>
                 )}
 
                 {isStarred && (
                     <FlexCenter>
-                        <AiFillStar color="gray" size="20px" />
+                        <AiFillStar color="var(--sn-stylekit-neutral-color)" size="20px" />
                         <Title>Starred</Title>
+                    </FlexCenter>
+                )}
+
+                {isArchived && (
+                    <FlexCenter>
+                        <MdMoveToInbox color="var(--sn-stylekit-neutral-color)" size="20px" />
+                        <Title>Archived</Title>
                     </FlexCenter>
                 )}
 
@@ -155,6 +168,7 @@ const Notes = ({ notes, deleted, starred }: Props) => {
                 {isNotes && notes.map((note: any) => <Note note={note} key={note.id} />)}
                 {isStarred && starred.map((note: any) => <Note note={note} key={note.id} />)}
                 {isTrashed && deleted.map((note: any) => <Note note={note} key={note.id} />)}
+                {isArchived && archived.map((note: any) => <Note note={note} key={note.id} />)}
                 {isEmpty && <Empty>No items.</Empty>}
             </NoteContainer>
         </Container>

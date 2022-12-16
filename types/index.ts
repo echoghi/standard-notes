@@ -4,6 +4,7 @@ export interface Note {
     title: string;
     content: string;
     starred: boolean;
+    archived: boolean;
     deleted: boolean;
     pinned: boolean;
     spellCheck: boolean;

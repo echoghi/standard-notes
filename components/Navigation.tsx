@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { CgNotes } from 'react-icons/cg';
 import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
+import { MdMoveToInbox } from 'react-icons/md';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 
 const Container = styled.div`
@@ -65,43 +66,34 @@ const Navigation = () => {
     const starred = useStoreState((store: any) => store.starred);
     const deleted = useStoreState((store: any) => store.deleted);
     const notes = useStoreState((store: any) => store.notes);
+    const archived = useStoreState((store: any) => store.archived);
     const starredCount = useStoreState((store: any) => store.starredCount);
     const noteCount = useStoreState((store: any) => store.notesCount);
 
     const activeNoteColor = view === 'notes' ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)';
+    const activeArchiveColor =
+        view === 'archive' ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)';
     const activeTrashColor = view === 'deleted' ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)';
 
     const handleViewChange = (nextView: string) => {
         setView(nextView);
-
+        let activeNoteArray;
         if (nextView === 'notes') {
-            if (notes.length) {
-                setActiveNote(notes[0]);
-            } else {
-                setActiveNote(null);
-            }
-
-            setView('notes');
+            activeNoteArray = notes;
         } else if (nextView === 'starred') {
-            if (starred.length) {
-                setActiveNote(starred[0]);
-            } else {
-                setActiveNote(null);
-            }
-            setView('starred');
+            activeNoteArray = starred;
         } else if (nextView === 'deleted') {
-            if (deleted.length) {
-                setActiveNote(deleted[0]);
-            } else {
-                setActiveNote(null);
-            }
-            setView('deleted');
+            activeNoteArray = deleted;
+        } else if (nextView === 'archived') {
+            activeNoteArray = archived;
         }
+        setActiveNote(activeNoteArray.length ? activeNoteArray[0] : null);
     };
 
     const handleNoteView = () => handleViewChange('notes');
     const handleStarView = () => handleViewChange('starred');
     const handleDeletedView = () => handleViewChange('deleted');
+    const handleArchivedView = () => handleViewChange('archived');
 
     return (
         <Container id="navigation">
@@ -120,6 +112,12 @@ const Navigation = () => {
                         <NavItemName>Starred</NavItemName>
                     </div>
                     <span>{starredCount}</span>
+                </NavItem>
+                <NavItem onClick={handleArchivedView} active={view === 'archived'}>
+                    <div>
+                        <MdMoveToInbox color={activeArchiveColor} size="18px" />
+                        <NavItemName>Archived</NavItemName>
+                    </div>
                 </NavItem>
                 <NavItem onClick={handleDeletedView} active={view === 'deleted'}>
                     <div>
