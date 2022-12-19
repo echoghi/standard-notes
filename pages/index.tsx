@@ -60,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const response = await getNotes(id);
 
     return {
-        props: { noteData: { ...response, newNote: response.notes[0] }, userId: id, email }
+        props: { noteData: { ...response, newNote: response.notes[0] || null }, userId: id, email }
     };
 };
 
