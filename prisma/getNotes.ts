@@ -2,7 +2,18 @@ import prisma from '../lib/prisma';
 import { sortNotes } from '../lib/sort';
 
 const getNotes = async (userId: string) => {
-    if (!userId) throw new Error('No user id provided');
+    if (!userId) {
+        return {
+            notes: [],
+            starred: [],
+            deleted: [],
+            archived: [],
+            starredCount: 0,
+            deletedCount: 0,
+            notesCount: 0,
+            error: 'No user id provided'
+        };
+    }
 
     // get all user notes
     const notes = await prisma.note.findMany({
@@ -93,9 +104,9 @@ const getNotes = async (userId: string) => {
         starred: sortNotes(starred, 'createdAt'),
         deleted: sortNotes(deleted, 'createdAt'),
         archived: sortNotes(archived, 'createdAt'),
-        starredCount: starred.length,
-        deletedCount: deleted.length,
-        notesCount: notes.length
+        starredCount: starred?.length,
+        deletedCount: deleted?.length,
+        notesCount: notes?.length
     };
 };
 
