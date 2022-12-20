@@ -23,5 +23,6 @@ export interface User {
     updatedAt: string;
     salt: string;
     proof: string;
+    sort: string;
     notes: Note[];
 }

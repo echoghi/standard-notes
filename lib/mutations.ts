@@ -36,3 +36,7 @@ export const edit = (newNote: Note) => {
 export const saveBulkNotes = (notes?: Note[]) => {
     return fetcher('/items', notes);
 };
+
+export const saveSort = (sort: string) => {
+    return fetcher('/sort', { sort });
+};

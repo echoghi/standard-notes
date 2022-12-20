@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import Modal from './Modal';
 import { useOnClickOutside } from '../lib/hooks';
 import { Divider, Menu, MenuButton, MenuContainer, MenuItem, RadioButton, RadioFill, RadioText } from '../styles';
+import { saveSort } from '../lib/mutations';
 
 const MenuTitle = styled.div`
     display: flex;
@@ -68,6 +69,11 @@ const SortNotes = () => {
         setIsMenuOpen((state) => !state);
     };
 
+    const handleSort = (sort: string) => {
+        setSort(sort);
+        saveSort(sort);
+    };
+
     return (
         <>
             <MenuButton onClick={handleMenuOpen} ref={buttonRef} aria-label="Sort Notes">
@@ -85,19 +91,19 @@ const SortNotes = () => {
 
                         <Menu>
                             <MenuItem>
-                                <RadioButton role="menuitemradio" onClick={() => setSort('updatedAt')}>
+                                <RadioButton role="menuitemradio" onClick={() => handleSort('updatedAt')}>
                                     <RadioFill checked={sortSetting === 'updatedAt'} />
                                     <RadioText>Date modified</RadioText>
                                 </RadioButton>
                             </MenuItem>
                             <MenuItem>
-                                <RadioButton role="menuitemradio" onClick={() => setSort('createdAt')}>
+                                <RadioButton role="menuitemradio" onClick={() => handleSort('createdAt')}>
                                     <RadioFill checked={sortSetting === 'createdAt'} />
                                     <RadioText>Date created</RadioText>
                                 </RadioButton>
                             </MenuItem>
                             <MenuItem>
-                                <RadioButton role="menuitemradio" onClick={() => setSort('title')}>
+                                <RadioButton role="menuitemradio" onClick={() => handleSort('title')}>
                                     <RadioFill checked={sortSetting === 'title'} />
                                     <RadioText>Title</RadioText>
                                 </RadioButton>

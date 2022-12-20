@@ -72,7 +72,7 @@ const Navigation = () => {
 
     const activeNoteColor = view === 'notes' ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)';
     const activeArchiveColor =
-        view === 'archive' ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)';
+        view === 'archived' ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)';
     const activeTrashColor = view === 'deleted' ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-neutral-color)';
 
     const handleViewChange = (nextView: string) => {

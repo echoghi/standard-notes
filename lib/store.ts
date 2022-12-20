@@ -187,5 +187,6 @@ export const store = createStore({
         state.starredCount = payload?.starredCount;
         state.notesCount = payload?.notesCount;
         state.activeNote = payload.newNote;
+        state.sortSetting = payload.sortSetting;
     })
 });

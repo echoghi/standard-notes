@@ -11,9 +11,22 @@ const getNotes = async (userId: string) => {
             starredCount: 0,
             deletedCount: 0,
             notesCount: 0,
+            sortSetting: 'createdAt',
             error: 'No user id provided'
         };
     }
+
+    // get user sort in prisma
+    const sortSetting = await prisma.user.findUnique({
+        where: {
+            // @ts-ignore
+            id: userId
+        },
+        select: {
+            // @ts-ignore
+            sort: true
+        }
+    });
 
     // get all user notes
     const notes = await prisma.note.findMany({
@@ -106,7 +119,9 @@ const getNotes = async (userId: string) => {
         archived: sortNotes(archived, 'createdAt'),
         starredCount: starred?.length,
         deletedCount: deleted?.length,
-        notesCount: notes?.length
+        notesCount: notes?.length,
+        // @ts-ignore
+        sortSetting: sortSetting?.sort
     };
 };
 

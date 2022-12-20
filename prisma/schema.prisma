@@ -15,6 +15,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   email     String   @unique
+  sort      String   @default("createdAt")
   proof     String
   salt      String
   notes     Note[]

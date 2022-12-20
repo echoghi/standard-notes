@@ -41,6 +41,7 @@ interface NoteData {
     starredCount: number;
     deletedCount: number;
     notesCount: number;
+    sortSetting: string;
 }
 
 interface Props {
