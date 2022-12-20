@@ -52,17 +52,20 @@ interface Props {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { proof, _sn_session } = context.req.cookies;
+
     // eslint-disable-next-line
-    if (!proof || !_sn_session) context.res.writeHead(302, { Location: '/signin' }).end();
+    if (proof && _sn_session) {
+        // @ts-ignore
+        const { id, email } = jwt.verify(_sn_session, proof);
 
-    // @ts-ignore
-    const { id, email } = jwt.verify(_sn_session, proof);
+        const response = await getNotes(id);
 
-    const response = await getNotes(id);
+        return {
+            props: { noteData: { ...response, newNote: response.notes[0] || null }, userId: id, email }
+        };
+    }
 
-    return {
-        props: { noteData: { ...response, newNote: response.notes[0] || null }, userId: id, email }
-    };
+    return { props: {} };
 };
 
 const Home = ({ noteData, userId, email }: Props) => {

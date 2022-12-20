@@ -52,8 +52,8 @@ export function generateProof(secretKey: string) {
 export function encryptPassword(password: string, existingSalt?: string) {
     const salt = existingSalt || generateSalt(); // The salt should be a random string of at least 16 characters
 
-    const iterations = 100000; // The number of iterations should be at least 100000 for good security
-    const keySize = 32; // The length of the derived key should be at least 32 bytes
+    const iterations = 100;
+    const keySize = 32;
 
     // Create a PBKDF2 hash of the password using the specified options
     const hash = PBKDF2(password, salt, { iterations, keySize });

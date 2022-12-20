@@ -34,8 +34,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         { expiresIn: '7d' }
     );
 
-    res.setHeader(
-        'Set-Cookie',
+    res.setHeader('Set-Cookie', [
+        cookie.serialize('_sn_session', token, {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/',
+            sameSite: 'strict',
+            secure: process.env.NODE_ENV === 'production'
+        }),
         cookie.serialize('proof', proof, {
             httpOnly: true,
             maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -43,18 +49,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production'
         })
-    );
-
-    res.setHeader(
-        'Set-Cookie',
-        cookie.serialize('_sn_session', token, {
-            httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            path: '/',
-            sameSite: 'strict',
-            secure: process.env.NODE_ENV === 'production'
-        })
-    );
+    ]);
 
     res.json(user);
 };

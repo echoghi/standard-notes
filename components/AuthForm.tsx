@@ -176,7 +176,7 @@ const AuthForm = ({ type }: { type: 'signin' | 'signup' }) => {
             }
         }
 
-        if (user) {
+        if (!user?.error) {
             resetForm();
             router.push('/');
         } else if (isSignIn) {
