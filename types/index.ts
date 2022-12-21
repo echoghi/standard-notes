@@ -24,5 +24,6 @@ export interface User {
     salt: string;
     proof: string;
     sort: string;
+    theme: string;
     notes: Note[];
 }

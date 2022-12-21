@@ -40,3 +40,7 @@ export const saveBulkNotes = (notes?: Note[]) => {
 export const saveSort = (sort: string) => {
     return fetcher('/sort', { sort });
 };
+
+export const saveTheme = (theme: string) => {
+    return fetcher('/theme', { theme });
+};

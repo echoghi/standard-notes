@@ -9,6 +9,7 @@ export const store = createStore({
     starredCount: 0,
     deletedCount: 0,
     notesCount: 0,
+    theme: 'light',
     view: 'notes',
     sortSetting: 'createdAt',
     activeNote: null,
@@ -173,7 +174,6 @@ export const store = createStore({
         state.notesCount = updatedNotes.length;
         state.starredCount = updatedStarred.length;
     }),
-
     setActiveNote: action((state: any, payload) => {
         state.activeNote = payload;
     }),
@@ -188,5 +188,6 @@ export const store = createStore({
         state.notesCount = payload?.notesCount;
         state.activeNote = payload.newNote;
         state.sortSetting = payload.sortSetting;
+        state.theme = payload.theme;
     })
 });

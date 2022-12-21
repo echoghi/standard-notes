@@ -6,7 +6,7 @@ import { MdOutlinePalette, MdLogout } from 'react-icons/md';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoMdClose } from 'react-icons/io';
 import { useRef, useState } from 'react';
-import { logOut } from '../lib/mutations';
+import { logOut, saveTheme } from '../lib/mutations';
 import { useOnClickOutside, useTheme, useUser } from '../lib/hooks';
 import { formatDate } from '../lib/formatters';
 import Modal from './Modal';
@@ -175,6 +175,7 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
     const focusMode = useStoreState((store: any) => store.focusMode);
     const tagsPanel = useStoreState((store: any) => store.tagsPanel);
     const notesPanel = useStoreState((store: any) => store.notesPanel);
+    const userTheme = useStoreState((store: any) => store.theme);
 
     const setFocusMode = useStoreActions((store: any) => store.setFocusMode);
     const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
@@ -187,7 +188,7 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
 
     const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false);
     const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
-    const { toggleTheme, theme } = useTheme();
+    const { toggleTheme, theme } = useTheme(userTheme);
 
     useOnClickOutside(authRef, () => setIsAuthMenuOpen(false));
     useOnClickOutside(settingsRef, () => setIsSettingsMenuOpen(false));
@@ -205,6 +206,11 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
     const handleSignOut = async () => {
         await logOut();
         router.push('/signin');
+    };
+
+    const handleThemeChange = (theme: 'light' | 'dark' | 'system') => {
+        toggleTheme(theme);
+        saveTheme(theme);
     };
 
     return (
@@ -277,15 +283,21 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                         <Menu>
                             <MenuTitle>APPEARANCE</MenuTitle>
                             <MenuItem>
-                                <RadioButton role="menuitemradio" onClick={() => toggleTheme('light')}>
+                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('light')}>
                                     <RadioFill checked={theme === 'light'} />
                                     <RadioText>Default</RadioText>
                                 </RadioButton>
                             </MenuItem>
                             <MenuItem>
-                                <RadioButton role="menuitemradio" onClick={() => toggleTheme('dark')}>
+                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('dark')}>
                                     <RadioFill checked={theme === 'dark'} />
                                     <RadioText>Dark</RadioText>
+                                </RadioButton>
+                            </MenuItem>
+                            <MenuItem>
+                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('system')}>
+                                    <RadioFill checked={theme === 'system'} />
+                                    <RadioText>System</RadioText>
                                 </RadioButton>
                             </MenuItem>
                             <Divider />

@@ -17,14 +17,16 @@ const getNotes = async (userId: string) => {
     }
 
     // get user sort in prisma
-    const sortSetting = await prisma.user.findUnique({
+    const userSettings = await prisma.user.findUnique({
         where: {
             // @ts-ignore
             id: userId
         },
         select: {
             // @ts-ignore
-            sort: true
+            sort: true,
+            // @ts-ignore
+            theme: true
         }
     });
 
@@ -121,7 +123,9 @@ const getNotes = async (userId: string) => {
         deletedCount: deleted?.length,
         notesCount: notes?.length,
         // @ts-ignore
-        sortSetting: sortSetting?.sort
+        sortSetting: userSettings?.sort,
+        // @ts-ignore
+        theme: userSettings?.theme
     };
 };
 
