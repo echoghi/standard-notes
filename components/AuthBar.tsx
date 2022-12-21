@@ -208,9 +208,9 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
         router.push('/signin');
     };
 
-    const handleThemeChange = (theme: 'light' | 'dark' | 'system') => {
-        toggleTheme(theme);
-        saveTheme(theme);
+    const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+        toggleTheme(newTheme);
+        saveTheme(newTheme);
     };
 
     return (
