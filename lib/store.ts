@@ -1,4 +1,5 @@
 import { createStore, action } from 'easy-peasy';
+import isFullLayout from './isFullLayout';
 import { sortNotes } from './sort';
 
 export const store = createStore({
@@ -17,16 +18,22 @@ export const store = createStore({
     error: null,
     synced: true,
     focusMode: false,
-    tagsPanel: true,
+    tagsPanel: isFullLayout(),
     notesPanel: true,
-    setFocusMode: action((state: any) => {
+    toggleFocusMode: action((state: any) => {
         state.focusMode = !state.focusMode;
     }),
-    setTagsPanel: action((state: any) => {
+    toggleTagsPanel: action((state: any) => {
         state.tagsPanel = !state.tagsPanel;
     }),
-    setNotesPanel: action((state: any) => {
+    toggleNotesPanel: action((state: any) => {
         state.notesPanel = !state.notesPanel;
+    }),
+    setTagsPanel: action((state: any, payload) => {
+        state.tagsPanel = payload;
+    }),
+    setNotesPanel: action((state: any, payload) => {
+        state.notesPanel = payload;
     }),
     setSynced: action((state: any, payload) => {
         state.synced = payload;

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import { RiAccountCircleFill } from 'react-icons/ri';
 import { MdOutlinePalette, MdLogout } from 'react-icons/md';
+import { FiChevronLeft } from 'react-icons/fi';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoMdClose } from 'react-icons/io';
 import { useRef, useState } from 'react';
@@ -10,34 +11,65 @@ import { logOut, saveTheme } from '../lib/mutations';
 import { useOnClickOutside, useTheme, useUser } from '../lib/hooks';
 import { formatDate } from '../lib/formatters';
 import Modal from './Modal';
-import { Divider, Menu, MenuContainer, MenuItem, RadioButton, RadioFill, RadioText } from '../styles';
+import {
+    breakpoints,
+    Divider,
+    ItemText,
+    Menu,
+    MenuButton,
+    MenuContainer,
+    MenuItem,
+    RadioButton,
+    RadioFill,
+    RadioText
+} from '../styles';
 import Switch from './Switch';
 
 const Container = styled.footer`
-    position: relative;
+    position: absolute;
+    bottom: 0;
     grid-column-start: 1;
     grid-column-end: 4;
     display: flex;
-    padding: 0 0.75rem;
+    padding: 0.625rem 0.75rem;
     color: var(--sn-stylekit-contrast-foreground-color);
     background-color: var(--sn-stylekit-contrast-background-color);
     border-top: 1px solid var(--sn-stylekit-border-color);
     justify-content: space-between;
     align-items: center;
-    height: 2rem;
+    min-height: 50px;
     width: 100%;
     user-select: none;
-    z-index: var(--z-index-footer-bar);
+    z-index: 1;
+
+    @media (min-width: ${breakpoints.md}px) {
+        height: 2rem;
+        min-height: unset;
+        padding: 0 0.75rem;
+        position: relative;
+        z-index: var(--z-index-footer-bar);
+    }
 `;
 
-const Group = styled.div<{ focusMode: boolean }>`
+const Group = styled.div<{ focusMode: boolean; fullLayout?: boolean }>`
     display: flex;
+    align-items: center;
     height: 100%;
     opacity: ${({ focusMode }) => (focusMode ? 0.08 : 1)};
     transition: ${({ focusMode }) => (focusMode ? 'opacity 0.25s ease-in-out' : 'none')};
+    gap: 0.5rem;
 
     &:hover {
         opacity: 1;
+    }
+
+    @media (max-width: ${breakpoints.md}px) {
+        display: ${({ fullLayout }) => (fullLayout ? 'none' : 'flex')};
+        flex-grow: 1;
+
+        button:first-child {
+            margin-right: auto;
+        }
     }
 `;
 
@@ -56,10 +88,10 @@ const Button = styled.button`
     align-items: center;
     display: flex;
     cursor: pointer;
-    width: 2rem;
+    width: 2.5rem;
     border: none;
-    height: 100%;
-    background-color: transparent;
+    height: 2.5rem;
+    background-color: var(--sn-stylekit-background-color);
 
     svg:hover {
         fill: var(--sn-stylekit-info-color);
@@ -75,6 +107,16 @@ const Button = styled.button`
 
     &:focus {
         background-color: var(--sn-stylekit-border-color);
+    }
+
+    @media (min-width: ${breakpoints.md}px) {
+        width: 2rem;
+        height: 2rem;
+        background-color: transparent;
+
+        &#mobile-back {
+            display: none;
+        }
     }
 `;
 
@@ -101,11 +143,6 @@ const ItemContent = styled.div`
     flex-grow: 1;
 `;
 
-const ItemText = styled.div`
-    margin-left: 0.5rem;
-    color: ${(props: any) => props.color || 'inherit'};
-`;
-
 const MenuTitle = styled.div`
     display: flex;
     justify-content: space-between;
@@ -122,7 +159,14 @@ const MenuTitle = styled.div`
     }
 
     svg {
+        display: none;
         cursor: pointer;
+    }
+
+    @media (min-width: ${breakpoints.md}px) {
+        svg {
+            display: block;
+        }
     }
 `;
 
@@ -177,7 +221,9 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
     const notesPanel = useStoreState((store: any) => store.notesPanel);
     const userTheme = useStoreState((store: any) => store.theme);
 
-    const setFocusMode = useStoreActions((store: any) => store.setFocusMode);
+    const toggleFocusMode = useStoreActions((store: any) => store.toggleFocusMode);
+    const toggleTagsPanel = useStoreActions((store: any) => store.toggleTagsPanel);
+    const toggleNotesPanel = useStoreActions((store: any) => store.toggleNotesPanel);
     const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
     const setNotesPanel = useStoreActions((store: any) => store.setNotesPanel);
 
@@ -213,9 +259,17 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
         saveTheme(newTheme);
     };
 
+    const handleBack = () => {
+        setTagsPanel(false);
+        setNotesPanel(true);
+    };
+
     return (
         <Container>
             <Group focusMode={focusMode}>
+                <Button onClick={handleBack} id="mobile-back">
+                    <FiChevronLeft size="22px" color="var(--sn-stylekit-neutral-color)" />
+                </Button>
                 <Button onClick={handleAuthClick}>
                     <RiAccountCircleFill
                         size="20px"
@@ -231,10 +285,10 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                     />
                 </Button>
             </Group>
-            <Group focusMode={focusMode}>
+            <Group focusMode={focusMode} fullLayout>
                 <Status>{synced ? '' : 'Unable to sync'}</Status>
             </Group>
-            <Group focusMode={focusMode}>
+            <Group focusMode={focusMode} fullLayout>
                 <Status>{status}</Status>
             </Group>
 
@@ -242,6 +296,12 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                 <Modal>
                     <MenuContainer open={isAuthMenuOpen} ref={authRef} left={13} bottom={32}>
                         <Menu>
+                            <div id="menu-close">
+                                <MenuButton onClick={() => setIsAuthMenuOpen(false)} aria-label="Close Auth Menu">
+                                    <IoMdClose size="28px" color="var(--sn-stylekit-neutral-color)" />
+                                </MenuButton>
+                            </div>
+                            <Divider id="menu-close-divider" />
                             <MenuTitle>
                                 <div>Account</div>
                                 <IoMdClose
@@ -281,6 +341,15 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                 <Modal>
                     <MenuContainer open={isSettingsMenuOpen} ref={settingsRef} left={45} bottom={32}>
                         <Menu>
+                            <div id="menu-close">
+                                <MenuButton
+                                    onClick={() => setIsSettingsMenuOpen(false)}
+                                    aria-label="Close Appearance Menu"
+                                >
+                                    <IoMdClose size="28px" color="var(--sn-stylekit-neutral-color)" />
+                                </MenuButton>
+                            </div>
+                            <Divider id="menu-close-divider" />
                             <MenuTitle>APPEARANCE</MenuTitle>
                             <MenuItem>
                                 <RadioButton role="menuitemradio" onClick={() => handleThemeChange('light')}>
@@ -301,8 +370,8 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                                 </RadioButton>
                             </MenuItem>
                             <Divider />
-                            <MenuItem>
-                                <Item onClick={setFocusMode}>
+                            <MenuItem id="focus-mode">
+                                <Item onClick={toggleFocusMode}>
                                     <ItemContent>
                                         <ItemText>Focus Mode</ItemText>
                                     </ItemContent>
@@ -311,8 +380,8 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                                     </div>
                                 </Item>
                             </MenuItem>
-                            <MenuItem>
-                                <Item onClick={setTagsPanel}>
+                            <MenuItem mobileHide>
+                                <Item onClick={toggleTagsPanel}>
                                     <ItemContent>
                                         <ItemText>Show Tags Panel</ItemText>
                                     </ItemContent>
@@ -321,8 +390,8 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                                     </div>
                                 </Item>
                             </MenuItem>
-                            <MenuItem>
-                                <Item onClick={setNotesPanel}>
+                            <MenuItem mobileHide>
+                                <Item onClick={toggleNotesPanel}>
                                     <ItemContent>
                                         <ItemText>Show Notes Panel</ItemText>
                                     </ItemContent>

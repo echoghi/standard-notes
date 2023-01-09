@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { FaSortAmountDown } from 'react-icons/fa';
+import { IoMdClose } from 'react-icons/io';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { useRef, useState } from 'react';
 import Modal from './Modal';
@@ -82,6 +83,12 @@ const SortNotes = () => {
             {isMenuOpen && (
                 <Modal>
                     <MenuContainer open={isMenuOpen} ref={ref} top={position.top} left={position.left}>
+                        <div id="menu-close">
+                            <MenuButton onClick={() => setIsMenuOpen(false)} aria-label="Close Menu">
+                                <IoMdClose size="28px" color="var(--sn-stylekit-neutral-color)" />
+                            </MenuButton>
+                        </div>
+                        <Divider id="menu-close-divider" />
                         <MenuTitle>PREFERENCES FOR</MenuTitle>
                         <PrefStatus>
                             <div>Global</div>

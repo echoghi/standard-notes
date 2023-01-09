@@ -7,6 +7,8 @@ import { BiTrash } from 'react-icons/bi';
 import { formatDate } from '../lib/formatters';
 import { decrypt } from '../lib/encryption';
 import { Note as NoteType } from '../types';
+import { breakpoints } from '../styles';
+import { useMediaQuery } from '../lib/hooks';
 
 const NoteContainer = styled.div<{ isActive: boolean }>`
     display: flex;
@@ -14,7 +16,6 @@ const NoteContainer = styled.div<{ isActive: boolean }>`
     width: 100%;
     color: var(--sn-stylekit-foreground-color);
     border-left: ${(props: any) => (props.isActive ? '2px solid var(--sn-stylekit-accessory-tint-color-1)' : '0')};
-    border-bottom: 1px solid var(--sn-stylekit-border-color);
     cursor: pointer;
     background: ${(props: any) =>
         props.isActive ? 'var(--item-cell-selected-background-color)' : 'var(--sn-stylekit-background-color)'};
@@ -31,19 +32,25 @@ const ContentContainer = styled.div<{ archived: boolean }>`
     padding: 1rem 0;
     overflow: hidden;
     opacity: ${(props: any) => (props.archived ? '0.5' : '1')};
+    border-bottom: 1px solid var(--sn-stylekit-border-color);
 `;
 
 const NoteTitle = styled.div`
+    font-size: 1.125rem;
     font-weight: bold;
 `;
 
 const NoteContent = styled.div`
-    font-size: 0.8rem;
+    font-size: 1rem;
     line-height: 1.75rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     min-width: 0;
+
+    @media (min-width: ${breakpoints.lg}px) {
+        font-size: 0.8rem;
+    }
 `;
 
 const NoteInner = styled.div`
@@ -51,10 +58,14 @@ const NoteInner = styled.div`
 `;
 
 const NoteTime = styled.div`
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     line-height: 1rem;
     opacity: 0.5;
     margin-top: 0.25rem;
+
+    @media (min-width: ${breakpoints.lg}px) {
+        font-size: 0.75rem;
+    }
 `;
 
 const NoteIcons = styled.div`
@@ -62,6 +73,7 @@ const NoteIcons = styled.div`
     padding: 1rem;
     padding-left: 0;
     align-items: flex-start;
+    border-bottom: 1px solid var(--sn-stylekit-border-color);
 
     span {
         margin-left: 0.375rem;
@@ -78,14 +90,19 @@ const IconWrapper = styled.div`
 `;
 
 const Note = ({ note }: { note: NoteType }) => {
+    const isFullLayout = useMediaQuery(`(min-width: ${breakpoints.lg}px)`);
+
     const sortSetting = useStoreState((state: any) => state.sortSetting);
     const activeNote = useStoreState((state: any) => state.activeNote);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
+    const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
 
     const isActive = activeNote?.id === note.id;
 
     const handleClick = () => {
         setActiveNote(note);
+
+        if (!isFullLayout) setTagsPanel(false);
     };
 
     return (

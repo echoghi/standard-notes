@@ -1,8 +1,30 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-export const MenuButton = styled.button<{ ref: any }>`
-    height: 2rem;
-    width: 2rem;
+export const breakpoints = {
+    sm: 640,
+    md: 768,
+    lg: 1024
+};
+
+export const slideAnimation = keyframes`
+  from {
+    transform: translateX(200%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+`;
+
+export const animation = {
+    slideDuration: '0.3s',
+    slideTimingFunction: 'ease-out',
+    fillMode: 'forwards'
+};
+
+export const MenuButton = styled.button<{ ref?: any }>`
+    height: 2.5rem;
+    width: 2.5rem;
     border: 1px solid var(--sn-stylekit-border-color);
     border-radius: 9999px;
     display: flex;
@@ -23,6 +45,11 @@ export const MenuButton = styled.button<{ ref: any }>`
             fill: var(--sn-stylekit-contrast-foreground-color);
         }
     }
+
+    @media (min-width: ${breakpoints.md}px) {
+        height: 2rem;
+        width: 2rem;
+    }
 `;
 
 export const Menu = styled.menu`
@@ -31,9 +58,21 @@ export const Menu = styled.menu`
     padding-bottom: 0.5rem;
 `;
 
-export const MenuItem = styled.li`
+export const MenuItem = styled.li<{ mobileHide?: boolean }>`
+    display: block;
+
     &:hover {
         background: var(--sn-stylekit-contrast-background-color);
+    }
+
+    &#focus-mode {
+        @media (max-width: ${breakpoints.sm}px) {
+            display: none;
+        }
+    }
+
+    @media (max-width: ${breakpoints.lg}px) {
+        display: ${(props: any) => (props.mobileHide ? 'none' : 'block')};
     }
 `;
 
@@ -55,18 +94,41 @@ export const MenuContainer = styled.div<{
     --tw-shadow-colored: 0px 4px 8px var(--tw-shadow-color), 0px 2px 8px var(--tw-shadow-color);
     box-shadow: var(--tw-ring-offset-shadow, 0 0 rgba(0, 0, 0, 0)), var(--tw-ring-shadow, 0 0 rgba(0, 0, 0, 0)),
         var(--tw-shadow);
-    max-width: 20rem;
-    height: auto;
-    border-radius: 0.25rem;
-    width: 20rem;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     z-index: var(--z-index-dropdown-menu);
     will-change: transform;
-    top: ${(props: any) => (props.top ? `${props.top}px` : 'unset')};
-    left: ${(props: any) => (props.left ? `${props.left}px` : 'unset')};
-    right: ${(props: any) => (props.right ? `${props.right}px` : 'unset')};
-    bottom: ${(props: any) => (props.bottom ? `${props.bottom}px` : 'unset')};
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    font-size: 1.1rem;
+
+    #menu-close {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0.5rem 0.75rem;
+        align-items: center;
+    }
+
+    @media (min-width: ${breakpoints.md}px) {
+        top: ${(props: any) => (props.top ? `${props.top}px` : 'unset')};
+        left: ${(props: any) => (props.left ? `${props.left}px` : 'unset')};
+        right: ${(props: any) => (props.right ? `${props.right}px` : 'unset')};
+        bottom: ${(props: any) => (props.bottom ? `${props.bottom}px` : 'unset')};
+        max-width: 20rem;
+        height: auto;
+        border-radius: 0.25rem;
+        width: 20rem;
+        font-size: 0.83rem;
+
+        #menu-close,
+        #menu-close-divider {
+            display: none;
+        }
+    }
 `;
 
 export const Divider = styled.hr`
@@ -113,43 +175,23 @@ export const RadioFill = styled.div<{ checked: boolean }>`
 `;
 
 export const RadioText = styled.div`
+    font-size: 1.1rem;
     flex-grow: 1;
     display: flex;
     margin-left: 0.5rem;
     align-items: center;
+
+    @media (min-width: ${breakpoints.md}px) {
+        font-size: 0.875rem;
+    }
 `;
 
-export const setGrid = ({
-    editorOpen,
-    notesPanel,
-    tagsPanel,
-    focusMode
-}: {
-    editorOpen: boolean;
-    notesPanel: boolean;
-    tagsPanel: boolean;
-    focusMode: boolean;
-}) => {
-    if (editorOpen) {
-        if (notesPanel && tagsPanel) {
-            if (focusMode) return '0 0 1fr';
-            return '220px 400px 2fr';
-        }
-        if (notesPanel) {
-            if (focusMode) return '0 1fr';
-            return '400px 2fr';
-        }
-        if (tagsPanel) {
-            if (focusMode) return '0 1fr';
-            return '220px 2fr';
-        }
+export const ItemText = styled.div<{ color?: string }>`
+    font-size: 1.1rem;
+    margin-left: 0.5rem;
+    color: ${(props: any) => props.color || 'inherit'};
 
-        return '1fr';
-    } else {
-        if (focusMode) return '0';
-        if (notesPanel && tagsPanel) {
-            return '220px 1fr';
-        }
-        return '1fr';
+    @media (min-width: ${breakpoints.md}px) {
+        font-size: 0.875rem;
     }
-};
+`;

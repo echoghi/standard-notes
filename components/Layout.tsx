@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import GlobalStyles from '../styles/GlobalStyles';
 import Seo from './SEO';
 
 const Container = styled.div`
@@ -13,6 +14,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 currentURL="https://app.standardnotes.com/"
                 description="Standard Notes is an easy-to-use encrypted note-taking app for digitalists and professionals. Capture your notes, documents, and life's work all in one place."
             />
+            <GlobalStyles />
             {children}
         </Container>
     );

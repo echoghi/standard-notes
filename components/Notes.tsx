@@ -2,30 +2,48 @@ import { CgNotes } from 'react-icons/cg';
 import { AiOutlinePlus, AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
 import { MdMoveToInbox } from 'react-icons/md';
+import { FiMenu } from 'react-icons/fi';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import styled from 'styled-components';
+
 import Note from './Note';
 import { formatTitleDate } from '../lib/formatters';
 import { encrypt } from '../lib/encryption';
 import { Note as NoteType } from '../types';
 import SortNotes from './SortNotes';
+import { animation, breakpoints, MenuButton, slideAnimation } from '../styles';
+import { useMediaQuery } from '../lib/hooks';
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
     overflow: hidden;
     height: 100%;
     border: 1px solid var(--sn-stylekit-border-color);
     border-bottom: 0;
     background: var(--sn-stylekit-background-color);
+    animation: ${slideAnimation} ${animation.slideDuration} ${animation.slideTimingFunction};
+    animation-fill-mode: ${animation.fillMode};
+
+    @media (min-width: ${breakpoints.md}px) {
+        animation: none;
+        position: relative;
+        top: unset;
+        left: unset;
+        right: unset;
+    }
 `;
 
 const TitleContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 0.8125rem;
     border-bottom: 1px solid var(--sn-stylekit-border-color);
 `;
 
@@ -33,6 +51,13 @@ const FlexCenter = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+
+    #show-menu {
+        margin-right: 1rem;
+        @media (min-width: ${breakpoints.lg}px) {
+            display: none;
+        }
+    }
 `;
 
 const Actions = styled(FlexCenter)`
@@ -40,18 +65,40 @@ const Actions = styled(FlexCenter)`
 `;
 
 const Button = styled.button`
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    width: 3.75rem;
+    height: 3.75rem;
     display: flex;
     justify-content: center;
     align-items: center;
     background: var(--sn-stylekit-info-color);
     border-radius: 9999px;
-    height: 2rem;
-    width: 2rem;
+
     cursor: pointer;
     border: none;
 
     &:hover {
         filter: brightness(1.25);
+    }
+
+    svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    @media (min-width: ${breakpoints.md}px) {
+        position: relative;
+        height: 2rem;
+        width: 2rem;
+        right: unset;
+        bottom: unset;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
     }
 `;
 
@@ -59,8 +106,13 @@ const Title = styled.div`
     margin-left: 0.5rem;
     color: var(--sn-stylekit-contrast-foreground-color);
     font-weight: 600;
-    font-size: 1.125rem;
-    line-height: 1.75rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
+
+    @media (min-width: ${breakpoints.md}px) {
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+    }
 `;
 
 const NoteContainer = styled.div`
@@ -88,9 +140,13 @@ interface Props {
 }
 
 const Notes = ({ notes, deleted, starred, archived }: Props) => {
+    const isSmallLayout = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
+
     const view = useStoreState((store: any) => store.view);
     const setView = useStoreActions((store: any) => store.setView);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
+    const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
+    const toggleNotesPanel = useStoreActions((store: any) => store.toggleNotesPanel);
 
     const isTrashed = view === 'deleted';
     const isStarred = view === 'starred';
@@ -103,7 +159,16 @@ const Notes = ({ notes, deleted, starred, archived }: Props) => {
         (isNotes && notes.length === 0) ||
         (isArchived && archived.length === 0);
 
-    const createNote = async () => {
+    const handleTagsPanel = () => {
+        if (isSmallLayout) {
+            toggleNotesPanel();
+        }
+
+        setActiveNote(null);
+        setTagsPanel(true);
+    };
+
+    const createNote = () => {
         setActiveNote({
             title: encrypt(formatTitleDate(new Date())),
             content: '',
@@ -121,34 +186,39 @@ const Notes = ({ notes, deleted, starred, archived }: Props) => {
     return (
         <Container id="items-column" aria-label="Notes">
             <TitleContainer className="flex justify-between items-center ml-3">
-                {isNotes && (
-                    <FlexCenter>
-                        <CgNotes color="var(--sn-stylekit-neutral-color)" size="20px" />
-                        <Title>Notes</Title>
-                    </FlexCenter>
-                )}
+                <FlexCenter>
+                    <MenuButton onClick={handleTagsPanel} id="show-menu">
+                        <FiMenu size="20px" color="var(--sn-stylekit-neutral-color)" />
+                    </MenuButton>
 
-                {isTrashed && (
-                    <FlexCenter>
-                        <BiTrash color="var(--sn-stylekit-neutral-color)" size="20px" />
-                        <Title>Trash</Title>
-                    </FlexCenter>
-                )}
+                    {isNotes && (
+                        <>
+                            <CgNotes color="var(--sn-stylekit-neutral-color)" size="22px" />
+                            <Title>Notes</Title>
+                        </>
+                    )}
 
-                {isStarred && (
-                    <FlexCenter>
-                        <AiFillStar color="var(--sn-stylekit-neutral-color)" size="20px" />
-                        <Title>Starred</Title>
-                    </FlexCenter>
-                )}
+                    {isTrashed && (
+                        <>
+                            <BiTrash color="var(--sn-stylekit-neutral-color)" size="20px" />
+                            <Title>Trash</Title>
+                        </>
+                    )}
 
-                {isArchived && (
-                    <FlexCenter>
-                        <MdMoveToInbox color="var(--sn-stylekit-neutral-color)" size="20px" />
-                        <Title>Archived</Title>
-                    </FlexCenter>
-                )}
+                    {isStarred && (
+                        <>
+                            <AiFillStar color="var(--sn-stylekit-neutral-color)" size="20px" />
+                            <Title>Starred</Title>
+                        </>
+                    )}
 
+                    {isArchived && (
+                        <>
+                            <MdMoveToInbox color="var(--sn-stylekit-neutral-color)" size="20px" />
+                            <Title>Archived</Title>
+                        </>
+                    )}
+                </FlexCenter>
                 <Actions>
                     <SortNotes />
                     <Button>

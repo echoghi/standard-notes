@@ -15,7 +15,7 @@ import { decrypt, generateUuid, storeEncryptedNotes } from '../lib/encryption';
 import { clearTrash, remove, update, duplicate } from '../lib/mutations';
 import Modal from './Modal';
 import { useOnClickOutside } from '../lib/hooks';
-import { Divider, Menu, MenuButton, MenuContainer, MenuItem } from '../styles';
+import { breakpoints, Divider, ItemText, Menu, MenuButton, MenuContainer, MenuItem } from '../styles';
 
 const Item = styled.button`
     cursor: pointer;
@@ -40,17 +40,12 @@ const ItemContent = styled.div<{ alignAlt?: boolean }>`
     flex-grow: 1;
 `;
 
-const ItemText = styled.div<{ color?: string }>`
-    margin-left: 0.5rem;
-    color: ${(props: any) => props.color || 'inherit'};
-`;
-
 const Container = styled.div`
     position: relative;
 `;
 
 const Info = styled.div`
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     line-height: 1rem;
     color: var(--sn-stylekit-neutral-color);
     font-weight: 500;
@@ -58,6 +53,10 @@ const Info = styled.div`
 
     div {
         margin-bottom: 0.25rem;
+    }
+
+    @media (min-width: ${breakpoints.md}px) {
+        font-size: 0.75rem;
     }
 `;
 
@@ -346,6 +345,12 @@ const NoteMenu = () => {
                 <Modal>
                     <MenuContainer open={isMenuOpen && note} ref={ref} top={position.top} right={position.right}>
                         <Menu aria-label="Note Options Menu">
+                            <div id="menu-close">
+                                <MenuButton onClick={() => setIsMenuOpen(false)} aria-label="Close Menu">
+                                    <IoMdClose size="28px" color="var(--sn-stylekit-neutral-color)" />
+                                </MenuButton>
+                            </div>
+                            <Divider id="menu-close-divider" />
                             <MenuItem>
                                 <Item onClick={toggleEditMode}>
                                     <ItemContent>

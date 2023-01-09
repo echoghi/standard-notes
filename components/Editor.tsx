@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useStoreState, useStoreActions } from 'easy-peasy';
 import React, { useCallback, useEffect, useState } from 'react';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 import { formatDate } from '../lib/formatters';
 import SaveStatus from './SaveStatus';
@@ -9,14 +10,40 @@ import PinNote from './PinNote';
 import EditModeBanner from './EditModeBanner';
 import { decrypt, encrypt, generateUuid, storeEncryptedNotes } from '../lib/encryption';
 import { edit } from '../lib/mutations';
+import { animation, breakpoints, MenuButton, slideAnimation } from '../styles';
+import { useMediaQuery } from '../lib/hooks';
 
 const Container = styled.div<{ focusMode: boolean }>`
     display: flex;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     flex-direction: column;
     align-items: center;
     background: ${({ focusMode }) =>
         focusMode ? 'var(--sn-stylekit-contrast-background-color)' : 'var(--sn-stylekit-background-color)'};
-    padding: ${({ focusMode }) => (focusMode ? '25px 20% 0px 20%' : '0')};
+    padding: ${({ focusMode }) => (focusMode ? '25px 10% 0px 10%' : '0')};
+    animation: ${slideAnimation} ${animation.slideDuration} ${animation.slideTimingFunction};
+    animation-fill-mode: forwards;
+    z-index: 3;
+
+    @media (min-width: ${breakpoints.md}px) {
+        height: auto;
+        width: auto;
+        position: relative;
+        transform: none;
+        animation: none;
+        top: unset;
+        left: unset;
+        right: unset;
+    }
+
+    @media (min-width: ${breakpoints.lg}px) {
+        padding: ${({ focusMode }) => (focusMode ? '25px 20% 0px 20%' : '0')};
+    }
 `;
 
 const TitleContainer = styled.div`
@@ -32,6 +59,15 @@ const TitleContainer = styled.div`
 
 const InputContainer = styled.div`
     flex-grow: 1;
+    display: flex;
+
+    button {
+        margin-right: 0.75rem;
+
+        @media (min-width: ${breakpoints.lg}px) {
+            display: none;
+        }
+    }
 `;
 
 const ActionContainer = styled.div<{ focusMode: boolean }>`
@@ -71,13 +107,19 @@ const EditPanel = styled.textarea`
 `;
 
 const Editor = () => {
+    const isSmallLayout = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
+
     const note = useStoreState((state: any) => state.activeNote);
     const focusMode = useStoreState((state: any) => state.focusMode);
+    const notesPanel = useStoreState((store: any) => store.notesPanel);
 
+    const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
     const createNote = useStoreActions((store: any) => store.createNote);
     const updateNote = useStoreActions((store: any) => store.updateNote);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
+    const toggleNotesPanel = useStoreActions((store: any) => store.toggleNotesPanel);
+    const setNotesPanel = useStoreActions((store: any) => store.setNotesPanel);
 
     const [editorContent, setEditorContent] = useState(note?.content || '');
     const [editorTitle, setEditorTitle] = useState(note?.title || formatDate(new Date()));
@@ -166,11 +208,29 @@ const Editor = () => {
         throttledSetEdit(false);
     };
 
+    const handleBack = () => {
+        if (isSmallLayout) {
+            setNotesPanel(true);
+            setActiveNote(null);
+        } else {
+            toggleNotesPanel();
+        }
+    };
+
     return (
         <Container focusMode={focusMode}>
             {!note?.editEnabled && <EditModeBanner note={note} />}
             <TitleContainer>
                 <InputContainer>
+                    {!focusMode && (
+                        <MenuButton onClick={handleBack}>
+                            {notesPanel ? (
+                                <FiChevronLeft size="22px" color="var(--sn-stylekit-neutral-color)" />
+                            ) : (
+                                <FiChevronRight size="22px" color="var(--sn-stylekit-neutral-color)" />
+                            )}
+                        </MenuButton>
+                    )}
                     <Title
                         onChange={onEditTitle}
                         value={editorTitle}

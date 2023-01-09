@@ -4,13 +4,26 @@ import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
 import { MdMoveToInbox } from 'react-icons/md';
 import { useStoreActions, useStoreState } from 'easy-peasy';
+import { useMediaQuery } from '../lib/hooks';
+import { breakpoints } from '../styles';
 
 const Container = styled.div`
     overflow: hidden;
     flex-grow: 1;
     background-color: var(--navigation-column-background-color);
     height: 100%;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+
+    @media (min-width: ${breakpoints.md}px) {
+        position: relative;
+        top: unset;
+        left: unset;
+        right: unset;
+    }
 `;
 
 const Title = styled.div`
@@ -19,8 +32,12 @@ const Title = styled.div`
     padding-bottom: 8px;
     padding-left: 16px;
     padding-right: 16px;
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
+
+    @media (min-width: ${breakpoints.lg}px) {
+        font-size: 0.9rem;
+    }
 `;
 
 const NavItem = styled.button`
@@ -32,7 +49,7 @@ const NavItem = styled.button`
     width: 100%;
     color: var(--navigation-section-title-color);
     padding: 8px 16px;
-    font-size: 12px;
+    font-size: 1rem;
     background-color: ${(props: { active: boolean }) =>
         props.active ? 'var(--navigation-item-selected-background-color)' : 'transparent'};
 
@@ -46,9 +63,16 @@ const NavItem = styled.button`
     }
 
     span {
-        font-size: 0.875rem;
+        font-size: 1rem;
         color: ${(props: { active: boolean }) => (props.active ? 'var(--sn-stylekit-foreground-color);' : 'inherit')};
         font-weight: ${(props: { active: boolean }) => (props.active ? '700' : '400')};
+    }
+
+    @media (min-width: ${breakpoints.lg}px) {
+        font-size: 0.875rem;
+        span {
+            font-size: 0.875rem;
+        }
     }
 `;
 
@@ -60,6 +84,11 @@ const NavItemName = styled.div`
 `;
 
 const Navigation = () => {
+    const isSmallLayout = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
+    const isMediumLayout = useMediaQuery(`(max-width: ${breakpoints.lg}px)`);
+
+    const setNotesPanel = useStoreActions((store: any) => store.setNotesPanel);
+    const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
     const setView = useStoreActions((store: any) => store.setView);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
     const view = useStoreState((store: any) => store.view);
@@ -87,7 +116,13 @@ const Navigation = () => {
         } else if (nextView === 'archived') {
             activeNoteArray = archived;
         }
-        setActiveNote(activeNoteArray.length ? activeNoteArray[0] : null);
+
+        setActiveNote(activeNoteArray.length && !isSmallLayout ? activeNoteArray[0] : null);
+
+        if (isMediumLayout) {
+            setTagsPanel(false);
+            setNotesPanel(true);
+        }
     };
 
     const handleNoteView = () => handleViewChange('notes');

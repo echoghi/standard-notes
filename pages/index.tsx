@@ -4,14 +4,20 @@ import jwt from 'jsonwebtoken';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
 
+import dynamic from 'next/dynamic';
+
 import Editor from '../components/Editor';
 import Notes from '../components/Notes';
-import Navigation from '../components/Navigation';
 import getNotes from '../prisma/getNotes';
 import AuthBar from '../components/AuthBar';
 import { Note } from '../types';
 import OfflineSync from '../components/OfflineSync';
-import { setGrid } from '../styles';
+import { useGrid, useMediaQuery } from '../lib/hooks';
+import { breakpoints } from '../styles';
+import isSmallLayout from '../lib/isSmallLayout';
+
+// disable ssr for navigation component
+const Navigation = dynamic(() => import('../components/Navigation'), { ssr: false });
 
 const Container = styled.div`
     position: relative;
@@ -22,14 +28,21 @@ const Container = styled.div`
 `;
 
 const AppGrid = styled.div<{ grid: string; focusMode: boolean }>`
-    display: grid;
-    grid-template-columns: ${(props: any) => (props.grid ? props.grid : '220px 1fr')};
     height: 100%;
     overflow: hidden;
     position: relative;
     vertical-align: top;
     width: 100%;
-    transition: ${(props: any) => (props.focusMode ? 'grid-template-columns .25s' : 'none')};
+
+    @media (min-width: ${breakpoints.md}px) {
+        display: grid;
+        grid-template-columns: ${({ grid }) => grid || '1fr 2fr'};
+        transition: ${({ focusMode }) => (focusMode ? 'grid-template-columns .25s' : 'none')};
+    }
+
+    @media (min-width: ${breakpoints.lg}px) {
+        grid-template-columns: ${({ grid }) => grid || '220px 1fr'};
+    }
 `;
 
 interface NoteData {
@@ -51,24 +64,37 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { proof, _sn_session } = context.req.cookies;
+    const { req } = context;
+    const { proof, _sn_session } = req.cookies;
 
     // eslint-disable-next-line
     if (proof && _sn_session) {
-        // @ts-ignore
-        const { id, email } = jwt.verify(_sn_session, proof);
+        try {
+            // @ts-ignore
+            const { id, email } = jwt.verify(_sn_session, proof);
 
-        const response = await getNotes(id);
+            const response = await getNotes(id);
 
-        return {
-            props: { noteData: { ...response, newNote: response.notes[0] || null }, userId: id, email }
-        };
+            return {
+                props: { noteData: { ...response, newNote: response.notes[0] || null }, userId: id, email }
+            };
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    return { props: {} };
+    return {
+        redirect: {
+            permanent: false,
+            destination: '/signin'
+        },
+        props: {}
+    };
 };
 
 const Home = ({ noteData, userId, email }: Props) => {
+    const isMobileLayout = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
+
     const starred = useStoreState((store: any) => store.starred);
     const deleted = useStoreState((store: any) => store.deleted);
     const archived = useStoreState((store: any) => store.archived);
@@ -78,20 +104,33 @@ const Home = ({ noteData, userId, email }: Props) => {
     const tagsPanel = useStoreState((state: any) => state.tagsPanel);
     const focusMode = useStoreState((state: any) => state.focusMode);
 
+    const navActive = isMobileLayout || tagsPanel;
+
     const setNotes = useStoreActions((store: any) => store.setNotes);
+    const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
+
+    const grid = useGrid({
+        editorOpen: !!activeNote,
+        notesPanel,
+        tagsPanel,
+        focusMode,
+        setNavigation: (bool: boolean) => setTagsPanel(bool)
+    });
 
     // save prisma notes to store
     useEffect(() => {
-        setNotes({ ...noteData });
-    }, [noteData]);
+        const isMobile = isSmallLayout();
+        const newNote = !isMobile ? noteData.newNote : null;
 
-    const grid = setGrid({ editorOpen: activeNote, notesPanel, tagsPanel, focusMode });
+        // load active note if in tablet layout or larger
+        setNotes({ ...noteData, newNote });
+    }, [noteData]);
 
     return (
         <Container id="app">
             <AppGrid grid={grid} focusMode={focusMode}>
                 <OfflineSync />
-                {tagsPanel && <Navigation />}
+                {navActive && <Navigation />}
                 {notesPanel && <Notes notes={notes} starred={starred} deleted={deleted} archived={archived} />}
 
                 {activeNote && <Editor />}
