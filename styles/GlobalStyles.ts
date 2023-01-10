@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import { breakpoints } from '.';
 
 const GlobalStyles = createGlobalStyle`
     html:root {
@@ -98,6 +99,7 @@ const GlobalStyles = createGlobalStyle`
         --sn-stylekit-sync-contrast-color: var(--sn-stylekit-passive-color-1);
 
         --z-index-dropdown-menu: 100;
+        --sn-stylekit-base-font-size:  0.813rem;
         
         --tw-border-spacing-x: 0;
         --tw-border-spacing-y: 0;
@@ -119,6 +121,14 @@ const GlobalStyles = createGlobalStyle`
         --tw-ring-shadow: 0 0 #0000;
         --tw-shadow: 0 0 #0000;
         --tw-shadow-colored: 0 0 #0000;
+
+        --sn-stylekit-font-size-editor: .9375rem;
+        --sn-stylekit-sans-serif-font:  -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", var(--sn-stylekit-simplified-chinese-font), sans-serif;
+        --sn-stylekit-editor-font-family: var(--sn-stylekit-sans-serif-font);
+
+        @media (max-width: ${breakpoints.md}px) {
+            --sn-stylekit-font-size-editor: 1rem;
+        }
     }
 
     body {
@@ -126,6 +136,7 @@ const GlobalStyles = createGlobalStyle`
         margin: 0;
         font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
         font-size: var(--sn-stylekit-base-font-size);
+        overflow: hidden;
     }
 
     a {

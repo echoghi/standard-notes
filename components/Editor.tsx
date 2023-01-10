@@ -98,12 +98,15 @@ const EditPanel = styled.textarea`
     height: 100%;
     overflow-y: auto;
     width: 100%;
+    font-family: var(--sn-stylekit-editor-font-family);
+    font-size: var(--sn-stylekit-font-size-editor);
     background-color: var(--editor-pane-editor-background-color);
     color: var(--editor-pane-editor-foreground-color);
     border: none;
     outline: none;
     padding: 15px;
     resize: none;
+    line-height: 1.5;
 `;
 
 const Editor = () => {
