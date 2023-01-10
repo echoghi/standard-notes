@@ -48,6 +48,8 @@ const Container = styled.div<{ focusMode: boolean }>`
 
 const TitleContainer = styled.div`
     display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     padding: 1rem 14px;
     padding-bottom: 10px;
     justify-content: space-between;
@@ -55,6 +57,11 @@ const TitleContainer = styled.div`
     background-color: var(--sn-stylekit-background-color);
     border-bottom: 1px solid var(--sn-stylekit-border-color);
     width: 100%;
+
+    @media (min-width: ${breakpoints.md}px) {
+        flex-wrap: nowrap;
+        gap: 1rem;
+    }
 `;
 
 const InputContainer = styled.div`
