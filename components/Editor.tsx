@@ -9,7 +9,7 @@ import NoteMenu from './NoteMenu';
 import PinNote from './PinNote';
 import EditModeBanner from './EditModeBanner';
 import { decrypt, encrypt, generateUuid, storeEncryptedNotes } from '../lib/encryption';
-import { edit } from '../lib/mutations';
+import { saveBulkNotes } from '../lib/mutations';
 import { animation, breakpoints, MenuButton, slideAnimation } from '../styles';
 import { useMediaQuery } from '../lib/hooks';
 
@@ -119,6 +119,8 @@ const EditPanel = styled.textarea`
 const Editor = () => {
     const isSmallLayout = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
 
+    const syncToken = useStoreState((store: any) => store.syncToken);
+
     const note = useStoreState((state: any) => state.activeNote);
     const focusMode = useStoreState((state: any) => state.focusMode);
     const notesPanel = useStoreState((store: any) => store.notesPanel);
@@ -177,7 +179,8 @@ const Editor = () => {
             } else {
                 // optimistically create note
                 newNote.id = generateUuid();
-                createNote(newNote);
+                newNote.createFlag = true;
+                createNote({ ...newNote });
             }
 
             const handleError = () => {
@@ -188,7 +191,10 @@ const Editor = () => {
 
             const saveNote = async () => {
                 try {
-                    const res = await edit(newNote);
+                    const res = await saveBulkNotes({
+                        items: [newNote],
+                        syncToken
+                    });
 
                     setLoading(false);
 

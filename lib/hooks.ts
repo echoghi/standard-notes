@@ -1,21 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import useSWR from 'swr';
 import { breakpoints } from '../styles';
-import { User } from '../types';
-import fetcher from './fetcher';
 import isAPISupported from './isApiSupported';
 import isClient from './isClient';
 import { toggleDarkMode } from './theme';
-
-export const useUser = () => {
-    const { data, error } = useSWR('/user', fetcher);
-
-    return {
-        user: (data as User) || null,
-        isLoading: !data && !error,
-        isError: error
-    };
-};
 
 // prettier-ignore
 export const useTheme = (initialTheme: 'light' | 'dark' | 'system') => {

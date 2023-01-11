@@ -1,6 +1,6 @@
 module.exports = {
     extends: ['next/core-web-vitals', 'airbnb', 'airbnb/hooks', 'prettier'],
-    plugins: ['react', '@typescript-eslint', 'prettier'],
+    plugins: ['react', '@typescript-eslint', 'prettier', 'import'],
     env: {
         browser: true,
         es2021: true,
@@ -20,6 +20,8 @@ module.exports = {
         'react/jsx-props-no-spreading': 'off',
         'import/prefer-default-export': 'off',
         'no-param-reassign': 'off',
+        // turn on errors for missing imports
+        'import/no-unresolved': 'error',
         'import/extensions': [
             'error',
             'ignorePackages',

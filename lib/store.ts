@@ -10,6 +10,7 @@ export const store = createStore({
     starredCount: 0,
     deletedCount: 0,
     notesCount: 0,
+    user: null,
     theme: 'light',
     view: 'notes',
     sortSetting: 'createdAt',
@@ -17,9 +18,16 @@ export const store = createStore({
     loading: false,
     error: null,
     synced: true,
+    syncToken: null,
     focusMode: false,
     tagsPanel: isFullLayout(),
     notesPanel: true,
+    updateUser: action((state: any, payload) => {
+        state.user = { ...state.user, ...payload };
+    }),
+    setSyncToken: action((state: any, payload) => {
+        state.syncToken = payload;
+    }),
     toggleFocusMode: action((state: any) => {
         state.focusMode = !state.focusMode;
     }),
@@ -87,6 +95,8 @@ export const store = createStore({
     }),
     createNote: action((state: any, payload) => {
         state.activeNote = payload;
+        // remove db flag
+        delete payload.createFlag;
 
         const newNotes = [...state.notes, payload];
         const newCount = newNotes.length;
@@ -184,6 +194,76 @@ export const store = createStore({
     setActiveNote: action((state: any, payload) => {
         state.activeNote = payload;
     }),
+    syncNotes: action((state: any, payload) => {
+        for (const note of payload) {
+            if (note.id === state.activeNote?.id) {
+                state.activeNote = note;
+            }
+
+            const noteIndex = state.notes.findIndex((n: any) => n.id === note.id);
+            const starredIndex = state.starred.findIndex((n: any) => n.id === note.id);
+            const archivedIndex = state.archived.findIndex((n: any) => n.id === note.id);
+            const deletedIndex = state.deleted.findIndex((n: any) => n.id === note.id);
+
+            if (!note.deleted && !note.archived) {
+                if (noteIndex === -1) {
+                    const updatedNotes = [...state.notes, note];
+
+                    state.notes = sortNotes(updatedNotes, state.sortSetting);
+                    state.notesCount += 1;
+                } else {
+                    state.notes[noteIndex] = note;
+                }
+            } else if (noteIndex !== -1) {
+                const updatedNotes = [...state.notes].filter((n: any) => n.id !== note.id);
+                state.notes = sortNotes(updatedNotes, state.sortSetting);
+                state.notesCount -= 1;
+            }
+
+            if (note.starred && !note.archived) {
+                if (starredIndex === -1) {
+                    const updatedStarred = [...state.starred, note];
+
+                    state.starred = sortNotes(updatedStarred, state.sortSetting);
+                    state.starredCount += 1;
+                } else {
+                    state.starred[starredIndex] = note;
+                }
+            } else if (starredIndex !== -1) {
+                const updatedStarred = [...state.starred].filter((n: any) => n.id !== note.id);
+                state.starred = sortNotes(updatedStarred, state.sortSetting);
+                state.starredCount -= 1;
+            }
+
+            if (note.archived) {
+                if (archivedIndex === -1) {
+                    const updatedArchived = [...state.archived, note];
+
+                    state.archived = sortNotes(updatedArchived, state.sortSetting);
+                } else {
+                    state.archived[archivedIndex] = note;
+                }
+            } else if (archivedIndex !== -1) {
+                const updatedArchived = [...state.archived].filter((n: any) => n.id !== note.id);
+                state.archived = sortNotes(updatedArchived, state.sortSetting);
+            }
+
+            if (note.deleted) {
+                if (deletedIndex === -1) {
+                    const updatedDeleted = [...state.deleted, note];
+
+                    state.deleted = sortNotes(updatedDeleted, state.sortSetting);
+                    state.deletedCount += 1;
+                } else {
+                    state.deleted[deletedIndex] = note;
+                }
+            } else if (deletedIndex !== -1) {
+                const updatedDeleted = [...state.deleted].filter((n: any) => n.id !== note.id);
+                state.deleted = sortNotes(updatedDeleted, state.sortSetting);
+                state.deletedCount -= 1;
+            }
+        }
+    }),
     setNotes: action((state: any, payload) => {
         state.loading = false;
         state.deleted = payload?.deleted;
@@ -194,7 +274,9 @@ export const store = createStore({
         state.starredCount = payload?.starredCount;
         state.notesCount = payload?.notesCount;
         state.activeNote = payload.newNote;
-        state.sortSetting = payload.sortSetting;
-        state.theme = payload.theme;
+        state.user = payload.user;
+        state.sortSetting = payload.user.sort;
+        state.theme = payload.user.theme;
+        state.syncToken = payload.syncToken;
     })
 });

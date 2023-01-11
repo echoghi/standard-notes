@@ -107,7 +107,7 @@ const SaveStatus = () => {
 
     return (
         <Container onMouseEnter={onHoverStart} onMouseLeave={onHoverEnd} onClick={toggleStatus}>
-            {loading && !error && !isDisabled && (
+            {loading && !isDisabled && (
                 <SyncBg>
                     <TiArrowSync size="15px" color="var(--sn-stylekit-sync-contrast-color)" />
                 </SyncBg>

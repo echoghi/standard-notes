@@ -1,3 +1,4 @@
+import { createSyncToken } from '../lib/encryption';
 import prisma from '../lib/prisma';
 import { sortNotes } from '../lib/sort';
 
@@ -16,17 +17,10 @@ const getNotes = async (userId: string) => {
         };
     }
 
-    // get user sort in prisma
-    const userSettings = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: {
             // @ts-ignore
             id: userId
-        },
-        select: {
-            // @ts-ignore
-            sort: true,
-            // @ts-ignore
-            theme: true
         }
     });
 
@@ -114,6 +108,8 @@ const getNotes = async (userId: string) => {
         }
     });
 
+    const syncToken = createSyncToken();
+
     return {
         notes: sortNotes(notes, 'createdAt'),
         starred: sortNotes(starred, 'createdAt'),
@@ -122,10 +118,8 @@ const getNotes = async (userId: string) => {
         starredCount: starred?.length,
         deletedCount: deleted?.length,
         notesCount: notes?.length,
-        // @ts-ignore
-        sortSetting: userSettings?.sort,
-        // @ts-ignore
-        theme: userSettings?.theme
+        user,
+        syncToken
     };
 };
 

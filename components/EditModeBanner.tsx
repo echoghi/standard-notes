@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { MdOutlineEditOff, MdOutlineEdit } from 'react-icons/md';
-import { useStoreActions } from 'easy-peasy';
+import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
-import { update } from '../lib/mutations';
+import { saveBulkNotes } from '../lib/mutations';
 import { Note } from '../types';
 import { storeEncryptedNotes } from '../lib/encryption';
 
@@ -36,6 +36,8 @@ const Container = styled.div<{ active: boolean }>`
 `;
 
 const EditModeBanner = ({ note }: { note: Note }) => {
+    const syncToken = useStoreState((store: any) => store.syncToken);
+
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
     const updateNote = useStoreActions((store: any) => store.updateNote);
@@ -52,21 +54,21 @@ const EditModeBanner = ({ note }: { note: Note }) => {
     };
 
     const enableEditMode = useCallback(async () => {
-        // optimistic update
-        updateNote({ ...note, editEnabled: !note.editEnabled });
+        const newNote = { ...note, editEnabled: !note.editEnabled };
+        updateNote(newNote);
 
         const handleError = () => {
             setError(true);
             setLoading(false);
-            storeEncryptedNotes({ ...note, editEnabled: !note.editEnabled });
+            storeEncryptedNotes(newNote);
         };
 
         try {
             setLoading(true);
             setError(false);
-            const res = await update({
-                id: note.id,
-                data: { editEnabled: !note.editEnabled }
+            const res = await saveBulkNotes({
+                items: [newNote],
+                syncToken
             });
 
             if (res.error) {

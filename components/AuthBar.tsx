@@ -7,8 +7,8 @@ import { FiChevronLeft } from 'react-icons/fi';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoMdClose } from 'react-icons/io';
 import { useRef, useState } from 'react';
-import { logOut, saveTheme } from '../lib/mutations';
-import { useOnClickOutside, useTheme, useUser } from '../lib/hooks';
+import { logOut, updateUserSettings } from '../lib/mutations';
+import { useOnClickOutside, useTheme } from '../lib/hooks';
 import { formatDate } from '../lib/formatters';
 import Modal from './Modal';
 import {
@@ -24,6 +24,7 @@ import {
     RadioText
 } from '../styles';
 import Switch from './Switch';
+import { Theme } from '../types';
 
 const Container = styled.footer`
     position: absolute;
@@ -215,6 +216,7 @@ const LastUpdated = styled.div`
 `;
 
 const AuthBar = ({ id, email }: { id: string; email: string }) => {
+    const user = useStoreState((store: any) => store.user);
     const synced = useStoreState((store: any) => store.synced);
     const focusMode = useStoreState((store: any) => store.focusMode);
     const tagsPanel = useStoreState((store: any) => store.tagsPanel);
@@ -227,7 +229,6 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
     const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
     const setNotesPanel = useStoreActions((store: any) => store.setNotesPanel);
 
-    const { user } = useUser();
     const router = useRouter();
     const authRef = useRef();
     const settingsRef = useRef();
@@ -254,9 +255,9 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
         router.push('/signin');
     };
 
-    const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+    const handleThemeChange = (newTheme: Theme) => {
         toggleTheme(newTheme);
-        saveTheme(newTheme);
+        updateUserSettings({ theme: newTheme });
     };
 
     const handleBack = () => {

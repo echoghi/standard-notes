@@ -9,38 +9,14 @@ export const logOut = () => {
     return fetcher('/logout');
 };
 
-export const update = (body: { id: string; data: any }) => {
-    return fetcher('/update', body);
-};
-
-export const remove = (body: { id: string; trashed: boolean }) => {
-    return fetcher('/delete', body);
-};
-
-export const clearTrash = () => {
-    return fetcher('/emptyTrash');
-};
-
-export const duplicate = (body: { id: string; newId: string }) => {
-    return fetcher('/duplicate', body);
-};
-
 export const matchUser = (body: { email: string }) => {
     return fetcher('/matchUser', body);
 };
 
-export const edit = (newNote: Note) => {
-    return fetcher('/edit', newNote);
+export const saveBulkNotes = (body: { syncToken: string; items?: Note[] }) => {
+    return fetcher('/items', { ...body, items: body.items || [] });
 };
 
-export const saveBulkNotes = (notes?: Note[]) => {
-    return fetcher('/items', notes);
-};
-
-export const saveSort = (sort: string) => {
-    return fetcher('/sort', { sort });
-};
-
-export const saveTheme = (theme: string) => {
-    return fetcher('/theme', { theme });
+export const updateUserSettings = (data: { sort?: string; theme?: string }) => {
+    return fetcher('/user', { data });
 };

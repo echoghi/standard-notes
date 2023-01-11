@@ -4,20 +4,63 @@ import { validateRoute } from '../../lib/auth';
 import { Note, User } from '../../types';
 
 export default validateRoute(async function handle(req: NextApiRequest, res: NextApiResponse, user: User) {
-    const { data } = <{ data: Note[] }>req.body;
+    const { items, syncToken } = <{ items: Note[]; syncToken: string }>req.body;
     const userId = user.id;
 
-    if (data) {
-        // loop through data and update each field and push promise to an array then finish with promise.all
-        const promises = [];
-        for (const updatedNote of data) {
-            const { id, userId: noteUser, ...note } = updatedNote;
+    // decrypt the base64 encoded syncToken
+    const decodedSyncToken = +atob(syncToken);
 
-            if (updatedNote.deleteFlag) {
+    const lastSync = new Date(decodedSyncToken).toISOString();
+
+    // query the note table for any notes that were updated after the syncToken
+    const retrievedItems = await prisma.note.findMany({
+        where: {
+            updatedAt: {
+                gte: lastSync
+            },
+            userId
+        }
+    });
+
+    const date = String(Date.now());
+    const newSyncToken = btoa(date);
+
+    type Items = any;
+
+    let savedItems: Items = [];
+    const conflicts: Items = [];
+
+    let message = 'success';
+    let updatedUser: any = null;
+
+    if (items.length) {
+        const promises = [];
+        for (const updatedNote of items) {
+            const { id, userId: noteUser, createFlag, deleteFlag, ...note } = updatedNote;
+
+            if (deleteFlag) {
                 promises.push(
                     prisma.note.delete({
                         // @ts-ignore
                         where: { id }
+                    })
+                );
+            } else if (createFlag) {
+                promises.push(
+                    prisma.note.create({
+                        data: {
+                            // @ts-ignore
+                            ...note,
+                            id,
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                            user: {
+                                connect: {
+                                    // @ts-ignore
+                                    id: userId
+                                }
+                            }
+                        }
                     })
                 );
             } else {
@@ -28,6 +71,7 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
                         // @ts-ignore
                         data: {
                             ...note,
+                            updatedAt: new Date(),
                             user: {
                                 connect: {
                                     // @ts-ignore
@@ -39,10 +83,22 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
                 );
             }
         }
-        await Promise.all(promises);
 
-        res.status(200).json({ message: 'Changes saved' });
-    } else {
-        res.status(200).json({ message: 'success' });
+        savedItems = await prisma.$transaction(promises);
+        message = 'changes saved';
     }
+
+    updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+            // @ts-ignore
+            updatedAt: new Date()
+        }
+    });
+
+    res.status(200).json({
+        message,
+        meta: { auth: { userId: updatedUser.id, updatedAt: updatedUser.updatedAt } },
+        data: { savedItems, retrievedItems, conflicts, syncToken: newSyncToken }
+    });
 });

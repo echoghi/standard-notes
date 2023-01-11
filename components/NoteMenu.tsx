@@ -11,8 +11,8 @@ import { VscPreview } from 'react-icons/vsc';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import Switch from './Switch';
 import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
-import { decrypt, generateUuid, storeEncryptedNotes } from '../lib/encryption';
-import { clearTrash, remove, update, duplicate } from '../lib/mutations';
+import { decrypt, generateUuid, markNotesForDeletion, storeEncryptedNotes } from '../lib/encryption';
+import { saveBulkNotes } from '../lib/mutations';
 import Modal from './Modal';
 import { useOnClickOutside } from '../lib/hooks';
 import { breakpoints, Divider, ItemText, Menu, MenuButton, MenuContainer, MenuItem } from '../styles';
@@ -81,6 +81,7 @@ const NoteMenu = () => {
     const view = useStoreState((store: any) => store.view);
     const note = useStoreState((store: any) => store.activeNote);
     const deleted = useStoreState((store: any) => store.deleted);
+    const syncToken = useStoreState((store: any) => store.syncToken);
 
     const updateNote = useStoreActions((store: any) => store.updateNote);
     const updateStarred = useStoreActions((store: any) => store.updateStarred);
@@ -116,13 +117,11 @@ const NoteMenu = () => {
 
     const handleUpdate = useCallback(
         async (data: any) => {
-            updateNote({ ...note, ...data });
+            const newNote = { ...note, ...data };
+            updateNote(newNote);
 
             const handleError = () => {
-                storeEncryptedNotes({
-                    ...note,
-                    ...data
-                });
+                storeEncryptedNotes(newNote);
                 setError(true);
                 setLoading(false);
             };
@@ -130,9 +129,9 @@ const NoteMenu = () => {
             try {
                 setLoading(true);
                 setError(false);
-                const res = await update({
-                    id: note.id,
-                    data
+                const res = await saveBulkNotes({
+                    items: [newNote],
+                    syncToken
                 });
 
                 if (res.error) {
@@ -157,19 +156,16 @@ const NoteMenu = () => {
     const togglePreviewMode = () => handleUpdate({ preview: !note.preview });
 
     const handleStarNote = useCallback(async () => {
-        const tempNote = { ...note, starred: !note.starred };
+        const newNote = { ...note, starred: !note.starred };
 
         if (isTrash || isArchived) {
-            updateNote(tempNote);
+            updateNote(newNote);
         } else {
-            updateStarred(tempNote);
+            updateStarred(newNote);
         }
 
         const handleError = () => {
-            storeEncryptedNotes({
-                ...note,
-                starred: !note.starred
-            });
+            storeEncryptedNotes(newNote);
             setError(true);
             setLoading(false);
         };
@@ -177,9 +173,9 @@ const NoteMenu = () => {
         try {
             setLoading(true);
             setError(false);
-            const res = await update({
-                id: note.id,
-                data: { starred: !note.starred }
+            const res = await saveBulkNotes({
+                items: [newNote],
+                syncToken
             });
 
             if (res.error) {
@@ -194,19 +190,16 @@ const NoteMenu = () => {
     }, [note]);
 
     const handleArchivedNote = useCallback(async () => {
-        const tempNote = { ...note, archived: !note.archived };
+        const newNote = { ...note, archived: !note.archived };
 
         if (isTrash) {
-            updateNote(tempNote);
+            updateNote(newNote);
         } else {
-            updateArchived(tempNote);
+            updateArchived(newNote);
         }
 
         const handleError = () => {
-            storeEncryptedNotes({
-                ...note,
-                archived: !note.archived
-            });
+            storeEncryptedNotes(newNote);
             setError(true);
             setLoading(false);
         };
@@ -214,9 +207,9 @@ const NoteMenu = () => {
         try {
             setLoading(true);
             setError(false);
-            const res = await update({
-                id: note.id,
-                data: { archived: !note.archived }
+            const res = await saveBulkNotes({
+                items: [newNote],
+                syncToken
             });
 
             if (res.error) {
@@ -231,14 +224,11 @@ const NoteMenu = () => {
     }, [note]);
 
     const handleRestoreNote = useCallback(async () => {
-        restoreNote({ ...note, deleted: false, deletedAt: null });
+        const newNote = { ...note, deleted: false, deletedAt: null };
+        restoreNote(newNote);
 
         const handleError = () => {
-            storeEncryptedNotes({
-                ...note,
-                deleted: false,
-                deletedAt: null
-            });
+            storeEncryptedNotes(newNote);
             setError(true);
             setLoading(false);
         };
@@ -246,9 +236,9 @@ const NoteMenu = () => {
         try {
             setLoading(true);
             setError(false);
-            const res = await update({
-                id: note.id,
-                data: { deleted: false, deletedAt: null }
+            const res = await saveBulkNotes({
+                items: [newNote],
+                syncToken
             });
 
             if (res.error) {
@@ -263,14 +253,11 @@ const NoteMenu = () => {
     }, [note]);
 
     const handleDeleteNote = useCallback(async () => {
-        deleteNote({ ...note, deleted: !note.deleted });
+        const newNote = { ...note, deleted: !note.deleted };
+        deleteNote(newNote);
 
         const handleError = () => {
-            storeEncryptedNotes({
-                ...note,
-                deleted: !note.deleted,
-                deleteFlag: view === 'deleted' ? true : undefined
-            });
+            storeEncryptedNotes(newNote);
             setError(true);
             setLoading(false);
         };
@@ -278,9 +265,9 @@ const NoteMenu = () => {
         try {
             setLoading(true);
             setError(false);
-            const res = await remove({
-                id: note.id,
-                trashed: view === 'deleted'
+            const res = await saveBulkNotes({
+                items: [{ ...newNote, deleteFlag: view === 'deleted' }],
+                syncToken
             });
 
             if (res.error) {
@@ -297,9 +284,34 @@ const NoteMenu = () => {
     const handleEmptyTrash = useCallback(async () => {
         emptyTrash();
 
+        const deletedNotes = [...deleted];
+
+        // mark all notes for permanent deletion
+        for (const trash of deletedNotes) {
+            trash.deleteFlag = true;
+        }
+
+        const handleError = () => {
+            markNotesForDeletion(deletedNotes);
+            setError(true);
+            setLoading(false);
+        };
+
         try {
             setLoading(true);
-            await clearTrash();
+            setError(false);
+
+            const res = await saveBulkNotes({
+                items: deletedNotes,
+                syncToken
+            });
+
+            if (res.error) {
+                handleError();
+            } else {
+                setLoading(false);
+                setError(false);
+            }
         } catch (err) {
             setError(true);
         }
@@ -321,16 +333,29 @@ const NoteMenu = () => {
 
     const handleDuplicateNote = useCallback(async () => {
         const newId = generateUuid();
-        createNote({ ...note, id: newId });
+        const newNote = { ...note, id: newId, duplicateOf: note.id };
+        createNote(newNote);
+
+        const handleError = () => {
+            storeEncryptedNotes(newNote);
+            setError(true);
+            setLoading(false);
+        };
 
         try {
             setLoading(true);
-            await duplicate({
-                id: note.id,
-                newId
+
+            const res = await saveBulkNotes({
+                items: [{ ...newNote, createFlag: true }],
+                syncToken
             });
 
-            setLoading(false);
+            if (res.error) {
+                handleError();
+            } else {
+                setLoading(false);
+                setError(false);
+            }
         } catch (err) {
             setError(true);
         }

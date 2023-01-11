@@ -65,6 +65,19 @@ export function encryptPassword(password: string, existingSalt?: string) {
     return { proof, salt, password: key };
 }
 
+export function markNotesForDeletion(notes: Note[]): void {
+    const storedNotes = JSON.parse(decrypt(getLocalStorage('enc_notes')) || '[]');
+
+    // if a note was both created and deleted while offline remove it from the array
+    const allNotes = storedNotes.concat(notes).filter((n: Note) => !n.createFlag);
+
+    // Encrypt the notes
+    const encryptedNotes = encrypt(JSON.stringify(allNotes));
+
+    // Store the encrypted notes
+    setLocalStorage('enc_notes', encryptedNotes);
+}
+
 export function storeEncryptedNotes(note: Note): void {
     const storedNotes = JSON.parse(decrypt(getLocalStorage('enc_notes')) || '[]');
 
@@ -73,14 +86,25 @@ export function storeEncryptedNotes(note: Note): void {
         return;
     }
 
-    // remove the note if it already exists in the array
-    const filtered = storedNotes.filter((n: Note) => n.id !== note.id);
+    let noteExists = false;
 
-    // replace with most recent change
-    filtered.push(note);
+    // merge the old note with the new one
+    for (let n of storedNotes) {
+        if (n.id === note.id) {
+            noteExists = true;
+            n = {
+                ...n,
+                ...note
+            };
+        }
+    }
+
+    if (!noteExists) {
+        storedNotes.push(note);
+    }
 
     // Encrypt the notes
-    const encryptedNotes = encrypt(JSON.stringify(filtered));
+    const encryptedNotes = encrypt(JSON.stringify(storedNotes));
     // Store the encrypted notes
     setLocalStorage('enc_notes', encryptedNotes);
 }
@@ -97,4 +121,11 @@ export function getEncryptedNotes(): Note[] | boolean {
 
 export function clearStoredNotes(): void {
     setLocalStorage('enc_notes', '');
+}
+
+export function createSyncToken(): string {
+    const timestamp = Date.now();
+
+    // Base64-encode the date
+    return btoa(String(timestamp));
 }

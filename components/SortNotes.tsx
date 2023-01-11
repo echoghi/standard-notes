@@ -6,7 +6,7 @@ import { useRef, useState } from 'react';
 import Modal from './Modal';
 import { useOnClickOutside } from '../lib/hooks';
 import { Divider, Menu, MenuButton, MenuContainer, MenuItem, RadioButton, RadioFill, RadioText } from '../styles';
-import { saveSort } from '../lib/mutations';
+import { updateUserSettings } from '../lib/mutations';
 
 const MenuTitle = styled.div`
     display: flex;
@@ -72,7 +72,7 @@ const SortNotes = () => {
 
     const handleSort = (sort: string) => {
         setSort(sort);
-        saveSort(sort);
+        updateUserSettings({ sort });
     };
 
     return (

@@ -10,6 +10,8 @@ export interface Note {
     spellCheck: boolean;
     preview: boolean;
     editEnabled: boolean;
+    duplicateOf?: string;
+    createFlag?: boolean;
     createdAt: string;
     updatedAt: string;
     deletedAt?: string;
@@ -27,3 +29,5 @@ export interface User {
     theme: string;
     notes: Note[];
 }
+
+export type Theme = 'light' | 'dark' | 'system';
