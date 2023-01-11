@@ -138,9 +138,9 @@ const Item = styled.button`
     }
 `;
 
-const ItemContent = styled.div`
+const ItemContent = styled.div<{ alignAlt?: boolean }>`
     display: flex;
-    align-items: ${(props: any) => (props.alignAlt ? 'flex-start' : 'center')};
+    align-items: ${({ alignAlt }) => (alignAlt ? 'flex-start' : 'center')};
     flex-grow: 1;
 `;
 
@@ -213,6 +213,13 @@ const LastUpdated = styled.div`
     color: var(--sn-stylekit-contrast-foreground-color);
     font-size: 0.875rem;
     line-height: 1.25rem;
+`;
+
+const ThemeCircle = styled.div<{ color: string }>`
+    background-color: ${({ color }) => color};
+    height: 1.25rem;
+    width: 1.25rem;
+    border-radius: 9999px;
 `;
 
 const AuthBar = ({ id, email }: { id: string; email: string }) => {
@@ -358,16 +365,32 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                                     <RadioText>Default</RadioText>
                                 </RadioButton>
                             </MenuItem>
-                            <MenuItem>
-                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('dark')}>
-                                    <RadioFill checked={theme === 'dark'} />
-                                    <RadioText>Dark</RadioText>
-                                </RadioButton>
-                            </MenuItem>
+
                             <MenuItem>
                                 <RadioButton role="menuitemradio" onClick={() => handleThemeChange('system')}>
                                     <RadioFill checked={theme === 'system'} />
                                     <RadioText>System</RadioText>
+                                </RadioButton>
+                            </MenuItem>
+                            <MenuItem>
+                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('dark')}>
+                                    <RadioFill checked={theme === 'dark'} />
+                                    <RadioText>Dark</RadioText>
+                                    <ThemeCircle color="rgb(164, 100, 194)" />
+                                </RadioButton>
+                            </MenuItem>
+                            <MenuItem>
+                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('futura')}>
+                                    <RadioFill checked={theme === 'futura'} />
+                                    <RadioText>Futura</RadioText>
+                                    <ThemeCircle color="rgb(252, 164, 41)" />
+                                </RadioButton>
+                            </MenuItem>
+                            <MenuItem>
+                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('solarized')}>
+                                    <RadioFill checked={theme === 'solarized'} />
+                                    <RadioText>Solarized Dark</RadioText>
+                                    <ThemeCircle color="rgb(42, 161, 152)" />
                                 </RadioButton>
                             </MenuItem>
                             <Divider />

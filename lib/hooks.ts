@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Theme } from 'types';
 import { breakpoints } from '../styles';
 import isAPISupported from './isApiSupported';
 import isClient from './isClient';
-import { toggleDarkMode } from './theme';
+import { handleTheme } from './theme';
 
 // prettier-ignore
-export const useTheme = (initialTheme: 'light' | 'dark' | 'system') => {
+export const useTheme = (initialTheme: Theme) => {
     const [theme, setTheme] = useState(() => {
         return initialTheme || 'light';
     });
@@ -23,28 +24,25 @@ export const useTheme = (initialTheme: 'light' | 'dark' | 'system') => {
 
         // set the initial value of the theme based on the user's preference on mount
         if (mediaQuery.matches && initialTheme === 'system') {
-            toggleDarkMode(true);
+            handleTheme('dark');
         }
 
         setTheme(initialTheme);
     }, [initialTheme]);
 
     useEffect(() => {
-        
         const mediaQuery = window?.matchMedia('(prefers-color-scheme: dark)');
 
-        if (theme === 'dark') {
-            toggleDarkMode(true);
-        } else if(theme === 'light'){
-            toggleDarkMode(false);
-        } else {
-            setTheme('system');
+        setTheme(theme);
 
+        if (theme === 'system') {
             if (mediaQuery.matches) {
-                toggleDarkMode(true);
+                handleTheme('dark');
             } else {
-                toggleDarkMode(false);
+                handleTheme('light');
             }
+        } else {
+            handleTheme(theme);
         }
 
         // listen for changes to the user's preferred color scheme
@@ -52,10 +50,10 @@ export const useTheme = (initialTheme: 'light' | 'dark' | 'system') => {
             if(theme !== 'system') return;
             if (event.matches) {
                 // If the user prefers dark mode, enable it
-                toggleDarkMode(true);
+                handleTheme('dark');
             } else {
                 // If the user does not prefer dark mode, disable it
-                toggleDarkMode(false);
+                handleTheme('light');
             }
         };
 
@@ -66,7 +64,7 @@ export const useTheme = (initialTheme: 'light' | 'dark' | 'system') => {
         return () => mediaQuery.removeListener(handleMediaQueryChange);
     }, [theme]);
 
-    const toggleTheme = (newTheme: 'light' | 'dark' | 'system') => setTheme(newTheme);
+    const toggleTheme = (newTheme: Theme) => setTheme(newTheme);
 
     return { toggleTheme, theme };
 };
