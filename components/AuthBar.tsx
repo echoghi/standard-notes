@@ -380,6 +380,13 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                                 </RadioButton>
                             </MenuItem>
                             <MenuItem>
+                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('autobiography')}>
+                                    <RadioFill checked={theme === 'autobiography'} />
+                                    <RadioText>Autobiography</RadioText>
+                                    <ThemeCircle color="rgb(157, 116, 65)" />
+                                </RadioButton>
+                            </MenuItem>
+                            <MenuItem>
                                 <RadioButton role="menuitemradio" onClick={() => handleThemeChange('futura')}>
                                     <RadioFill checked={theme === 'futura'} />
                                     <RadioText>Futura</RadioText>
@@ -387,10 +394,24 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                                 </RadioButton>
                             </MenuItem>
                             <MenuItem>
+                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('midnight')}>
+                                    <RadioFill checked={theme === 'midnight'} />
+                                    <RadioText>Midnight</RadioText>
+                                    <ThemeCircle color="rgb(8, 109, 214)" />
+                                </RadioButton>
+                            </MenuItem>
+                            <MenuItem>
                                 <RadioButton role="menuitemradio" onClick={() => handleThemeChange('solarized')}>
                                     <RadioFill checked={theme === 'solarized'} />
                                     <RadioText>Solarized Dark</RadioText>
                                     <ThemeCircle color="rgb(42, 161, 152)" />
+                                </RadioButton>
+                            </MenuItem>
+                            <MenuItem>
+                                <RadioButton role="menuitemradio" onClick={() => handleThemeChange('titanium')}>
+                                    <RadioFill checked={theme === 'titanium'} />
+                                    <RadioText>Titanium</RadioText>
+                                    <ThemeCircle color="rgb(110, 43, 158)" />
                                 </RadioButton>
                             </MenuItem>
                             <Divider />

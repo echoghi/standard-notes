@@ -30,4 +30,4 @@ export interface User {
     notes: Note[];
 }
 
-export type Theme = 'light' | 'dark' | 'solarized' | 'futura' | 'system';
+export type Theme = 'light' | 'dark' | 'solarized' | 'futura' | 'autobiography' | 'midnight' | 'titanium' | 'system';
