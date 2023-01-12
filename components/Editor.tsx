@@ -67,6 +67,7 @@ const TitleContainer = styled.div`
 const InputContainer = styled.div`
     flex-grow: 1;
     display: flex;
+    align-items: center;
 
     button {
         margin-right: 0.75rem;
@@ -253,9 +254,10 @@ const Editor = () => {
                         spellCheck={false}
                         disabled={!note?.editEnabled}
                     />
+                    <SaveStatus mobile />
                 </InputContainer>
                 <ActionContainer focusMode={focusMode}>
-                    <SaveStatus />
+                    <SaveStatus mobile={false} />
                     <PinNote note={note} />
                     <NoteMenu />
                 </ActionContainer>

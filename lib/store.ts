@@ -1,4 +1,5 @@
 import { createStore, action } from 'easy-peasy';
+import { Note, Theme, User } from 'types';
 import isFullLayout from './isFullLayout';
 import { sortNotes } from './sort';
 
@@ -25,7 +26,7 @@ export const store = createStore({
     updateUser: action((state: any, payload) => {
         state.user = { ...state.user, ...payload };
     }),
-    setSyncToken: action((state: any, payload) => {
+    setSyncToken: action((state: any, payload: string) => {
         state.syncToken = payload;
     }),
     toggleFocusMode: action((state: any) => {
@@ -37,16 +38,16 @@ export const store = createStore({
     toggleNotesPanel: action((state: any) => {
         state.notesPanel = !state.notesPanel;
     }),
-    setTagsPanel: action((state: any, payload) => {
+    setTagsPanel: action((state: any, payload: boolean) => {
         state.tagsPanel = payload;
     }),
-    setNotesPanel: action((state: any, payload) => {
+    setNotesPanel: action((state: any, payload: boolean) => {
         state.notesPanel = payload;
     }),
-    setSynced: action((state: any, payload) => {
+    setSynced: action((state: any, payload: boolean) => {
         state.synced = payload;
     }),
-    setSort: action((state: any, payload) => {
+    setSort: action((state: any, payload: string) => {
         state.sortSetting = payload;
 
         state.notes = sortNotes([...state.notes], payload);
@@ -54,16 +55,16 @@ export const store = createStore({
         state.deleted = sortNotes([...state.deleted], payload);
         state.archived = sortNotes([...state.archived], payload);
     }),
-    setView: action((state: any, payload) => {
+    setView: action((state: any, payload: string) => {
         state.view = payload;
     }),
     setError: action((state: any, payload) => {
         state.error = payload;
     }),
-    setLoading: action((state: any, payload) => {
+    setLoading: action((state: any, payload: boolean) => {
         state.loading = payload;
     }),
-    deleteNote: action((state: any, payload) => {
+    deleteNote: action((state: any, payload: Note) => {
         state.activeNote = null;
         const isStarred = payload.starred;
 
@@ -93,7 +94,7 @@ export const store = createStore({
         state.deletedCount = 0;
         state.activeNote = null;
     }),
-    createNote: action((state: any, payload) => {
+    createNote: action((state: any, payload: Note) => {
         state.activeNote = payload;
         // remove db flag
         delete payload.createFlag;
@@ -104,7 +105,7 @@ export const store = createStore({
         state.notesCount = newCount;
         state.notes = sortNotes(newNotes, state.sortSetting);
     }),
-    restoreNote: action((state: any, payload) => {
+    restoreNote: action((state: any, payload: Note) => {
         state.activeNote = payload;
         state.view = 'notes';
 
@@ -125,7 +126,7 @@ export const store = createStore({
         state.deleted = updatedDeleted;
         state.notes = sortNotes(updatedNotes, state.sortSetting);
     }),
-    updateNote: action((state: any, payload) => {
+    updateNote: action((state: any, payload: Note) => {
         payload.updatedAt = new Date().toISOString();
         state.activeNote = payload;
 
@@ -141,7 +142,7 @@ export const store = createStore({
 
         state[`${state.view}`] = sortNotes(updatedNotes, state.sortSetting);
     }),
-    updateStarred: action((state: any, payload) => {
+    updateStarred: action((state: any, payload: Note) => {
         payload.updatedAt = new Date().toISOString();
         let updatedStarred = [...state.starred];
         let updatedNotes = [...state.notes];
@@ -165,7 +166,7 @@ export const store = createStore({
         state.starred = sortNotes(updatedStarred, state.sortSetting);
         state.starredCount = updatedStarred.length;
     }),
-    updateArchived: action((state: any, payload) => {
+    updateArchived: action((state: any, payload: Note) => {
         payload.updatedAt = new Date().toISOString();
         let updatedArchived = [...state.archived];
         let updatedNotes = [...state.notes];
@@ -191,10 +192,10 @@ export const store = createStore({
         state.notesCount = updatedNotes.length;
         state.starredCount = updatedStarred.length;
     }),
-    setActiveNote: action((state: any, payload) => {
+    setActiveNote: action((state: any, payload: Note) => {
         state.activeNote = payload;
     }),
-    syncNotes: action((state: any, payload) => {
+    syncNotes: action((state: any, payload: Note[]) => {
         for (const note of payload) {
             if (note.id === state.activeNote?.id) {
                 state.activeNote = note;
@@ -264,19 +265,37 @@ export const store = createStore({
             }
         }
     }),
-    setNotes: action((state: any, payload) => {
-        state.loading = false;
-        state.deleted = payload?.deleted;
-        state.starred = payload?.starred;
-        state.archived = payload?.archived;
-        state.notes = payload?.notes;
-        state.deletedCount = payload?.deletedCount;
-        state.starredCount = payload?.starredCount;
-        state.notesCount = payload?.notesCount;
-        state.activeNote = payload.newNote;
-        state.user = payload.user;
-        state.sortSetting = payload.user.sort;
-        state.theme = payload.user.theme;
-        state.syncToken = payload.syncToken;
-    })
+    setNotes: action(
+        (
+            state: any,
+            payload: {
+                deleted: Note[];
+                starred: Note[];
+                archived: Note[];
+                notes: Note[];
+                starredCount: number;
+                deletedCount: number;
+                notesCount: number;
+                newNote: Note;
+                user: User;
+                sortSetting: string;
+                theme: Theme;
+                syncToken: string;
+            }
+        ) => {
+            state.loading = false;
+            state.deleted = payload?.deleted;
+            state.starred = payload?.starred;
+            state.archived = payload?.archived;
+            state.notes = payload?.notes;
+            state.deletedCount = payload?.deletedCount;
+            state.starredCount = payload?.starredCount;
+            state.notesCount = payload?.notesCount;
+            state.activeNote = payload.newNote;
+            state.user = payload.user;
+            state.sortSetting = payload.user.sort;
+            state.theme = payload.user.theme;
+            state.syncToken = payload.syncToken;
+        }
+    )
 });

@@ -4,8 +4,10 @@ import { AiFillCheckCircle, AiOutlineInfoCircle } from 'react-icons/ai';
 import { TiArrowSync } from 'react-icons/ti';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import styled, { keyframes } from 'styled-components';
+import { breakpoints } from 'styles';
 
-const Container = styled.button`
+const Container = styled.button<{ mobile: boolean }>`
+    display: ${({ mobile }) => (mobile ? 'block' : 'none')};
     cursor: pointer;
     position: relative;
     height: 24px;
@@ -18,6 +20,10 @@ const Container = styled.button`
     &:active,
     &:focus {
         box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
+    }
+
+    @media (min-width: ${breakpoints.md}px) {
+        display: ${({ mobile }) => (mobile ? 'none' : 'block')};
     }
 `;
 
@@ -53,7 +59,7 @@ const ErrorBg = styled(Bg)`
 `;
 
 const Tooltip = styled.div<{ active: boolean; error: boolean; loading: boolean }>`
-    display: ${(props: any) => (props.active ? 'block' : 'none')};
+    display: none;
     position: absolute;
     top: 0;
     left: 0;
@@ -68,6 +74,10 @@ const Tooltip = styled.div<{ active: boolean; error: boolean; loading: boolean }
     user-select: none;
     min-width: max-content;
     z-index: 99;
+
+    @media (min-width: ${breakpoints.md}px) {
+        display: ${({ active }) => (active ? 'block' : 'none')};
+    }
 `;
 
 const TooltipTitle = styled.div`
@@ -81,7 +91,7 @@ const TooltipBody = styled.div`
 `;
 
 // prettier-ignore
-const SaveStatus = () => {
+const SaveStatus = ({ mobile } : { mobile: boolean }) => {
     const loading = useStoreState((state: any) => state.loading);
     const error = useStoreState((state: any) => state.error);
     const [tooltipActive, setTooltipActive] = useState(false);
@@ -106,7 +116,7 @@ const SaveStatus = () => {
     };
 
     return (
-        <Container onMouseEnter={onHoverStart} onMouseLeave={onHoverEnd} onClick={toggleStatus}>
+        <Container onMouseEnter={onHoverStart} onMouseLeave={onHoverEnd} onClick={toggleStatus} mobile={mobile}>
             {loading && !isDisabled && (
                 <SyncBg>
                     <TiArrowSync size="15px" color="var(--sn-stylekit-sync-contrast-color)" />

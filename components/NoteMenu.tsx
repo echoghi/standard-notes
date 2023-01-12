@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { SlOptions } from 'react-icons/sl';
 import { BiTrash } from 'react-icons/bi';
@@ -115,37 +115,34 @@ const NoteMenu = () => {
         setIsMenuOpen((prev) => !prev);
     };
 
-    const handleUpdate = useCallback(
-        async (data: any) => {
-            const newNote = { ...note, ...data };
-            updateNote(newNote);
+    const handleUpdate = async (data: any) => {
+        const newNote = { ...note, ...data };
+        updateNote(newNote);
 
-            const handleError = () => {
-                storeEncryptedNotes(newNote);
-                setError(true);
-                setLoading(false);
-            };
+        const handleError = () => {
+            storeEncryptedNotes(newNote);
+            setError(true);
+            setLoading(false);
+        };
 
-            try {
-                setLoading(true);
-                setError(false);
-                const res = await saveBulkNotes({
-                    items: [newNote],
-                    syncToken
-                });
+        try {
+            setLoading(true);
+            setError(false);
+            const res = await saveBulkNotes({
+                items: [newNote],
+                syncToken
+            });
 
-                if (res.error) {
-                    handleError();
-                } else {
-                    setLoading(false);
-                    setError(false);
-                }
-            } catch (err) {
+            if (res.error) {
                 handleError();
+            } else {
+                setLoading(false);
+                setError(false);
             }
-        },
-        [note]
-    );
+        } catch (err) {
+            handleError();
+        }
+    };
 
     const handlePinNote = () => handleUpdate({ pinned: !note.pinned });
 
@@ -155,7 +152,7 @@ const NoteMenu = () => {
 
     const togglePreviewMode = () => handleUpdate({ preview: !note.preview });
 
-    const handleStarNote = useCallback(async () => {
+    const handleStarNote = async () => {
         const newNote = { ...note, starred: !note.starred };
 
         if (isTrash || isArchived) {
@@ -187,9 +184,9 @@ const NoteMenu = () => {
         } catch (err) {
             handleError();
         }
-    }, [note]);
+    };
 
-    const handleArchivedNote = useCallback(async () => {
+    const handleArchivedNote = async () => {
         const newNote = { ...note, archived: !note.archived };
 
         if (isTrash) {
@@ -221,9 +218,9 @@ const NoteMenu = () => {
         } catch (err) {
             handleError();
         }
-    }, [note]);
+    };
 
-    const handleRestoreNote = useCallback(async () => {
+    const handleRestoreNote = async () => {
         const newNote = { ...note, deleted: false, deletedAt: null };
         restoreNote(newNote);
 
@@ -250,9 +247,9 @@ const NoteMenu = () => {
         } catch (err) {
             handleError();
         }
-    }, [note]);
+    };
 
-    const handleDeleteNote = useCallback(async () => {
+    const handleDeleteNote = async () => {
         const newNote = { ...note, deleted: !note.deleted };
         deleteNote(newNote);
 
@@ -279,9 +276,9 @@ const NoteMenu = () => {
         } catch (err) {
             handleError();
         }
-    }, [note]);
+    };
 
-    const handleEmptyTrash = useCallback(async () => {
+    const handleEmptyTrash = async () => {
         emptyTrash();
 
         const deletedNotes = [...deleted];
@@ -315,9 +312,9 @@ const NoteMenu = () => {
         } catch (err) {
             setError(true);
         }
-    }, [note]);
+    };
 
-    const handleExportNote = useCallback(async () => {
+    const handleExportNote = () => {
         try {
             const element = document.createElement('a');
             element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(decrypt(note.content))}`);
@@ -329,9 +326,9 @@ const NoteMenu = () => {
         } catch (err) {
             console.log(err);
         }
-    }, [note]);
+    };
 
-    const handleDuplicateNote = useCallback(async () => {
+    const handleDuplicateNote = async () => {
         const newId = generateUuid();
         const newNote = { ...note, id: newId, duplicateOf: note.id };
         createNote(newNote);
@@ -359,7 +356,7 @@ const NoteMenu = () => {
         } catch (err) {
             setError(true);
         }
-    }, [note]);
+    };
 
     return (
         <Container>

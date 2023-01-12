@@ -5,10 +5,11 @@ import { useCallback } from 'react';
 import { saveBulkNotes } from '../lib/mutations';
 import { Note } from '../types';
 import { storeEncryptedNotes } from '../lib/encryption';
+import { breakpoints } from '../styles';
 
 const MenuButton = styled.button<{ pinned: boolean }>`
-    height: 2rem;
-    width: 2rem;
+    height: 2.5rem;
+    width: 2.5rem;
     border: ${({ pinned }) =>
         pinned ? '1px solid var(--sn-stylekit-info-color)' : '1px solid var(--sn-stylekit-border-color)'};
     border-radius: 9999px;
@@ -25,6 +26,11 @@ const MenuButton = styled.button<{ pinned: boolean }>`
         svg {
             fill: var(--sn-stylekit-info-color);
         }
+    }
+
+    @media (min-width: ${breakpoints.md}px) {
+        height: 2rem;
+        width: 2rem;
     }
 `;
 

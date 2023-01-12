@@ -25,6 +25,7 @@ export const animation = {
 export const MenuButton = styled.button<{ ref?: any }>`
     height: 2.5rem;
     width: 2.5rem;
+    min-width: 2.5rem;
     border: 1px solid var(--sn-stylekit-border-color);
     border-radius: 9999px;
     display: flex;
@@ -49,6 +50,7 @@ export const MenuButton = styled.button<{ ref?: any }>`
     @media (min-width: ${breakpoints.md}px) {
         height: 2rem;
         width: 2rem;
+        min-width: 2rem;
     }
 `;
 
