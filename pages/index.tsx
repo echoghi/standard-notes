@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import AuthBar from '../components/AuthBar';
 import { Note } from '../types';
 import OfflineSync from '../components/OfflineSync';
-import { useIsTabletOrMobileScreen } from '../lib/hooks';
+import { useMediaQuery } from '../lib/hooks';
 import ColumnSystem from '../components/ColumnSystem';
 import getNotes from '../prisma/getNotes';
 
@@ -67,7 +67,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const Home = ({ noteData, userId, email }: Props) => {
-    const { isMobile } = useIsTabletOrMobileScreen();
+    const isMobile = useMediaQuery(`(max-width: 768px)`);
 
     const setNotes = useStoreActions((store: any) => store.setNotes);
 

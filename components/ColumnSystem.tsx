@@ -236,13 +236,13 @@ const ColumnSystem = () => {
 
     return (
         <AppGrid className={focusMode && 'focus-mode'} style={{ ...computeStylesForContainer() }}>
-            {columns.map((pane: string) => {
+            {columns.map((pane: 'navigation-column' | 'items-column' | 'editor-column') => {
                 if (pane === 'navigation-column') {
-                    return <Navigation />;
+                    return <Navigation key={pane} />;
                 } else if (pane === 'items-column') {
-                    return <Notes notes={notes} starred={starred} deleted={deleted} archived={archived} />;
+                    return <Notes notes={notes} starred={starred} deleted={deleted} archived={archived} key={pane} />;
                 } else if (pane === 'editor-column') {
-                    return <Editor />;
+                    return <Editor key={pane} />;
                 }
             })}
         </AppGrid>
