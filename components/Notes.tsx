@@ -11,8 +11,8 @@ import { formatTitleDate } from '../lib/formatters';
 import { encrypt } from '../lib/encryption';
 import { Note as NoteType } from '../types';
 import SortNotes from './SortNotes';
-import { animation, breakpoints, MenuButton, slideAnimation } from '../styles';
-import { useMediaQuery } from '../lib/hooks';
+import { breakpoints, MenuButton } from '../styles';
+import { useIsTabletOrMobileScreen } from '../lib/hooks';
 
 const Container = styled.div`
     display: flex;
@@ -27,11 +27,8 @@ const Container = styled.div`
     border: 1px solid var(--sn-stylekit-border-color);
     border-bottom: 0;
     background: var(--sn-stylekit-background-color);
-    animation: ${slideAnimation} ${animation.slideDuration} ${animation.slideTimingFunction};
-    animation-fill-mode: ${animation.fillMode};
 
     @media (min-width: ${breakpoints.md}px) {
-        animation: none;
         position: relative;
         top: unset;
         left: unset;
@@ -140,9 +137,10 @@ interface Props {
 }
 
 const Notes = ({ notes, deleted, starred, archived }: Props) => {
-    const isSmallLayout = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
+    const { isMobile } = useIsTabletOrMobileScreen();
 
     const view = useStoreState((store: any) => store.view);
+
     const setView = useStoreActions((store: any) => store.setView);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
     const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
@@ -160,7 +158,7 @@ const Notes = ({ notes, deleted, starred, archived }: Props) => {
         (isArchived && archived.length === 0);
 
     const handleTagsPanel = () => {
-        if (isSmallLayout) {
+        if (isMobile) {
             toggleNotesPanel();
         }
 

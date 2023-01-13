@@ -4,7 +4,7 @@ import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
 import { MdMoveToInbox } from 'react-icons/md';
 import { useStoreActions, useStoreState } from 'easy-peasy';
-import { useMediaQuery } from '../lib/hooks';
+import { useIsTabletOrMobileScreen } from '../lib/hooks';
 import { breakpoints } from '../styles';
 
 const Container = styled.div`
@@ -84,8 +84,7 @@ const NavItemName = styled.div`
 `;
 
 const Navigation = () => {
-    const isSmallLayout = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
-    const isMediumLayout = useMediaQuery(`(max-width: ${breakpoints.lg}px)`);
+    const { isMobile, isTabletOrMobile } = useIsTabletOrMobileScreen();
 
     const setNotesPanel = useStoreActions((store: any) => store.setNotesPanel);
     const setTagsPanel = useStoreActions((store: any) => store.setTagsPanel);
@@ -117,9 +116,9 @@ const Navigation = () => {
             activeNoteArray = archived;
         }
 
-        setActiveNote(activeNoteArray.length && !isSmallLayout ? activeNoteArray[0] : null);
+        setActiveNote(activeNoteArray.length && !isMobile ? activeNoteArray[0] : null);
 
-        if (isMediumLayout) {
+        if (isTabletOrMobile) {
             setTagsPanel(false);
             setNotesPanel(true);
         }
@@ -131,7 +130,7 @@ const Navigation = () => {
     const handleArchivedView = () => handleViewChange('archived');
 
     return (
-        <Container id="navigation">
+        <Container id="navigation-column">
             <section>
                 <Title>Views</Title>
                 <NavItem onClick={handleNoteView} active={view === 'notes'}>

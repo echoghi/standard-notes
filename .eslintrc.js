@@ -20,6 +20,7 @@ module.exports = {
         'react/jsx-props-no-spreading': 'off',
         'import/prefer-default-export': 'off',
         'no-param-reassign': 'off',
+        'no-void': 'off',
         // turn on errors for missing imports
         'import/no-unresolved': 'error',
         'import/extensions': [

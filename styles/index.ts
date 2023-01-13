@@ -6,21 +6,15 @@ export const breakpoints = {
     lg: 1024
 };
 
-export const slideAnimation = keyframes`
+export const fadeOut = keyframes`
   from {
-    transform: translateX(200%);
+     opacity: 1;
   }
 
   to {
-    transform: translateX(0);
+    opacity: 0;
   }
 `;
-
-export const animation = {
-    slideDuration: '0.3s',
-    slideTimingFunction: 'ease-out',
-    fillMode: 'forwards'
-};
 
 export const MenuButton = styled.button<{ ref?: any }>`
     height: 2.5rem;

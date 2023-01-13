@@ -10,8 +10,8 @@ import PinNote from './PinNote';
 import EditModeBanner from './EditModeBanner';
 import { decrypt, encrypt, generateUuid, storeEncryptedNotes } from '../lib/encryption';
 import { saveBulkNotes } from '../lib/mutations';
-import { animation, breakpoints, MenuButton, slideAnimation } from '../styles';
-import { useMediaQuery } from '../lib/hooks';
+import { breakpoints, MenuButton } from '../styles';
+import { useIsTabletOrMobileScreen } from '../lib/hooks';
 
 const Container = styled.div<{ focusMode: boolean }>`
     display: flex;
@@ -26,16 +26,12 @@ const Container = styled.div<{ focusMode: boolean }>`
     background: ${({ focusMode }) =>
         focusMode ? 'var(--sn-stylekit-contrast-background-color)' : 'var(--sn-stylekit-background-color)'};
     padding: ${({ focusMode }) => (focusMode ? '25px 10% 0px 10%' : '0')};
-    animation: ${slideAnimation} ${animation.slideDuration} ${animation.slideTimingFunction};
-    animation-fill-mode: forwards;
     z-index: 3;
 
     @media (min-width: ${breakpoints.md}px) {
         height: auto;
         width: auto;
         position: relative;
-        transform: none;
-        animation: none;
         top: unset;
         left: unset;
         right: unset;
@@ -118,7 +114,7 @@ const EditPanel = styled.textarea`
 `;
 
 const Editor = () => {
-    const isSmallLayout = useMediaQuery(`(max-width: ${breakpoints.sm}px)`);
+    const { isMobile } = useIsTabletOrMobileScreen();
 
     const syncToken = useStoreState((store: any) => store.syncToken);
 
@@ -226,7 +222,7 @@ const Editor = () => {
     };
 
     const handleBack = () => {
-        if (isSmallLayout) {
+        if (isMobile) {
             setNotesPanel(true);
             setActiveNote(null);
         } else {
@@ -235,7 +231,7 @@ const Editor = () => {
     };
 
     return (
-        <Container focusMode={focusMode}>
+        <Container focusMode={focusMode} id="editor-column">
             {!note?.editEnabled && <EditModeBanner note={note} />}
             <TitleContainer>
                 <InputContainer>

@@ -4,6 +4,7 @@ import { MdOutlineNotes, MdOutlineEditOff, MdMoveToInbox } from 'react-icons/md'
 import { BsPinFill } from 'react-icons/bs';
 import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
+
 import { formatDate } from '../lib/formatters';
 import { decrypt } from '../lib/encryption';
 import { Note as NoteType } from '../types';

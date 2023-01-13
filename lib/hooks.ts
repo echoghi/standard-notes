@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Theme } from 'types';
-import { breakpoints } from '../styles';
+import debounce from './debounce';
 import isAPISupported from './isApiSupported';
 import isClient from './isClient';
 import { handleTheme } from './theme';
@@ -130,61 +130,25 @@ export const useMediaQuery = (mediaQuery: string) => {
     return isVerified;
 };
 
-type LayoutConfig = {
-    editorOpen: boolean;
-    notesPanel: boolean;
-    tagsPanel: boolean;
-    focusMode: boolean;
-    setNavigation: any;
-};
-
-export const useGrid = ({ editorOpen, notesPanel, tagsPanel, focusMode, setNavigation }: LayoutConfig) => {
-    const [grid, setGrid] = useState('1fr');
-    const isFullLayout = useMediaQuery(`(min-width: ${breakpoints.lg}px)`);
+export function useIsTabletOrMobileScreen() {
+    const [windowSize, setWindowSize] = useState(0);
 
     useEffect(() => {
-        // toggle navigation on layout change
-        setNavigation(isFullLayout);
-    }, [isFullLayout]);
+        const handleResize = debounce(() => {
+            setWindowSize(window.innerWidth);
+        }, 100);
 
-    useEffect(() => {
-        switch (true) {
-            case isFullLayout && editorOpen && notesPanel && tagsPanel && focusMode:
-                return setGrid('0 0 1fr');
-            case isFullLayout && editorOpen && notesPanel && tagsPanel:
-                return setGrid('220px 400px 2fr');
-            case isFullLayout && editorOpen && notesPanel && focusMode:
-                return setGrid('0 1fr');
-            case isFullLayout && editorOpen && notesPanel:
-                return setGrid('400px 2fr');
-            case isFullLayout && editorOpen && tagsPanel && focusMode:
-                return setGrid('0 1fr');
-            case isFullLayout && editorOpen && tagsPanel:
-                return setGrid('220px 2fr');
-            case isFullLayout && editorOpen:
-                return setGrid('1fr');
-            case isFullLayout && focusMode:
-                return setGrid('0');
-            case isFullLayout && notesPanel && tagsPanel:
-                return setGrid('220px 1fr');
-            case isFullLayout:
-                return setGrid('1fr');
-            case !isFullLayout && editorOpen && notesPanel && focusMode:
-                return setGrid('0 1fr');
-            case !isFullLayout && editorOpen && notesPanel:
-                return setGrid('1fr 2fr');
-            case !isFullLayout && editorOpen:
-                return setGrid('1fr');
-            case !isFullLayout && focusMode:
-                return setGrid('0');
-            case !isFullLayout && notesPanel && tagsPanel:
-                return setGrid('1fr 2fr');
-            case !isFullLayout && notesPanel:
-                return setGrid('1fr');
-            default:
-                return setGrid('220px 1fr');
-        }
-    }, [editorOpen, notesPanel, tagsPanel, focusMode, isFullLayout]);
+        window.addEventListener('resize', handleResize);
+        handleResize();
 
-    return grid;
-};
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    return {
+        isTabletOrMobile: windowSize < 1024,
+        isMobile: windowSize < 768,
+        isTablet: windowSize < 1024 && windowSize > 768
+    };
+}
