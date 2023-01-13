@@ -6,7 +6,7 @@ This is a clone of the popular note-taking app Standard Notes, built with [Next.
 
 -   Create and edit notes
 -   Securely store notes using end-to-end encryption
--   Organize notes using tags
+-   Stay in sync across sessions/devices without refreshing the browser
 -   Dark mode
 -   Offline capabilities
 
