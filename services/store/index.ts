@@ -66,6 +66,7 @@ export const store = createStore({
     deleteNote: action((state: any, payload: Note) => {
         state.activeNote = null;
         const isStarred = payload.starred;
+        payload.updatedAt = new Date().toISOString();
 
         if (state.view === 'deleted') {
             const updatedNotes = [...state.deleted].filter((note: any) => note.id !== payload.id);
@@ -105,6 +106,7 @@ export const store = createStore({
         state.notes = sortNotes(newNotes, state.sortSetting);
     }),
     restoreNote: action((state: any, payload: Note) => {
+        payload.updatedAt = new Date().toISOString();
         state.activeNote = payload;
         state.view = 'notes';
 
@@ -211,7 +213,7 @@ export const store = createStore({
 
                     state.notes = sortNotes(updatedNotes, state.sortSetting);
                     state.notesCount += 1;
-                } else {
+                } else if (new Date(note.updatedAt) > new Date(state.notes[noteIndex].updatedAt)) {
                     state.notes[noteIndex] = note;
                 }
             } else if (noteIndex !== -1) {
@@ -226,8 +228,8 @@ export const store = createStore({
 
                     state.starred = sortNotes(updatedStarred, state.sortSetting);
                     state.starredCount += 1;
-                } else {
-                    state.starred[starredIndex] = note;
+                } else if (new Date(note.updatedAt) > new Date(state.starred[noteIndex].updatedAt)) {
+                    state.starred[noteIndex] = note;
                 }
             } else if (starredIndex !== -1) {
                 const updatedStarred = [...state.starred].filter((n: any) => n.id !== note.id);
@@ -240,8 +242,8 @@ export const store = createStore({
                     const updatedArchived = [...state.archived, note];
 
                     state.archived = sortNotes(updatedArchived, state.sortSetting);
-                } else {
-                    state.archived[archivedIndex] = note;
+                } else if (new Date(note.updatedAt) > new Date(state.archived[noteIndex].updatedAt)) {
+                    state.archived[noteIndex] = note;
                 }
             } else if (archivedIndex !== -1) {
                 const updatedArchived = [...state.archived].filter((n: any) => n.id !== note.id);
@@ -254,8 +256,8 @@ export const store = createStore({
 
                     state.deleted = sortNotes(updatedDeleted, state.sortSetting);
                     state.deletedCount += 1;
-                } else {
-                    state.deleted[deletedIndex] = note;
+                } else if (new Date(note.updatedAt) > new Date(state.deleted[noteIndex].updatedAt)) {
+                    state.deleted[noteIndex] = note;
                 }
             } else if (deletedIndex !== -1) {
                 const updatedDeleted = [...state.deleted].filter((n: any) => n.id !== note.id);

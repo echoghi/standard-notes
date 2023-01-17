@@ -15,3 +15,12 @@ export function getLocalStorage(name: string): string | null {
         throw new Error('Unable to get local storage');
     }
 }
+
+export function removeLocalStorageItem(name: string): void {
+    try {
+        // remove the local storage item with the given name
+        localStorage.removeItem(name);
+    } catch (e) {
+        throw new Error('Unable to remove local storage item');
+    }
+}

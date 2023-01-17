@@ -1,5 +1,5 @@
 import { AES, PBKDF2, enc, lib, HmacSHA256 } from 'crypto-js';
-import { getLocalStorage, setLocalStorage } from 'services/storage';
+import { getLocalStorage, removeLocalStorageItem, setLocalStorage } from 'services/storage';
 import { Note } from 'types';
 
 export function encrypt(text: string | null) {
@@ -120,7 +120,7 @@ export function getEncryptedNotes(): Note[] | boolean {
 }
 
 export function clearStoredNotes(): void {
-    setLocalStorage('enc_notes', '');
+    removeLocalStorageItem('enc_notes');
 }
 
 export function createSyncToken(): string {

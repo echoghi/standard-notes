@@ -27,7 +27,7 @@ const OfflineSync = () => {
                     // @ts-ignore
                     const res = await saveBulkNotes({ items: storedNotes, syncToken });
                     setSyncToken(res.data.syncToken);
-                    if (res?.message === 'Changes saved') {
+                    if (res?.message === 'changes saved') {
                         setLoading(false);
                         setError(false);
                         setSynced(true);

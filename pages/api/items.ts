@@ -13,19 +13,6 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
 
     const lastSync = new Date(decodedSyncToken).toISOString();
 
-    // query the note table for any notes that were updated after the syncToken
-    const retrievedItems = await prisma.note.findMany({
-        where: {
-            updatedAt: {
-                gte: lastSync
-            },
-            userId
-        }
-    });
-
-    const date = String(Date.now());
-    const newSyncToken = btoa(date);
-
     type Items = any;
 
     let savedItems: Items = [];
@@ -34,10 +21,16 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
     let message = 'success';
     let updatedUser: any = null;
 
+    // Create a set to keep track of the ids of the items that were just changed by the API
+    const changedItemsIds = new Set<string>();
+
     if (items.length) {
         const promises = [];
         for (const updatedNote of items) {
             const { id, userId: noteUser, createFlag, deleteFlag, ...note } = updatedNote;
+
+            const updatedAt = new Date();
+            changedItemsIds.add(id);
 
             if (deleteFlag) {
                 promises.push(
@@ -53,8 +46,8 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
                             // @ts-ignore
                             ...note,
                             id,
-                            createdAt: new Date(),
-                            updatedAt: new Date(),
+                            createdAt: updatedAt,
+                            updatedAt,
                             user: {
                                 connect: {
                                     // @ts-ignore
@@ -72,7 +65,7 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
                         // @ts-ignore
                         data: {
                             ...note,
-                            updatedAt: new Date(),
+                            updatedAt,
                             user: {
                                 connect: {
                                     // @ts-ignore
@@ -96,6 +89,22 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
             updatedAt: new Date()
         }
     });
+
+    // query the note table for any notes that were updated after the syncToken
+    const rawRetrievedItems = await prisma.note.findMany({
+        where: {
+            updatedAt: {
+                gte: lastSync
+            },
+            userId
+        }
+    });
+
+    // Filter the retrieved items to exclude those that were just changed by the API
+    const retrievedItems = rawRetrievedItems.filter((item) => !changedItemsIds.has(item.id));
+
+    const timestamp = String(Date.now());
+    const newSyncToken = btoa(timestamp);
 
     res.status(200).json({
         message,
