@@ -83,7 +83,7 @@ const Status = styled.div`
     color: var(--sn-stylekit-foreground-color);
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ ref?: any }>`
     border-radius: 9999px;
     justify-content: center;
     align-items: center;
@@ -93,6 +93,10 @@ const Button = styled.button`
     border: none;
     height: 2.5rem;
     background-color: var(--sn-stylekit-background-color);
+
+    svg {
+        pointer-events: none;
+    }
 
     svg:hover {
         fill: var(--sn-stylekit-info-color);
@@ -239,13 +243,15 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
     const router = useRouter();
     const authRef = useRef();
     const settingsRef = useRef();
+    const authMenuButtonRef = useRef();
+    const themeMenuButtonRef = useRef();
 
     const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false);
     const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
     const { toggleTheme, theme } = useTheme(userTheme);
 
-    useOnClickOutside(authRef, () => setIsAuthMenuOpen(false));
-    useOnClickOutside(settingsRef, () => setIsSettingsMenuOpen(false));
+    useOnClickOutside(authRef, authMenuButtonRef, () => setIsAuthMenuOpen(false));
+    useOnClickOutside(settingsRef, themeMenuButtonRef, () => setIsSettingsMenuOpen(false));
 
     const status = id ? '' : 'Offline';
 
@@ -278,13 +284,13 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
                 <Button onClick={handleBack} id="mobile-back">
                     <FiChevronLeft size="22px" color="var(--sn-stylekit-neutral-color)" />
                 </Button>
-                <Button onClick={handleAuthClick}>
+                <Button id="auth-menu-button" onClick={handleAuthClick} ref={authMenuButtonRef}>
                     <RiAccountCircleFill
                         size="20px"
                         color={!synced ? 'var(--sn-stylekit-danger-color)' : 'var(--sn-stylekit-info-color)'}
                     />
                 </Button>
-                <Button onClick={handleSettingsClick}>
+                <Button id="theme-menu-button" onClick={handleSettingsClick} ref={themeMenuButtonRef}>
                     <MdOutlinePalette
                         size="20px"
                         color={

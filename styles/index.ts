@@ -41,6 +41,10 @@ export const MenuButton = styled.button<{ ref?: any }>`
         }
     }
 
+    svg {
+        pointer-events: none;
+    }
+
     @media (min-width: ${breakpoints.md}px) {
         height: 2rem;
         width: 2rem;
@@ -68,7 +72,7 @@ export const MenuItem = styled.li<{ mobileHide?: boolean }>`
     }
 
     @media (max-width: ${breakpoints.lg}px) {
-        display: ${(props: any) => (props.mobileHide ? 'none' : 'block')};
+        display: ${({ mobileHide }) => (mobileHide ? 'none' : 'block')};
     }
 `;
 
@@ -83,8 +87,8 @@ export const MenuContainer = styled.div<{
     position: absolute;
     user-select: none;
     padding-top: 0.5rem;
-    display: ${(props: any) => (props.open ? 'block' : 'none')};
-    visibility: ${(props: any) => (props.open ? 'visible' : 'hidden')};
+    display: ${({ open }) => (open ? 'block' : 'none')};
+    visibility: ${({ open }) => (open ? 'visible' : 'hidden')};
     background-color: var(--sn-stylekit-background-color);
     --tw-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12), 0px 2px 8px rgba(0, 0, 0, 0.04);
     --tw-shadow-colored: 0px 4px 8px var(--tw-shadow-color), 0px 2px 8px var(--tw-shadow-color);
@@ -110,10 +114,10 @@ export const MenuContainer = styled.div<{
     }
 
     @media (min-width: ${breakpoints.md}px) {
-        top: ${(props: any) => (props.top ? `${props.top}px` : 'unset')};
-        left: ${(props: any) => (props.left ? `${props.left}px` : 'unset')};
-        right: ${(props: any) => (props.right ? `${props.right}px` : 'unset')};
-        bottom: ${(props: any) => (props.bottom ? `${props.bottom}px` : 'unset')};
+        top: ${({ top }) => (top ? `${top}px` : 'unset')};
+        left: ${({ left }) => (left ? `${left}px` : 'unset')};
+        right: ${({ right }) => (right ? `${right}px` : 'unset')};
+        bottom: ${({ bottom }) => (bottom ? `${bottom}px` : 'unset')};
         max-width: 20rem;
         height: auto;
         border-radius: 0.25rem;
@@ -150,7 +154,7 @@ export const RadioButton = styled.button`
 
 export const RadioFill = styled.div<{ checked: boolean }>`
     border: 2px solid
-        ${(props) => (props.checked ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-passive-color-1)')};
+        ${({ checked }) => (checked ? 'var(--sn-stylekit-info-color)' : 'var(--sn-stylekit-passive-color-1)')};
     border-radius: 9999px;
     width: 1rem;
     height: 1rem;
@@ -166,7 +170,7 @@ export const RadioFill = styled.div<{ checked: boolean }>`
         height: 0.5rem;
         border-radius: 9999px;
         background-color: var(--sn-stylekit-info-color);
-        opacity: ${(props) => (props.checked ? 1 : 0)};
+        opacity: ${({ checked }) => (checked ? 1 : 0)};
     }
 `;
 
@@ -185,7 +189,7 @@ export const RadioText = styled.div`
 export const ItemText = styled.div<{ color?: string }>`
     font-size: 1.1rem;
     margin-left: 0.5rem;
-    color: ${(props: any) => props.color || 'inherit'};
+    color: ${({ color }) => color || 'inherit'};
 
     @media (min-width: ${breakpoints.md}px) {
         font-size: 0.875rem;

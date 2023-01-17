@@ -96,7 +96,7 @@ const NoteMenu = () => {
     const isTrash = view === 'deleted';
     const isArchived = view === 'archived';
 
-    useOnClickOutside(ref, () => setIsMenuOpen(false));
+    useOnClickOutside(ref, buttonRef, () => setIsMenuOpen(false));
 
     const handleClick = () => {
         // Get the bounding client rect of the button element
@@ -360,7 +360,7 @@ const NoteMenu = () => {
 
     return (
         <Container>
-            <MenuButton onClick={handleClick} ref={buttonRef} aria-label="Note Options">
+            <MenuButton onClick={handleClick} ref={buttonRef} aria-label="Note Options" id="note-menu-button">
                 <SlOptions size="16px" color="var(--sn-stylekit-neutral-color)" />
             </MenuButton>
             {isMenuOpen && (

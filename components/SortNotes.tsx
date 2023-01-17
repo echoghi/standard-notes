@@ -47,7 +47,7 @@ const SortNotes = () => {
     const sortSetting = useStoreState((store: any) => store.sortSetting);
     const setSort = useStoreActions((store: any) => store.setSort);
 
-    useOnClickOutside(ref, () => setIsMenuOpen(false));
+    useOnClickOutside(ref, buttonRef, () => setIsMenuOpen(false));
 
     const handleMenuOpen = () => {
         // Get the bounding client rect of the button element

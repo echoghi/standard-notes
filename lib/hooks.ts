@@ -69,13 +69,22 @@ export const useTheme = (initialTheme: Theme) => {
     return { toggleTheme, theme };
 };
 
-// eslint-disable-next-line
-export function useOnClickOutside(ref: React.MutableRefObject<any>, handler: (event: Event) => void) {
+export function useOnClickOutside(
+    ref: React.MutableRefObject<any>,
+    buttonRef: React.MutableRefObject<any>,
+    // eslint-disable-next-line
+    handler: (event: Event) => void
+) {
     useEffect(() => {
         // eslint-disable-next-line
         const listener = (event: Event) => {
-            // Do nothing if clicking ref's element or descendent elements
-            if (!ref.current || ref.current.contains(event.target)) {
+            // Do nothing if clicking ref's element, menu button, or descendent elements
+            if (
+                !ref.current ||
+                !buttonRef.current ||
+                ref.current.contains(event.target) ||
+                event.target === buttonRef.current
+            ) {
                 return;
             }
 
