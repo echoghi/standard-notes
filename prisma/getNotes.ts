@@ -1,6 +1,6 @@
-import { createSyncToken } from '../lib/encryption';
-import prisma from '../lib/prisma';
-import { sortNotes } from '../lib/sort';
+import prisma from '../services/db';
+import { createSyncToken } from '../services';
+import { sortNotes } from '../utils';
 
 const getNotes = async (userId: string) => {
     if (!userId) {

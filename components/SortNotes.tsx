@@ -3,10 +3,11 @@ import { FaSortAmountDown } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { useRef, useState } from 'react';
+
 import Modal from './Modal';
-import { useOnClickOutside } from '../lib/hooks';
+import { useOnClickOutside } from '../hooks';
 import { Divider, Menu, MenuButton, MenuContainer, MenuItem, RadioButton, RadioFill, RadioText } from '../styles';
-import { updateUserSettings } from '../lib/mutations';
+import { updateUserSettings } from '../services';
 
 const MenuTitle = styled.div`
     display: flex;

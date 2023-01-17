@@ -4,6 +4,7 @@ import { AiFillCheckCircle, AiOutlineInfoCircle } from 'react-icons/ai';
 import { TiArrowSync } from 'react-icons/ti';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import styled, { keyframes } from 'styled-components';
+
 import { breakpoints } from 'styles';
 
 const Container = styled.button<{ mobile: boolean }>`

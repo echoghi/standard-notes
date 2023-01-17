@@ -3,10 +3,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { getValidationSchema } from '../lib/validation';
-import { auth, matchUser } from '../lib/mutations';
-import { encryptPassword, generateUuid } from '../lib/encryption';
-import { setLocalStorage } from '../lib/storage';
+import { encryptPassword, setLocalStorage, generateUuid, getValidationSchema, matchUser, auth } from 'services';
 
 const Container = styled.div`
     display: flex;

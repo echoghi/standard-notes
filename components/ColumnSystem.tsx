@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic';
 
 import Editor from './Editor';
 import Notes from './Notes';
-import { useIsTabletOrMobileScreen } from '../lib/hooks';
+import { useIsTabletOrMobileScreen } from '../hooks';
 import {
     animatePaneEntranceTransitionFromOffscreenToTheRight,
     animatePaneExitTransitionOffscreenToTheRight

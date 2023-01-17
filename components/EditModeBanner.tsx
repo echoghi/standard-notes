@@ -2,9 +2,9 @@ import { useCallback, useState } from 'react';
 import { MdOutlineEditOff, MdOutlineEdit } from 'react-icons/md';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
-import { saveBulkNotes } from '../lib/mutations';
+
+import { saveBulkNotes, storeEncryptedNotes } from '../services';
 import { Note } from '../types';
-import { storeEncryptedNotes } from '../lib/encryption';
 
 const Container = styled.div<{ active: boolean }>`
     font-size: 0.875rem;

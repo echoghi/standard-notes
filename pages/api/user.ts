@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '../../lib/prisma';
-import { validateRoute } from '../../lib/auth';
+
+import prisma from '../../services/db';
+import { validateRoute } from '../../services/auth';
 import { User } from '../../types';
 
 export default validateRoute(async function handle(req: NextApiRequest, res: NextApiResponse, user: User) {

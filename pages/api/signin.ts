@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
-import prisma from '../../lib/prisma';
+
+import prisma from '../../services/db';
 import { User } from '../../types';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

@@ -7,12 +7,12 @@ import { useStoreState, useStoreActions } from 'easy-peasy';
 import styled from 'styled-components';
 
 import Note from './Note';
-import { formatTitleDate } from '../lib/formatters';
-import { encrypt } from '../lib/encryption';
+import { formatTitleDate } from '../utils';
+import { encrypt } from '../services';
 import { Note as NoteType } from '../types';
 import SortNotes from './SortNotes';
 import { breakpoints, MenuButton } from '../styles';
-import { useIsTabletOrMobileScreen } from '../lib/hooks';
+import { useIsTabletOrMobileScreen } from '../hooks';
 
 const Container = styled.div`
     display: flex;

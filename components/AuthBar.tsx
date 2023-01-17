@@ -7,9 +7,9 @@ import { FiChevronLeft } from 'react-icons/fi';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoMdClose } from 'react-icons/io';
 import { useRef, useState } from 'react';
-import { logOut, updateUserSettings } from '../lib/mutations';
-import { useOnClickOutside, useTheme } from '../lib/hooks';
-import { formatDate } from '../lib/formatters';
+import { logOut, updateUserSettings } from '../services';
+import { useOnClickOutside, useTheme } from '../hooks';
+import { formatDate } from '../utils';
 import Modal from './Modal';
 import {
     breakpoints,

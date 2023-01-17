@@ -1,6 +1,7 @@
 import cookie from 'cookie';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { validateRoute } from '../../lib/auth';
+
+import { validateRoute } from '../../services/auth';
 
 export default validateRoute(async (req: NextApiRequest, res: NextApiResponse) => {
     res.setHeader('Set-Cookie', [

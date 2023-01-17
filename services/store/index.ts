@@ -1,7 +1,6 @@
 import { createStore, action } from 'easy-peasy';
 import { Note, Theme, User } from 'types';
-import isFullLayout from './isFullLayout';
-import { sortNotes } from './sort';
+import { isFullLayout, sortNotes } from 'utils';
 
 export const store = createStore({
     notes: [],

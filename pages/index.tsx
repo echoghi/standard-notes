@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import AuthBar from '../components/AuthBar';
 import { Note } from '../types';
 import OfflineSync from '../components/OfflineSync';
-import { useMediaQuery } from '../lib/hooks';
+import { useMediaQuery } from '../hooks';
 import ColumnSystem from '../components/ColumnSystem';
 import getNotes from '../prisma/getNotes';
 

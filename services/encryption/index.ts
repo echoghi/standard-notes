@@ -1,6 +1,6 @@
 import { AES, PBKDF2, enc, lib, HmacSHA256 } from 'crypto-js';
-import { Note } from '../types';
-import { getLocalStorage, setLocalStorage } from './storage';
+import { getLocalStorage, setLocalStorage } from 'services/storage';
+import { Note } from 'types';
 
 export function encrypt(text: string | null) {
     if (!text) return '';

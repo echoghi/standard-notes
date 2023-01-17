@@ -5,11 +5,11 @@ import { BsPinFill } from 'react-icons/bs';
 import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
 
-import { formatDate } from '../lib/formatters';
-import { decrypt } from '../lib/encryption';
+import { formatDate } from '../utils';
+import { decrypt } from '../services';
 import { Note as NoteType } from '../types';
 import { breakpoints } from '../styles';
-import { useMediaQuery } from '../lib/hooks';
+import { useMediaQuery } from '../hooks';
 
 const NoteContainer = styled.div<{ isActive: boolean }>`
     display: flex;

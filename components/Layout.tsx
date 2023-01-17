@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import GlobalStyles from '../styles/GlobalStyles';
 import Seo from './SEO';
 

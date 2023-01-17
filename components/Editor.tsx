@@ -3,15 +3,15 @@ import { useStoreState, useStoreActions } from 'easy-peasy';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
-import { formatDate } from '../lib/formatters';
 import SaveStatus from './SaveStatus';
 import NoteMenu from './NoteMenu';
 import PinNote from './PinNote';
 import EditModeBanner from './EditModeBanner';
-import { decrypt, encrypt, generateUuid, storeEncryptedNotes } from '../lib/encryption';
-import { saveBulkNotes } from '../lib/mutations';
+
+import { saveBulkNotes, decrypt, encrypt, generateUuid, storeEncryptedNotes } from '../services';
 import { breakpoints, MenuButton } from '../styles';
-import { useIsTabletOrMobileScreen } from '../lib/hooks';
+import { useIsTabletOrMobileScreen } from '../hooks';
+import { formatDate } from '../utils';
 
 const Container = styled.div<{ focusMode: boolean }>`
     display: flex;

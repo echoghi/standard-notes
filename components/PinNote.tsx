@@ -2,9 +2,9 @@ import styled from 'styled-components';
 import { BsPin } from 'react-icons/bs';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { useCallback } from 'react';
-import { saveBulkNotes } from '../lib/mutations';
+
 import { Note } from '../types';
-import { storeEncryptedNotes } from '../lib/encryption';
+import { storeEncryptedNotes, saveBulkNotes } from '../services';
 import { breakpoints } from '../styles';
 
 const MenuButton = styled.button<{ pinned: boolean }>`

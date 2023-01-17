@@ -1,5 +1,5 @@
 /** Via https://davidwalsh.name/javascript-debounce-function */
-export default function debounce(this: any, func: any, wait: number, immediate = false) {
+export function debounce(this: any, func: any, wait: number, immediate = false) {
     let timeout: NodeJS.Timeout | null;
     return () => {
         // eslint-disable-next-line @typescript-eslint/no-this-alias, no-invalid-this

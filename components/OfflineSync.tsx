@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useStoreActions, useStoreState } from 'easy-peasy';
-import { clearStoredNotes, getEncryptedNotes } from '../lib/encryption';
-import { saveBulkNotes } from '../lib/mutations';
+
+import { clearStoredNotes, getEncryptedNotes, saveBulkNotes } from '../services';
 
 const OfflineSync = () => {
     const syncToken = useStoreState((store: any) => store.syncToken);

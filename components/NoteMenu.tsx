@@ -9,12 +9,12 @@ import { MdOutlineEditOff, MdSettingsBackupRestore, MdOutlineDownload, MdMoveToI
 import { AiOutlineStar } from 'react-icons/ai';
 import { VscPreview } from 'react-icons/vsc';
 import { useStoreActions, useStoreState } from 'easy-peasy';
+
 import Switch from './Switch';
-import { formatDate, getNoteStats, getReadTime } from '../lib/formatters';
-import { decrypt, generateUuid, markNotesForDeletion, storeEncryptedNotes } from '../lib/encryption';
-import { saveBulkNotes } from '../lib/mutations';
+import { formatDate, getNoteStats, getReadTime } from '../utils';
+import { decrypt, generateUuid, markNotesForDeletion, storeEncryptedNotes, saveBulkNotes } from '../services';
 import Modal from './Modal';
-import { useOnClickOutside } from '../lib/hooks';
+import { useOnClickOutside } from '../hooks';
 import { breakpoints, Divider, ItemText, Menu, MenuButton, MenuContainer, MenuItem } from '../styles';
 
 const Item = styled.button`

@@ -4,7 +4,8 @@ import { AiFillStar } from 'react-icons/ai';
 import { BiTrash } from 'react-icons/bi';
 import { MdMoveToInbox } from 'react-icons/md';
 import { useStoreActions, useStoreState } from 'easy-peasy';
-import { useIsTabletOrMobileScreen } from '../lib/hooks';
+
+import { useIsTabletOrMobileScreen } from '../hooks';
 import { breakpoints } from '../styles';
 
 const Container = styled.div`
