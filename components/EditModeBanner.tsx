@@ -38,6 +38,7 @@ const Container = styled.div<{ active: boolean }>`
 const EditModeBanner = ({ note }: { note: Note }) => {
     const syncToken = useStoreState((store: any) => store.syncToken);
 
+    const setSyncToken = useStoreActions((store: any) => store.setSyncToken);
     const setLoading = useStoreActions((store: any) => store.setLoading);
     const setError = useStoreActions((store: any) => store.setError);
     const updateNote = useStoreActions((store: any) => store.updateNote);
@@ -74,6 +75,7 @@ const EditModeBanner = ({ note }: { note: Note }) => {
             if (res.error) {
                 handleError();
             } else {
+                setSyncToken(res.data.syncToken);
                 setLoading(false);
                 setError(false);
             }

@@ -122,6 +122,7 @@ const Editor = () => {
     const focusMode = useStoreState((state: any) => state.focusMode);
     const notesPanel = useStoreState((store: any) => store.notesPanel);
 
+    const setSyncToken = useStoreActions((store: any) => store.setSyncToken);
     const setActiveNote = useStoreActions((store: any) => store.setActiveNote);
     const createNote = useStoreActions((store: any) => store.createNote);
     const updateNote = useStoreActions((store: any) => store.updateNote);
@@ -195,7 +196,11 @@ const Editor = () => {
 
                     setLoading(false);
 
-                    if (res.error) handleError();
+                    if (res.error) {
+                        handleError();
+                    } else {
+                        setSyncToken(res.data.syncToken);
+                    }
                 } catch (err) {
                     handleError();
                 }
@@ -255,7 +260,7 @@ const Editor = () => {
                 <ActionContainer focusMode={focusMode}>
                     <SaveStatus mobile={false} />
                     <PinNote note={note} />
-                    <NoteMenu />
+                    <NoteMenu note={note} />
                 </ActionContainer>
             </TitleContainer>
             <EditPanel

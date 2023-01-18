@@ -95,9 +95,10 @@ export const store = createStore({
         state.activeNote = null;
     }),
     createNote: action((state: any, payload: Note) => {
-        state.activeNote = payload;
         // remove db flag
         delete payload.createFlag;
+
+        state.activeNote = payload;
 
         const newNotes = [...state.notes, payload];
         const newCount = newNotes.length;
@@ -145,6 +146,7 @@ export const store = createStore({
     }),
     updateStarred: action((state: any, payload: Note) => {
         payload.updatedAt = new Date().toISOString();
+        state.activeNote = payload;
         let updatedStarred = [...state.starred];
         let updatedNotes = [...state.notes];
 
@@ -169,6 +171,7 @@ export const store = createStore({
     }),
     updateArchived: action((state: any, payload: Note) => {
         payload.updatedAt = new Date().toISOString();
+        state.activeNote = null;
         let updatedArchived = [...state.archived];
         let updatedNotes = [...state.notes];
         let updatedStarred = [...state.starred];

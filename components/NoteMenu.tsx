@@ -10,6 +10,7 @@ import { AiOutlineStar } from 'react-icons/ai';
 import { VscPreview } from 'react-icons/vsc';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 
+import { Note } from 'types';
 import Switch from './Switch';
 import { formatDate, getNoteStats, getReadTime } from '../utils';
 import { decrypt, generateUuid, markNotesForDeletion, storeEncryptedNotes, saveBulkNotes } from '../services';
@@ -72,17 +73,17 @@ const SmallText = styled.div`
     color: var(--sn-stylekit-contrast-foreground-color);
 `;
 
-const NoteMenu = () => {
+const NoteMenu = ({ note }: { note: Note }) => {
     const ref = useRef();
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [position, setPosition] = useState({ right: 0, top: 0 });
 
     const view = useStoreState((store: any) => store.view);
-    const note = useStoreState((store: any) => store.activeNote);
     const deleted = useStoreState((store: any) => store.deleted);
     const syncToken = useStoreState((store: any) => store.syncToken);
 
+    const setSyncToken = useStoreActions((store: any) => store.setSyncToken);
     const updateNote = useStoreActions((store: any) => store.updateNote);
     const updateStarred = useStoreActions((store: any) => store.updateStarred);
     const emptyTrash = useStoreActions((store: any) => store.emptyTrash);
@@ -136,6 +137,7 @@ const NoteMenu = () => {
             if (res.error) {
                 handleError();
             } else {
+                setSyncToken(res.data.syncToken);
                 setLoading(false);
                 setError(false);
             }
@@ -178,6 +180,7 @@ const NoteMenu = () => {
             if (res.error) {
                 handleError();
             } else {
+                setSyncToken(res.data.syncToken);
                 setLoading(false);
                 setError(false);
             }
@@ -212,6 +215,7 @@ const NoteMenu = () => {
             if (res.error) {
                 handleError();
             } else {
+                setSyncToken(res.data.syncToken);
                 setLoading(false);
                 setError(false);
             }
@@ -221,7 +225,7 @@ const NoteMenu = () => {
     };
 
     const handleRestoreNote = async () => {
-        const newNote = { ...note, deleted: false, deletedAt: null };
+        const newNote = { ...note, deleted: false };
         restoreNote(newNote);
 
         const handleError = () => {
@@ -241,6 +245,7 @@ const NoteMenu = () => {
             if (res.error) {
                 handleError();
             } else {
+                setSyncToken(res.data.syncToken);
                 setLoading(false);
                 setError(false);
             }
@@ -270,6 +275,7 @@ const NoteMenu = () => {
             if (res.error) {
                 handleError();
             } else {
+                setSyncToken(res.data.syncToken);
                 setLoading(false);
                 setError(false);
             }
@@ -306,6 +312,7 @@ const NoteMenu = () => {
             if (res.error) {
                 handleError();
             } else {
+                setSyncToken(res.data.syncToken);
                 setLoading(false);
                 setError(false);
             }
@@ -350,6 +357,7 @@ const NoteMenu = () => {
             if (res.error) {
                 handleError();
             } else {
+                setSyncToken(res.data.syncToken);
                 setLoading(false);
                 setError(false);
             }
@@ -365,7 +373,7 @@ const NoteMenu = () => {
             </MenuButton>
             {isMenuOpen && (
                 <Modal>
-                    <MenuContainer open={isMenuOpen && note} ref={ref} top={position.top} right={position.right}>
+                    <MenuContainer open={isMenuOpen && !!note} ref={ref} top={position.top} right={position.right}>
                         <Menu aria-label="Note Options Menu">
                             <div id="menu-close">
                                 <MenuButton onClick={() => setIsMenuOpen(false)} aria-label="Close Menu">

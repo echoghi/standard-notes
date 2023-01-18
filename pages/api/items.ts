@@ -29,7 +29,7 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
         for (const updatedNote of items) {
             const { id, userId: noteUser, createFlag, deleteFlag, ...note } = updatedNote;
 
-            const updatedAt = new Date();
+            const createdAt = new Date();
             changedItemsIds.add(id);
 
             if (deleteFlag) {
@@ -46,8 +46,7 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
                             // @ts-ignore
                             ...note,
                             id,
-                            createdAt: updatedAt,
-                            updatedAt,
+                            createdAt,
                             user: {
                                 connect: {
                                     // @ts-ignore
@@ -65,7 +64,6 @@ export default validateRoute(async function handle(req: NextApiRequest, res: Nex
                         // @ts-ignore
                         data: {
                             ...note,
-                            updatedAt,
                             user: {
                                 connect: {
                                     // @ts-ignore
