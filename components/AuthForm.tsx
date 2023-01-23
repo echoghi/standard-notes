@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { encryptPassword, setLocalStorage, generateUuid, getValidationSchema, matchUser, auth } from 'services';
+import { breakpoints } from 'styles';
 
 const Container = styled.div`
     display: flex;
@@ -20,10 +21,9 @@ const Container = styled.div`
 const SignInFormContainer = styled.div`
     width: fit-content;
     margin: 0 auto;
-    padding: 3rem;
+    padding: 2rem;
     border: 1px solid #dfe1e4;
     border-radius: 0.25rem;
-    min-width: 450px;
     background-color: #fff;
 
     input {
@@ -41,6 +41,11 @@ const SignInFormContainer = styled.div`
             outline: none;
             box-shadow: 0 0 0 1px #086dd6;
         }
+    }
+
+    @media (min-width: ${breakpoints.lg}px) {
+        min-width: 450px;
+        padding: 3rem;
     }
 `;
 
