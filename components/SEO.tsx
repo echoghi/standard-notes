@@ -1,14 +1,12 @@
 import { NextSeo } from 'next-seo';
 
-const Seo = ({
-    pageTitle,
-    description,
-    currentURL
-}: {
+interface SEO {
     pageTitle: string;
     description: string;
     currentURL: string;
-}) => {
+}
+
+const Seo = ({ pageTitle, description, currentURL }: SEO) => {
     return (
         <NextSeo
             title={pageTitle}
