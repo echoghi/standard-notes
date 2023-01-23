@@ -22,30 +22,33 @@ const SignInFormContainer = styled.div`
     width: fit-content;
     margin: 0 auto;
     padding: 2rem;
-    border: 1px solid #dfe1e4;
+    border: 1px solid var(--sn-stylekit-border-color);
     border-radius: 0.25rem;
     background-color: #fff;
 
     input {
-        font-size: 0.875rem;
+        font-size: 16px;
         line-height: 1.25rem;
         padding: 0.625rem 0.75rem;
-        border: 1px solid #dfe1e4;
+        border: 1px solid var(--sn-stylekit-border-color);
         width: 100%;
         border-radius: 0.25rem;
         height: 100%;
         outline: none;
 
         &:focus {
-            border: none;
             outline: none;
-            box-shadow: 0 0 0 1px #086dd6;
+            box-shadow: 0 0 0 1px var(--sn-stylekit-info-color);
         }
     }
 
     @media (min-width: ${breakpoints.lg}px) {
         min-width: 450px;
         padding: 3rem;
+
+        input {
+            font-size: 0.875rem;
+        }
     }
 `;
 
@@ -75,7 +78,7 @@ const Button = styled.button`
     line-height: 1.25rem;
     color: #fff;
     padding: 0.375rem 1rem;
-    background-color: #086dd6;
+    background-color: var(--sn-stylekit-info-color);
     border-radius: 0.25rem;
     cursor: pointer;
     min-width: 6rem;
@@ -102,12 +105,12 @@ const Label = styled.label`
 const SubText = styled.div`
     font-size: 0.875rem;
     line-height: 1.25rem;
-    color: #515357;
+    color: var(--sn-stylekit-passive-color-0);
     font-weight: 500;
 
     a {
         cursor: pointer;
-        color: #086dd6;
+        color: var(--sn-stylekit-info-color);
     }
 `;
 
