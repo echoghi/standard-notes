@@ -7,7 +7,17 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "vercel-build": "prisma generate && prisma migrate deploy && next build"
+        "vercel-build": "prisma generate && prisma migrate deploy && next build",
+        "prepare": "husky install",
+        "lint-staged": "lint-staged"
+    },
+    "lint-staged": {
+        "*.{js,ts,tsx,css,json}": [
+            "prettier --write"
+        ],
+        "*.{js,ts,tsx}": [
+            "eslint --fix"
+        ]
     },
     "dependencies": {
         "@prisma/client": "^4.7.1",
@@ -53,6 +63,8 @@
         "eslint-plugin-prettier": "^4.2.1",
         "eslint-plugin-react": "^7.31.11",
         "eslint-plugin-react-hooks": "^4.6.0",
+        "husky": "^8.0.3",
+        "lint-staged": "^13.1.0",
         "prettier": "^2.8.1",
         "prisma": "^4.7.1",
         "superjson": "^1.11.0",
