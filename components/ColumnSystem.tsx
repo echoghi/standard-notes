@@ -2,19 +2,15 @@ import { useEffect, useState } from 'react';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import styled from 'styled-components';
 
-import dynamic from 'next/dynamic';
-
 import Editor from './Editor';
 import Notes from './Notes';
+import Navigation from './Navigation';
 import { useIsTabletOrMobileScreen } from '../hooks';
 import {
   animatePaneEntranceTransitionFromOffscreenToTheRight,
   animatePaneExitTransitionOffscreenToTheRight,
 } from './ColumnAnimator';
 import { fadeOut } from '../styles';
-
-// disable ssr for navigation component
-const Navigation = dynamic(() => import('./Navigation'), { ssr: false });
 
 const AppGrid = styled.div`
   height: 100%;
@@ -42,7 +38,7 @@ export function isPanesChangeLeafDismiss(from: any, to: any): boolean {
   // @ts-ignore
   return (
     fromWithoutLast.length === to.length &&
-    fromWithoutLast.every((pane, index) => pane === to[index])
+    fromWithoutLast.every((pane: any, index: any) => pane === to[index])
   );
 }
 
@@ -51,7 +47,7 @@ export function isPanesChangePush(from: any, to: any): boolean {
   // @ts-ignore
   return (
     toWithoutLast.length === from.length &&
-    toWithoutLast.every((pane, index) => pane === from[index])
+    toWithoutLast.every((pane: any, index: any) => pane === from[index])
   );
 }
 
