@@ -5,27 +5,28 @@ import { TiArrowSync } from 'react-icons/ti';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import styled, { keyframes } from 'styled-components';
 
-import { breakpoints } from 'styles';
+import { breakpoints } from '../styles';
 
 const Container = styled.button<{ mobile: boolean }>`
-    display: ${({ mobile }) => (mobile ? 'block' : 'none')};
-    cursor: pointer;
-    position: relative;
-    height: 24px;
-    width: 24px;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
-    padding: 0;
+  display: ${({ mobile }) => (mobile ? 'block' : 'none')};
+  cursor: pointer;
+  position: relative;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  padding: 0;
 
-    &:active,
-    &:focus {
-        box-shadow: 0 0 0 2px var(--sn-stylekit-background-color), 0 0 0 4px var(--sn-stylekit-info-color);
-    }
+  &:active,
+  &:focus {
+    box-shadow: 0 0 0 2px var(--sn-stylekit-background-color),
+      0 0 0 4px var(--sn-stylekit-info-color);
+  }
 
-    @media (min-width: ${breakpoints.md}px) {
-        display: ${({ mobile }) => (mobile ? 'none' : 'block')};
-    }
+  @media (min-width: ${breakpoints.md}px) {
+    display: ${({ mobile }) => (mobile ? 'none' : 'block')};
+  }
 `;
 
 const spin = keyframes`
@@ -38,57 +39,59 @@ const spin = keyframes`
 `;
 
 const Bg = styled.div`
-    border-radius: 50%;
-    height: 24px;
-    width: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const SyncBg = styled(Bg)`
-    background: var(--sn-stylekit-contrast-background-color);
-    animation: ${spin} 1s linear infinite;
+  background: var(--sn-stylekit-contrast-background-color);
+  animation: ${spin} 1s linear infinite;
 `;
 
 const DisabledBg = styled(Bg)`
-    background: var(--sn-stylekit-contrast-background-color);
+  background: var(--sn-stylekit-contrast-background-color);
 `;
 
 const ErrorBg = styled(Bg)`
-    background: var(--sn-stylekit-danger-color);
+  background: var(--sn-stylekit-danger-color);
 `;
 
 const Tooltip = styled.div<{ active: boolean; error: boolean; loading: boolean }>`
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    border: 1px solid var(--sn-stylekit-border-color);
-    border-radius: 0.25rem;
-    text-align: left;
-    padding: 0.375rem 0.75rem;
-    line-height: 1.25rem;
-    background-color: var(--sn-stylekit-background-color);
-    color: ${({ error }) => (error ? 'var(--sn-stylekit-danger-color)' : 'var(--editor-title-input-color)')};
-    transform: ${({ loading }) => (loading ? 'translate(-4rem, 1.5rem)' : 'translate(-8rem, 1.5rem)')};
-    user-select: none;
-    min-width: max-content;
-    z-index: 99;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid var(--sn-stylekit-border-color);
+  border-radius: 0.25rem;
+  text-align: left;
+  padding: 0.375rem 0.75rem;
+  line-height: 1.25rem;
+  background-color: var(--sn-stylekit-background-color);
+  color: ${({ error }) =>
+    error ? 'var(--sn-stylekit-danger-color)' : 'var(--editor-title-input-color)'};
+  transform: ${({ loading }) =>
+    loading ? 'translate(-4rem, 1.5rem)' : 'translate(-8rem, 1.5rem)'};
+  user-select: none;
+  min-width: max-content;
+  z-index: 99;
 
-    @media (min-width: ${breakpoints.md}px) {
-        display: ${({ active }) => (active ? 'block' : 'none')};
-    }
+  @media (min-width: ${breakpoints.md}px) {
+    display: ${({ active }) => (active ? 'block' : 'none')};
+  }
 `;
 
 const TooltipTitle = styled.div`
-    font-weight: 700;
-    font-size: 0.875rem;
+  font-weight: 700;
+  font-size: 0.875rem;
 `;
 
 const TooltipBody = styled.div`
-    margin-top: 0.125rem;
-    font-size: 13px;
+  margin-top: 0.125rem;
+  font-size: 13px;
 `;
 
 // prettier-ignore

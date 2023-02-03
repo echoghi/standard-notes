@@ -9,7 +9,7 @@ export const isAPISupported = (api: string) => api in window;
 export const isClient = typeof window === 'object';
 
 export const isFullLayout = () => {
-    if (!isClient || !isAPISupported('matchMedia')) return false;
+  if (!isClient || !isAPISupported('matchMedia')) return false;
 
-    return window.innerWidth >= 1024;
+  return window.innerWidth >= 1024;
 };

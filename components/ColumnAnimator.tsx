@@ -8,69 +8,73 @@ const EXIT_DURATION = 200;
  * the editor panel), causing Safari to get tripped up.
  */
 function performSafariAnimationFix(element: HTMLElement): void {
-    const isSafari = /Safari/.test(navigator.userAgent) || /AppleWebKit/.test(navigator.userAgent);
-    if (!isSafari) {
-        return;
-    }
+  const isSafari = /Safari/.test(navigator.userAgent) || /AppleWebKit/.test(navigator.userAgent);
+  if (!isSafari) {
+    return;
+  }
 
-    element.style.opacity = '0.999';
-    setTimeout(() => {
-        element.style.opacity = '1.0';
-    }, 0);
+  element.style.opacity = '0.999';
+  setTimeout(() => {
+    element.style.opacity = '1.0';
+  }, 0);
 }
 
-export async function animatePaneEntranceTransitionFromOffscreenToTheRight(elementId: string): Promise<void> {
-    const element = document.getElementById(elementId);
-    if (!element) {
-        return;
-    }
+export async function animatePaneEntranceTransitionFromOffscreenToTheRight(
+  elementId: string,
+): Promise<void> {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    return;
+  }
 
-    const animation = element.animate(
-        [
-            {
-                transform: 'translateX(100%)'
-            },
-            {
-                transform: 'translateX(0)'
-            }
-        ],
-        {
-            duration: ENTRANCE_DURATION,
-            easing: 'ease-in-out',
-            fill: 'both'
-        }
-    );
+  const animation = element.animate(
+    [
+      {
+        transform: 'translateX(100%)',
+      },
+      {
+        transform: 'translateX(0)',
+      },
+    ],
+    {
+      duration: ENTRANCE_DURATION,
+      easing: 'ease-in-out',
+      fill: 'both',
+    },
+  );
 
-    await animation.finished;
+  await animation.finished;
 
-    performSafariAnimationFix(element);
+  performSafariAnimationFix(element);
 
-    animation.finish();
+  animation.finish();
 }
 
-export async function animatePaneExitTransitionOffscreenToTheRight(elementId: string): Promise<void> {
-    const element = document.getElementById(elementId);
-    if (!element) {
-        return;
-    }
+export async function animatePaneExitTransitionOffscreenToTheRight(
+  elementId: string,
+): Promise<void> {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    return;
+  }
 
-    const animation = element.animate(
-        [
-            {
-                transform: 'translateX(0)'
-            },
-            {
-                transform: 'translateX(100%)'
-            }
-        ],
-        {
-            duration: EXIT_DURATION,
-            easing: 'ease-in-out',
-            fill: 'both'
-        }
-    );
+  const animation = element.animate(
+    [
+      {
+        transform: 'translateX(0)',
+      },
+      {
+        transform: 'translateX(100%)',
+      },
+    ],
+    {
+      duration: EXIT_DURATION,
+      easing: 'ease-in-out',
+      fill: 'both',
+    },
+  );
 
-    await animation.finished;
+  await animation.finished;
 
-    animation.finish();
+  animation.finish();
 }

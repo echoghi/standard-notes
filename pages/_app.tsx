@@ -6,14 +6,12 @@ import { StoreProvider } from 'easy-peasy';
 import Layout from '../components/Layout';
 import { store } from '../services';
 
-const App = ({ Component, pageProps }: AppProps) => {
-    return (
-        <StoreProvider store={store}>
-            <Layout>
-                <Component {...pageProps} />
-            </Layout>
-        </StoreProvider>
-    );
-};
+const App = ({ Component, pageProps }: AppProps) => (
+    <StoreProvider store={store}>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </StoreProvider>
+  );
 
 export default App;

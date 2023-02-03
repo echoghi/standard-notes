@@ -4,11 +4,11 @@ This is a clone of the popular note-taking app Standard Notes, built with [Next.
 
 ## Features
 
--   Create and edit notes
--   Securely store notes using end-to-end encryption
--   Stay in sync across sessions/devices without refreshing the browser
--   Dark mode
--   Offline capabilities
+- Create and edit notes
+- Securely store notes using end-to-end encryption
+- Stay in sync across sessions/devices without refreshing the browser
+- Dark mode
+- Offline capabilities
 
 ## Getting Started
 
