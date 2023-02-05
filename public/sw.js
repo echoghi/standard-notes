@@ -31,6 +31,14 @@ define(['./workbox-588899ac'], function (e) {
     e.clientsClaim(),
     e.precacheAndRoute(
       [
+        {
+          url: '/_next/static/NiVySN5Ry8tGvKLytibaU/_buildManifest.js',
+          revision: '3ba5bc98ece203b608537817d8f2d6a8',
+        },
+        {
+          url: '/_next/static/NiVySN5Ry8tGvKLytibaU/_ssgManifest.js',
+          revision: 'b6652df95db52feb4daf4eca35380933',
+        },
         { url: '/_next/static/chunks/0c428ae2-897a32e8692eac4a.js', revision: '897a32e8692eac4a' },
         { url: '/_next/static/chunks/17007de1-8d822d2daa814310.js', revision: '8d822d2daa814310' },
         { url: '/_next/static/chunks/1a48c3c1-4e30a84c4c381813.js', revision: '4e30a84c4c381813' },
@@ -57,8 +65,8 @@ define(['./workbox-588899ac'], function (e) {
           revision: '4b61be14865575c5',
         },
         {
-          url: '/_next/static/chunks/pages/index-1f0be1d40258e546.js',
-          revision: '1f0be1d40258e546',
+          url: '/_next/static/chunks/pages/index-04f43a0c468a5c8a.js',
+          revision: '04f43a0c468a5c8a',
         },
         {
           url: '/_next/static/chunks/pages/signin-601fc11fc9a4fe38.js',
@@ -74,14 +82,6 @@ define(['./workbox-588899ac'], function (e) {
         },
         { url: '/_next/static/chunks/webpack-adc8ae21bb142924.js', revision: 'adc8ae21bb142924' },
         { url: '/_next/static/css/663422b7d5d06e33.css', revision: '663422b7d5d06e33' },
-        {
-          url: '/_next/static/dWNWnGwWRLdOzl26KC873/_buildManifest.js',
-          revision: '4df3f3d01f788ecd131d8a42018155cf',
-        },
-        {
-          url: '/_next/static/dWNWnGwWRLdOzl26KC873/_ssgManifest.js',
-          revision: 'b6652df95db52feb4daf4eca35380933',
-        },
         { url: '/android-chrome-192x192.png', revision: '104670fb758b148c207a567d116a43e8' },
         { url: '/android-chrome-512x512.png', revision: '14098dcd54cecbdbe327946d9ea57b61' },
         { url: '/apple-touch-icon.png', revision: 'a2ccebeec51839c9712d09a8d2371769' },

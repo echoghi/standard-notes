@@ -146,7 +146,7 @@ const Editor = () => {
 
       throttledSetEdit.timeout = setTimeout(() => {
         setIsEditing(newValue);
-      }, 1000);
+      }, 250);
     },
     [setIsEditing],
   );
