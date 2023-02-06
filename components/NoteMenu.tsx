@@ -157,7 +157,7 @@ const NoteMenu = ({ note }: { note: Note }) => {
       setLoading(true);
       setError(false);
       const res = await saveBulkNotes({
-        items: [{ ...newNote, deleteFlag: view === 'deleted' && !newNote.deleted }],
+        items: [{ ...newNote, deleteFlag: newNote.deleteFlag }],
         syncToken,
       });
 
@@ -221,6 +221,8 @@ const NoteMenu = ({ note }: { note: Note }) => {
   const handleRestoreNote = () => handleUpdate({ deleted: false }, restoreCallback);
 
   const handleDeleteNote = () => handleUpdate({ deleted: !note.deleted }, deleteCallback);
+
+  const handleFullDelete = () => handleUpdate({ deleted: true, deleteFlag: true }, deleteCallback);
 
   const handleEmptyTrash = async () => {
     emptyTrash();
@@ -431,7 +433,7 @@ const NoteMenu = ({ note }: { note: Note }) => {
                     </Item>
                   </MenuItem>
                   <MenuItem>
-                    <Item onClick={handleDeleteNote}>
+                    <Item onClick={handleFullDelete}>
                       <ItemContent>
                         <IoMdClose size="22px" color="var(--sn-stylekit-danger-color)" />
                         <ItemText color="var(--sn-stylekit-danger-color)">
