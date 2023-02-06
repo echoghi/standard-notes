@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { SlOptions } from 'react-icons/sl';
 import { BiTrash } from 'react-icons/bi';
@@ -138,9 +138,14 @@ const NoteMenu = ({ note }: { note: Note }) => {
     setIsMenuOpen(prev => !prev);
   };
 
-  const handleUpdate = async (data: any) => {
+  const handleUpdate = async (data: any, callback?: (newNote?: any) => void) => {
     const newNote = { ...note, ...data };
-    updateNote(newNote);
+
+    if (callback) {
+      callback(newNote);
+    } else {
+      updateNote(newNote);
+    }
 
     const handleError = () => {
       storeEncryptedNotes(newNote);
@@ -152,7 +157,7 @@ const NoteMenu = ({ note }: { note: Note }) => {
       setLoading(true);
       setError(false);
       const res = await saveBulkNotes({
-        items: [newNote],
+        items: [{ ...newNote, deleteFlag: view === 'deleted' && !newNote.deleted }],
         syncToken,
       });
 
@@ -167,6 +172,39 @@ const NoteMenu = ({ note }: { note: Note }) => {
       handleError();
     }
   };
+
+  const starCallback = useCallback(
+    (newNote: Note) => {
+      if (isTrash || isArchived) {
+        updateNote(newNote);
+      } else {
+        updateStarred(newNote);
+      }
+    },
+    [isTrash, isArchived, note],
+  );
+
+  const archiveCallback = useCallback(
+    (newNote: Note) => {
+      if (isTrash) {
+        updateNote(newNote);
+      } else {
+        setIsMenuOpen(false);
+        updateArchived(newNote);
+      }
+    },
+    [isTrash, note],
+  );
+
+  const restoreCallback = useCallback((newNote: Note) => restoreNote(newNote), [note]);
+
+  const deleteCallback = useCallback(
+    (newNote: Note) => {
+      setIsMenuOpen(false);
+      deleteNote(newNote);
+    },
+    [note],
+  );
 
   const handlePinNote = () => handleUpdate({ pinned: !note.pinned });
 
@@ -176,135 +214,13 @@ const NoteMenu = ({ note }: { note: Note }) => {
 
   const togglePreviewMode = () => handleUpdate({ preview: !note.preview });
 
-  const handleStarNote = async () => {
-    const newNote = { ...note, starred: !note.starred };
+  const handleStarNote = () => handleUpdate({ starred: !note.starred }, starCallback);
 
-    if (isTrash || isArchived) {
-      updateNote(newNote);
-    } else {
-      updateStarred(newNote);
-    }
+  const handleArchivedNote = () => handleUpdate({ archived: !note.archived }, archiveCallback);
 
-    const handleError = () => {
-      storeEncryptedNotes(newNote);
-      setError(true);
-      setLoading(false);
-    };
+  const handleRestoreNote = () => handleUpdate({ deleted: false }, restoreCallback);
 
-    try {
-      setLoading(true);
-      setError(false);
-      const res = await saveBulkNotes({
-        items: [newNote],
-        syncToken,
-      });
-
-      if (res.error) {
-        handleError();
-      } else {
-        setSyncToken(res.data.syncToken);
-        setLoading(false);
-        setError(false);
-      }
-    } catch (err) {
-      handleError();
-    }
-  };
-
-  const handleArchivedNote = async () => {
-    const newNote = { ...note, archived: !note.archived };
-
-    if (isTrash) {
-      updateNote(newNote);
-    } else {
-      updateArchived(newNote);
-    }
-
-    const handleError = () => {
-      storeEncryptedNotes(newNote);
-      setError(true);
-      setLoading(false);
-    };
-
-    try {
-      setLoading(true);
-      setError(false);
-      const res = await saveBulkNotes({
-        items: [newNote],
-        syncToken,
-      });
-
-      if (res.error) {
-        handleError();
-      } else {
-        setSyncToken(res.data.syncToken);
-        setLoading(false);
-        setError(false);
-      }
-    } catch (err) {
-      handleError();
-    }
-  };
-
-  const handleRestoreNote = async () => {
-    const newNote = { ...note, deleted: false };
-    restoreNote(newNote);
-
-    const handleError = () => {
-      storeEncryptedNotes(newNote);
-      setError(true);
-      setLoading(false);
-    };
-
-    try {
-      setLoading(true);
-      setError(false);
-      const res = await saveBulkNotes({
-        items: [newNote],
-        syncToken,
-      });
-
-      if (res.error) {
-        handleError();
-      } else {
-        setSyncToken(res.data.syncToken);
-        setLoading(false);
-        setError(false);
-      }
-    } catch (err) {
-      handleError();
-    }
-  };
-
-  const handleDeleteNote = async () => {
-    const newNote = { ...note, deleted: !note.deleted };
-    deleteNote(newNote);
-
-    const handleError = () => {
-      storeEncryptedNotes(newNote);
-      setError(true);
-      setLoading(false);
-    };
-
-    try {
-      setLoading(true);
-      setError(false);
-      const res = await saveBulkNotes({
-        items: [{ ...newNote, deleteFlag: view === 'deleted' }],
-        syncToken,
-      });
-
-      if (res.error) {
-        handleError();
-      } else {
-        setSyncToken(res.data.syncToken);
-        setLoading(false);
-        setError(false);
-      }
-    } catch (err) {
-      handleError();
-    }
-  };
+  const handleDeleteNote = () => handleUpdate({ deleted: !note.deleted }, deleteCallback);
 
   const handleEmptyTrash = async () => {
     emptyTrash();
