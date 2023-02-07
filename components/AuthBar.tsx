@@ -7,7 +7,7 @@ import { MdOutlinePalette, MdLogout } from 'react-icons/md';
 import { FiChevronLeft } from 'react-icons/fi';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoMdClose } from 'react-icons/io';
-import { useOnClickOutside } from '@rennalabs/hooks';
+import { useOnClickOutside, useLocalStorage } from '@rennalabs/hooks';
 
 import { logOut, updateUserSettings } from '../services';
 import { useTheme } from '../hooks';
@@ -245,6 +245,8 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
 
   const router = useRouter();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [pk, setPk, removePk] = useLocalStorage('pk', '');
   const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false);
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
   const { toggleTheme, theme } = useTheme(userTheme);
@@ -269,6 +271,7 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
 
   const handleSignOut = async () => {
     await logOut();
+    removePk();
     router.push('/signin');
   };
 

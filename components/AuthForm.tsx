@@ -1,16 +1,10 @@
 import { Formik, Form, Field, FormikHelpers } from 'formik';
 import styled from 'styled-components';
 import Link from 'next/link';
+import { useLocalStorage } from '@rennalabs/hooks';
 import { useRouter } from 'next/router';
 
-import {
-  encryptPassword,
-  setLocalStorage,
-  generateUuid,
-  getValidationSchema,
-  matchUser,
-  auth,
-} from '../services';
+import { encryptPassword, generateUuid, getValidationSchema, matchUser, auth } from '../services';
 import { breakpoints } from '../styles';
 
 const Container = styled.div`
@@ -29,7 +23,7 @@ const SignInFormContainer = styled.div`
   width: fit-content;
   margin: 0 auto;
   padding: 2rem;
-  border: 1px solid var(--sn-stylekit-border-color);
+  border: 1px solid #dfe1e4;
   border-radius: 0.25rem;
   background-color: #fff;
 
@@ -37,7 +31,7 @@ const SignInFormContainer = styled.div`
     font-size: 16px;
     line-height: 1.25rem;
     padding: 0.625rem 0.75rem;
-    border: 1px solid var(--sn-stylekit-border-color);
+    border: 1px solid #dfe1e4;
     width: 100%;
     border-radius: 0.25rem;
     height: 100%;
@@ -45,7 +39,7 @@ const SignInFormContainer = styled.div`
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 1px var(--sn-stylekit-info-color);
+      box-shadow: 0 0 0 1px #086dd6;
     }
   }
 
@@ -85,7 +79,7 @@ const Button = styled.button`
   line-height: 1.25rem;
   color: #fff;
   padding: 0.375rem 1rem;
-  background-color: var(--sn-stylekit-info-color);
+  background-color: #086dd6;
   border-radius: 0.25rem;
   cursor: pointer;
   min-width: 6rem;
@@ -117,7 +111,7 @@ const SubText = styled.div`
 
   a {
     cursor: pointer;
-    color: var(--sn-stylekit-info-color);
+    color: #086dd6;
   }
 `;
 
@@ -135,6 +129,8 @@ interface Values {
 }
 
 const AuthForm = ({ type }: { type: 'signin' | 'signup' }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [pk, setLocalStorage] = useLocalStorage('pk', '');
   const isSignIn = type === 'signin';
   const buttonText = isSignIn ? 'Sign In' : 'Create account';
   const router = useRouter();
@@ -179,7 +175,7 @@ const AuthForm = ({ type }: { type: 'signin' | 'signup' }) => {
 
       user = await auth(type, { email, proof: encrypted.proof, salt: encrypted.salt, id });
 
-      setLocalStorage('pk', encrypted.password);
+      setLocalStorage(encrypted.password);
     } catch (err) {
       if (isSignIn) {
         setStatus('Sign in failed');

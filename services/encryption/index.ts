@@ -23,6 +23,7 @@ export function decrypt(text: string | null) {
     console.log('user is not logged in, bypassing decryption');
     return text;
   }
+
   const bytes = AES.decrypt(text, secretKey);
   const decryptedText = bytes.toString(enc.Utf8);
 
