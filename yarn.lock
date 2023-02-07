@@ -1185,10 +1185,12 @@
   resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-4.7.1.tgz#d657d4d05724158140022fa00614e143643090c2"
   integrity sha512-zWabHosTdLpXXlMefHmnouhXMoTB1+SCbUU3t4FCmdrtIOZcarPKU3Alto7gm/pZ9vHlGOXHCfVZ1G7OIrSbog==
 
-"@rennalabs/hooks@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@rennalabs/hooks/-/hooks-1.1.4.tgz#0fabc7e2efcea91b3385cd5ec7c93d7fdf373a9f"
-  integrity sha512-3Q5NJjI0fixdVf6TdWDcBRKzVCpNdHpZwtK8dgS8cgPzajP9l1CUPnsSZ4WDfwn/lBUFaGbQmRlh02zKN3+hIw==
+"@rennalabs/hooks@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@rennalabs/hooks/-/hooks-1.2.0.tgz#3460d458c38516e60e076431b46fe40d2600d113"
+  integrity sha512-sagLO2j+MYg1VeodK/2Uvd9kmIcRALI4lxZi3oHnTz41+a0EXwayl+AWYY9T01a1Sd7wcKFV3PTyBXjy5OoG/A==
+  dependencies:
+    js-cookie "^3.0.1"
 
 "@rennalabs/prettier-config@^1.0.3":
   version "1.0.3"
@@ -3447,6 +3449,11 @@ jose@^4.11.2:
   version "4.11.2"
   resolved "https://registry.yarnpkg.com/jose/-/jose-4.11.2.tgz#d9699307c02e18ff56825843ba90e2fae9f09e23"
   integrity sha512-njj0VL2TsIxCtgzhO+9RRobBvws4oYyCM8TpvoUQwl/MbIM3NFJRR9+e6x0sS5xXaP1t6OCBkaBME98OV9zU5A==
+
+js-cookie@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-3.0.1.tgz#9e39b4c6c2f56563708d7d31f6f5f21873a92414"
+  integrity sha512-+0rgsUXZu4ncpPxRL+lNEptWMOWl9etvPHc/koSRp6MPwpRYAhmk0dUG00J4bxVV3r9uUzfo24wW0knS07SKSw==
 
 js-sdsl@^4.1.4:
   version "4.2.0"
