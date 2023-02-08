@@ -32,11 +32,11 @@ define(['./workbox-588899ac'], function (e) {
     e.precacheAndRoute(
       [
         {
-          url: '/_next/static/PZAFSFKaS2fOnZvWNou6T/_buildManifest.js',
-          revision: '5ab2348c8cae774c6af4baaf3b34c827',
+          url: '/_next/static/MLtYBRuC2_nwI5CeNn8wd/_buildManifest.js',
+          revision: 'f7f08e2f0b5bebeb83956742713de543',
         },
         {
-          url: '/_next/static/PZAFSFKaS2fOnZvWNou6T/_ssgManifest.js',
+          url: '/_next/static/MLtYBRuC2_nwI5CeNn8wd/_ssgManifest.js',
           revision: 'b6652df95db52feb4daf4eca35380933',
         },
         { url: '/_next/static/chunks/0c428ae2-69f2da6d3df26f9c.js', revision: '69f2da6d3df26f9c' },
@@ -66,8 +66,8 @@ define(['./workbox-588899ac'], function (e) {
           revision: '4b61be14865575c5',
         },
         {
-          url: '/_next/static/chunks/pages/index-1b072bed03b77369.js',
-          revision: '1b072bed03b77369',
+          url: '/_next/static/chunks/pages/index-7994bb6dee02e56d.js',
+          revision: '7994bb6dee02e56d',
         },
         {
           url: '/_next/static/chunks/pages/signin-1f4795ab8ec6848c.js',

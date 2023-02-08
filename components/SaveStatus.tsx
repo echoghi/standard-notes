@@ -60,7 +60,7 @@ const ErrorBg = styled(Bg)`
   background: var(--sn-stylekit-danger-color);
 `;
 
-const Tooltip = styled.div<{ active: boolean; error: boolean; loading: boolean }>`
+const Tooltip = styled.div<{ $active: boolean; $error: boolean; $loading: boolean }>`
   display: none;
   position: absolute;
   top: 0;
@@ -71,16 +71,16 @@ const Tooltip = styled.div<{ active: boolean; error: boolean; loading: boolean }
   padding: 0.375rem 0.75rem;
   line-height: 1.25rem;
   background-color: var(--sn-stylekit-background-color);
-  color: ${({ error }) =>
-    error ? 'var(--sn-stylekit-danger-color)' : 'var(--editor-title-input-color)'};
-  transform: ${({ loading }) =>
-    loading ? 'translate(-4rem, 1.5rem)' : 'translate(-8rem, 1.5rem)'};
+  color: ${({ $error }) =>
+    $error ? 'var(--sn-stylekit-danger-color)' : 'var(--editor-title-input-color)'};
+  transform: ${({ $loading }) =>
+    $loading ? 'translate(-4rem, 1.5rem)' : 'translate(-8rem, 1.5rem)'};
   user-select: none;
   min-width: max-content;
   z-index: 99;
 
   @media (min-width: ${breakpoints.md}px) {
-    display: ${({ active }) => (active ? 'block' : 'none')};
+    display: ${({ $active }) => ($active ? 'block' : 'none')};
   }
 `;
 
@@ -139,7 +139,7 @@ const SaveStatus = ({ mobile } : { mobile: boolean }) => {
                     <AiOutlineInfoCircle size="15px" color="var(--sn-stylekit-passive-color-1)" />
                 </DisabledBg>
             )}
-            <Tooltip active={tooltipActive} error={error && !isDisabled} loading={loading && !error}>
+            <Tooltip $active={tooltipActive} $error={error && !isDisabled} $loading={loading && !error}>
                 <TooltipTitle>{isDisabled ? disabledText : tooltipText}</TooltipTitle>
                 <TooltipBody>{isDisabled ? disabledBodyText : tooltipBodyText}</TooltipBody>
             </Tooltip>
