@@ -2,7 +2,7 @@ function serializeJSON<T>(value: T) {
   try {
     return JSON.stringify(value);
   } catch (error) {
-    throw new Error('@rennalabs/hooks - useLocalStorage: Failed to serialize the value');
+    throw new Error('localStorage: Failed to serialize the value');
   }
 }
 
