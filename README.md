@@ -6,7 +6,7 @@ Clone of the popular note-taking app Standard Notes, built with [Next.js](https:
 
 - Create and edit notes
 - Securely store notes using end-to-end encryption
-- Stay in sync across sessions/devices without refreshing the browser
+- Stay in sync across sessions without refreshing the browser
 - Dark mode
 - Offline capabilities
 
