@@ -1,6 +1,6 @@
 # Standard Notes Clone
 
-Clone of the popular note-taking app Standard Notes, built with [Next.js](https://nextjs.org/), [Prisma](https://www.prisma.io/), and [Styled Components](https://styled-components.com/).
+A clone of the popular note-taking app Standard Notes, built with [Next.js](https://nextjs.org/), [Prisma](https://www.prisma.io/), and [Styled Components](https://styled-components.com/).
 
 ## Features
 
