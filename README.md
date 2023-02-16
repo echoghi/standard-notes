@@ -16,7 +16,7 @@ To get started with the app, follow these steps:
 
 1. Clone this repository to your local machine using `git clone https://github.com/echoghi/standard-notes-clone.git`
 2. Install the dependencies using `npm install` or `yarn install`
-3. Create a `.env` file in the root of the project and set the following environment variable: DATABASE_URL=your-database-url
+3. Create a `.env` file in the root of the project and set the following environment variable: DATABASE_URL=your-database-url (This project uses [Railway](https://www.railway.app/))
 4. Start the development server using `npm run dev` or `yarn dev`
 
 ## Deployment
