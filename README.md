@@ -23,7 +23,7 @@ To get started with the app, follow these steps:
 
 To deploy the app, you can use [Vercel](https://vercel.com/). Follow these steps to deploy the app:
 
-1. Sign up for a Vercel account and install the Vercel CLI
+1. Sign up for Vercel and install the Vercel CLI
 2. Run `vercel` in the root of the project to deploy the app
 
 ## License
