@@ -54,6 +54,9 @@ export const getServerSideProps: GetServerSideProps = async context => {
       };
     } catch (error) {
       console.log(error);
+      return {
+        props: { errorMessage: 'There was an error retrieving your data' },
+      };
     }
   }
 
