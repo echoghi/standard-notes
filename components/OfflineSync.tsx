@@ -3,6 +3,8 @@ import { useStoreActions, useStoreState } from 'easy-peasy';
 
 import { clearStoredNotes, getEncryptedNotes, saveBulkNotes } from '../services';
 
+const SYNC_INTERVAL_MS = 30000;
+
 const OfflineSync = () => {
   const syncToken = useStoreState((store: any) => store.syncToken);
 
@@ -13,34 +15,34 @@ const OfflineSync = () => {
   const setError = useStoreActions((store: any) => store.setError);
   const setLoading = useStoreActions((store: any) => store.setLoading);
 
-  const checkIfOnline = useCallback(async () => {
+  const syncStoredNotes = useCallback(async () => {
+    const storedNotes = getEncryptedNotes();
+    if (storedNotes.length) {
+      setLoading(true);
+      const res = await saveBulkNotes({ items: storedNotes, syncToken });
+      setSyncToken(res.data.syncToken);
+      if (res?.message === 'changes saved') {
+        setLoading(false);
+        setError(false);
+        setSynced(true);
+        clearStoredNotes();
+      }
+    }
+  }, [syncToken]);
+
+  const handleOnlineStatus = useCallback(async () => {
     try {
       const statusRes = await saveBulkNotes({ syncToken });
 
       if (statusRes?.message === 'success') {
         updateUser(statusRes.meta.auth);
-        const storedNotes = getEncryptedNotes();
-
-        if (storedNotes) {
-          setLoading(true);
-
-          // @ts-ignore
-          const res = await saveBulkNotes({ items: storedNotes, syncToken });
-          setSyncToken(res.data.syncToken);
-          if (res?.message === 'changes saved') {
-            setLoading(false);
-            setError(false);
-            setSynced(true);
-            clearStoredNotes();
-          }
-        } else {
-          if (statusRes.data.retrievedItems.length) {
-            syncNotes(statusRes.data.retrievedItems);
-          }
-          setSynced(true);
-          setError(false);
-          setSyncToken(statusRes.data.syncToken);
+        await syncStoredNotes();
+        if (statusRes.data.retrievedItems.length) {
+          syncNotes(statusRes.data.retrievedItems);
         }
+        setSynced(true);
+        setError(false);
+        setSyncToken(statusRes.data.syncToken);
       } else {
         setLoading(false);
         setError(true);
@@ -51,15 +53,15 @@ const OfflineSync = () => {
       setError(true);
       setSynced(false);
     }
-  }, [syncToken]);
+  }, [syncToken, syncStoredNotes]);
 
   useEffect(() => {
     const ping = setInterval(() => {
-      checkIfOnline();
-    }, 30000);
+      handleOnlineStatus();
+    }, SYNC_INTERVAL_MS);
 
     return () => clearInterval(ping);
-  }, [checkIfOnline, syncToken]);
+  }, [handleOnlineStatus, syncToken]);
 
   return null;
 };

@@ -110,11 +110,11 @@ export function storeEncryptedNotes(note: Note): void {
   setLocalStorage('enc_notes', encryptedNotes);
 }
 
-export function getEncryptedNotes(): Note[] | boolean {
+export function getEncryptedNotes(): Note[] {
   const storedNotes = JSON.parse(decrypt(getLocalStorage('enc_notes')) || '[]');
 
-  if (!storedNotes || !storedNotes.length) {
-    return false;
+  if (!storedNotes) {
+    return [];
   }
 
   return storedNotes;
