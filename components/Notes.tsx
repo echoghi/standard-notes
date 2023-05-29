@@ -185,7 +185,7 @@ const Notes = ({ notes, deleted, starred, archived }: Props) => {
     <Container id="items-column" aria-label="Notes">
       <TitleContainer className="flex justify-between items-center ml-3">
         <FlexCenter>
-          <MenuButton onClick={handleTagsPanel} id="show-menu">
+          <MenuButton onClick={handleTagsPanel} id="show-menu" aria-label="Show Menu">
             <FiMenu size="20px" color="var(--sn-stylekit-neutral-color)" />
           </MenuButton>
 
@@ -219,7 +219,7 @@ const Notes = ({ notes, deleted, starred, archived }: Props) => {
         </FlexCenter>
         <Actions>
           <SortNotes />
-          <Button>
+          <Button aria-label="Create New Note">
             <AiOutlinePlus
               id="add-note-button"
               size="20px"

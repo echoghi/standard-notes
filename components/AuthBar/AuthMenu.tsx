@@ -155,7 +155,7 @@ const AuthMenu: React.FC<AuthMenuProps> = ({
         </SyncContainer>
         <Divider />
         <MenuItem>
-          <Item onClick={handleSignOut}>
+          <Item onClick={handleSignOut} aria-label="Log Out">
             <ItemContent>
               <MdLogout size="22px" color="var(--sn-stylekit-neutral-color)" />
               <ItemText>Sign out workspace</ItemText>

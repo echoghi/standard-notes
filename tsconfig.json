@@ -1,6 +1,6 @@
 {
   "extends": "@rennalabs/tsconfig/tsconfig.json",
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".eslintrc.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".eslintrc.js", "tests/audit.ts"],
   "exclude": ["node_modules", "public"],
   "baseUrl": ".",
   "compilerOptions": {

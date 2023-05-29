@@ -168,16 +168,26 @@ const AuthBar = ({ id, email }: { id: string; email: string }) => {
   return (
     <Container>
       <Group focusMode={focusMode}>
-        <Button onClick={handleBack} id="mobile-back">
+        <Button onClick={handleBack} id="mobile-back" aria-label="Go Back">
           <FiChevronLeft size="22px" color="var(--sn-stylekit-neutral-color)" />
         </Button>
-        <Button id="auth-menu-button" onClick={handleAuthClick} ref={setAuthButton}>
+        <Button
+          id="auth-menu-button"
+          onClick={handleAuthClick}
+          ref={setAuthButton}
+          aria-label="Open Auth Menu"
+        >
           <RiAccountCircleFill
             size="20px"
             color={!synced ? 'var(--sn-stylekit-danger-color)' : 'var(--sn-stylekit-info-color)'}
           />
         </Button>
-        <Button id="theme-menu-button" onClick={handleSettingsClick} ref={setSettingsButton}>
+        <Button
+          id="theme-menu-button"
+          onClick={handleSettingsClick}
+          ref={setSettingsButton}
+          aria-label="Open Theme Menu"
+        >
           <MdOutlinePalette
             size="20px"
             color={
