@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:audit": "esno ./tests/audit.ts",
+    "test:audit": " lighthouse https://standard-notes.vercel.app/ --disable-storage-reset --port 62428 --view --outputPath ./lighthouse/audit.html",
     "vercel-build": "prisma generate && prisma migrate deploy && next build",
     "format": "prettier --write .",
     "prepare": "husky install",

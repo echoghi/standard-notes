@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { IoMdClose } from 'react-icons/io';
 import { useStoreState, useStoreActions } from 'easy-peasy';
@@ -92,11 +92,18 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
   const focusMode = useStoreState((store: any) => store.focusMode);
   const tagsPanel = useStoreState((store: any) => store.tagsPanel);
   const notesPanel = useStoreState((store: any) => store.notesPanel);
-  const theme = useStoreState((store: any) => store.theme);
+  const initialTheme = useStoreState((store: any) => store.theme);
 
   const toggleFocusMode = useStoreActions((store: any) => store.toggleFocusMode);
   const toggleTagsPanel = useStoreActions((store: any) => store.toggleTagsPanel);
   const toggleNotesPanel = useStoreActions((store: any) => store.toggleNotesPanel);
+
+  const [theme, setTheme] = useState(initialTheme);
+
+  const handleTheme = (newTheme: Theme) => {
+    setTheme(newTheme);
+    handleThemeChange(newTheme);
+  };
 
   return (
     <Modal>
@@ -110,55 +117,55 @@ const SettingsMenu: React.FC<SettingsMenuProps> = ({
           <Divider id="menu-close-divider" />
           <MenuTitle>APPEARANCE</MenuTitle>
           <MenuItem>
-            <RadioButton role="menuitemradio" onClick={() => handleThemeChange('light')}>
+            <RadioButton role="menuitemradio" onClick={() => handleTheme('light')}>
               <RadioFill checked={theme === 'light'} />
               <RadioText>Default</RadioText>
             </RadioButton>
           </MenuItem>
 
           <MenuItem>
-            <RadioButton role="menuitemradio" onClick={() => handleThemeChange('system')}>
+            <RadioButton role="menuitemradio" onClick={() => handleTheme('system')}>
               <RadioFill checked={theme === 'system'} />
               <RadioText>System</RadioText>
             </RadioButton>
           </MenuItem>
           <MenuItem>
-            <RadioButton role="menuitemradio" onClick={() => handleThemeChange('dark')}>
+            <RadioButton role="menuitemradio" onClick={() => handleTheme('dark')}>
               <RadioFill checked={theme === 'dark'} />
               <RadioText>Dark</RadioText>
               <ThemeCircle color="rgb(164, 100, 194)" />
             </RadioButton>
           </MenuItem>
           <MenuItem>
-            <RadioButton role="menuitemradio" onClick={() => handleThemeChange('autobiography')}>
+            <RadioButton role="menuitemradio" onClick={() => handleTheme('autobiography')}>
               <RadioFill checked={theme === 'autobiography'} />
               <RadioText>Autobiography</RadioText>
               <ThemeCircle color="rgb(157, 116, 65)" />
             </RadioButton>
           </MenuItem>
           <MenuItem>
-            <RadioButton role="menuitemradio" onClick={() => handleThemeChange('futura')}>
+            <RadioButton role="menuitemradio" onClick={() => handleTheme('futura')}>
               <RadioFill checked={theme === 'futura'} />
               <RadioText>Futura</RadioText>
               <ThemeCircle color="rgb(252, 164, 41)" />
             </RadioButton>
           </MenuItem>
           <MenuItem>
-            <RadioButton role="menuitemradio" onClick={() => handleThemeChange('midnight')}>
+            <RadioButton role="menuitemradio" onClick={() => handleTheme('midnight')}>
               <RadioFill checked={theme === 'midnight'} />
               <RadioText>Midnight</RadioText>
               <ThemeCircle color="rgb(8, 109, 214)" />
             </RadioButton>
           </MenuItem>
           <MenuItem>
-            <RadioButton role="menuitemradio" onClick={() => handleThemeChange('solarized')}>
+            <RadioButton role="menuitemradio" onClick={() => handleTheme('solarized')}>
               <RadioFill checked={theme === 'solarized'} />
               <RadioText>Solarized Dark</RadioText>
               <ThemeCircle color="rgb(42, 161, 152)" />
             </RadioButton>
           </MenuItem>
           <MenuItem>
-            <RadioButton role="menuitemradio" onClick={() => handleThemeChange('titanium')}>
+            <RadioButton role="menuitemradio" onClick={() => handleTheme('titanium')}>
               <RadioFill checked={theme === 'titanium'} />
               <RadioText>Titanium</RadioText>
               <ThemeCircle color="rgb(110, 43, 158)" />
