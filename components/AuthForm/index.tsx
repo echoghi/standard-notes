@@ -208,7 +208,7 @@ const AuthForm = ({ type }: { type: 'signin' | 'signup' }) => {
                 />
               )}
               {status ? <ErrorMsg>{status}</ErrorMsg> : null}
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting} id="login-button">
                 {isSubmitting ? 'Signing in...' : buttonText}
               </Button>
             </Form>
